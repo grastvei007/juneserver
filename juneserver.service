@@ -1,0 +1,13 @@
+[Unit]
+Description=June Server
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/juneserver \
+	--conf_file /etc/june/juneserver.conf \
+	--log_file /var/log/juneserver.log
+User=root
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target
