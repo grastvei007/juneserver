@@ -1,7 +1,5 @@
-QT += gui core
-QT += websockets
+QT = gui core websockets widgets
 
-QT += widgets
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
@@ -46,12 +44,18 @@ INCLUDEPATH += ../
 SOURCES += main.cpp \
     app.cpp \
     websocketserver.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    gui/menubar.cpp \
+    gui/clientlistwidget.cpp \
+    client.cpp
 
 HEADERS += \
     app.h \
     websocketserver.h \
-    mainwindow.h
+    mainwindow.h \
+    gui/menubar.h \
+    gui/clientlistwidget.h \
+    client.h
 
 FORMS += \
     mainwindow.ui

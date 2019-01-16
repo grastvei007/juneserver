@@ -1,11 +1,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
+#include <qt5/QtWidgets/QMainWindow>
+#include <memory>
 
 namespace Ui {
 class MainWindow;
 }
+
+class Menubar;
 
 class MainWindow : public QMainWindow
 {
@@ -17,6 +20,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    std::unique_ptr<Menubar> mMenubar;
 };
 
 #endif // MAINWINDOW_H

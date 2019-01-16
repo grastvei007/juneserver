@@ -30,11 +30,11 @@ void WebSocketServer::onNewConnection()
 {
     QWebSocket *webSocket = mWebSocketServer->nextPendingConnection();
     qDebug() << "New Connection ";
-    connect(webSocket, &QWebSocket::textMessageReceived, this, &WebSocketServer::processTextMessage);
-    connect(webSocket, &QWebSocket::binaryMessageReceived, this, &WebSocketServer::processBinaryMessage);
-    connect(webSocket, &QWebSocket::disconnected, this, &WebSocketServer::socketDisconnected);
+    if(!webSocket)
+        return;
 
-     mClients.push_back(webSocket);
+    Client *client = new Client(webSocket);
+    mClients.push_back(client);
 
      // send current initial tags list, ask client to create everything.
      QByteArray taglist;

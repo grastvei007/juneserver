@@ -8,6 +8,8 @@
 #include <QByteArray>
 #include <QXmlStreamReader>
 
+#include "client.h"
+
 #include <memory>
 
 class Tag;
@@ -24,6 +26,9 @@ class WebSocketServer : public QObject
     Q_OBJECT
 public:
     WebSocketServer(qint16 port, QString aServerName, QObject *parent=nullptr);
+
+signals:
+    void newConnection(Client*);
 
 private slots:
     void onNewConnection();
@@ -44,7 +49,8 @@ private:
 private:
     std::unique_ptr<QWebSocketServer> mWebSocketServer;
 
-    QVector<QWebSocket*> mClients;
+    //QVector<QWebSocket*> mClients;
+    QVector<Client*> mClients;
 
     QVector<Tag*> mTagsCreatedQueue;
     QVector<Tag*> mTagsUpdatedQueue;
