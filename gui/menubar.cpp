@@ -1,6 +1,6 @@
 #include "menubar.h"
 
-#include <qt5/QtWidgets/qmenu.h>
+#include <QMenu>
 
 Menubar::Menubar()
 {

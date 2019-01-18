@@ -3,13 +3,15 @@
 
 #include <QWidget>
 
+#include "client.h"
+
 class ClientListWidget
 {
 public:
     ClientListWidget();
 
 public slots:
-    void onNewConnection();
+    void onNewConnection(Client *aClient);
 };
 
 #endif // CLIENTLISTWIDGET_H

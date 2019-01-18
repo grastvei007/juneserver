@@ -3,8 +3,10 @@
 
 #include <QObject>
 #include <QString>
+#include <QXmlStreamReader>
 
 class QWebSocket;
+class Tag;
 
 
 class Client : public QObject
@@ -18,9 +20,12 @@ public:
 
     QString getName() const;
     QString getIp() const;
+
+    void sendBinaryMessage(const QByteArray &aMsg);
 signals:
     void disconnected(Client *aClient);
-
+    void tagCreated(Tag*);
+    void tagUpdated(Tag*);
 
 private slots:
     void onTextMessageRecieved(QString aMsg);
@@ -29,6 +34,8 @@ private slots:
 
 private:
     void onInfo(QString aMsg);
+    void createTags(QXmlStreamReader &aStream);
+    void updateTags(QXmlStreamReader &aStream);
 
 private:
     QWebSocket *mWebSocket;

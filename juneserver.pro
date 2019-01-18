@@ -1,4 +1,4 @@
-QT = gui core websockets widgets
+QT += gui core websockets widgets
 
 
 CONFIG += c++11 console
@@ -30,14 +30,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-LIBPATH = $$(DEV_LIBS)
+INCLUDEPATH += ../
 
 if(debug){
-#LIBS += -L$$(LIBPATH) -ltagsystemd
-LIBS += -ltagsystemd
+LIBS += -L$$(DEV_LIBS) -ltagsystemd
+#LIBS += -ltagsystemd
 }
 
-INCLUDEPATH += ../
+
 
 
 
@@ -47,7 +47,8 @@ SOURCES += main.cpp \
     mainwindow.cpp \
     gui/menubar.cpp \
     gui/clientlistwidget.cpp \
-    client.cpp
+    client.cpp \
+    clientinformation.cpp
 
 HEADERS += \
     app.h \
@@ -55,7 +56,8 @@ HEADERS += \
     mainwindow.h \
     gui/menubar.h \
     gui/clientlistwidget.h \
-    client.h
+    client.h \
+    clientinformation.h
 
 FORMS += \
     mainwindow.ui

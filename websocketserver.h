@@ -41,9 +41,6 @@ private slots:
     void onTagValueChanged(Tag *aTag);
 
 private:
-    void createTag(QXmlStreamReader &aStream);
-    void updateTag(QXmlStreamReader &aStream);
-
     void sendTagsCreatedToClients();
     void sendTagsUpdatedToClients();
 private:

@@ -36,6 +36,8 @@ void WebSocketServer::onNewConnection()
     Client *client = new Client(webSocket);
     mClients.push_back(client);
 
+    emit newConnection(client);
+
      // send current initial tags list, ask client to create everything.
      QByteArray taglist;
      TagList::sGetInstance().toXml(taglist, true);
@@ -69,53 +71,7 @@ void WebSocketServer::processTextMessage(QString aMsg)
  */
 void WebSocketServer::processBinaryMessage(QByteArray aMsg)
 {
-  //  qDebug() << __FUNCTION__ << QString(aMsg);
-    QXmlStreamReader stream(aMsg);
 
-    while(!stream.atEnd() && !stream.hasError())
-    {
-        QXmlStreamReader::TokenType token = stream.readNext();
-        if(token == QXmlStreamReader::StartDocument)
-            continue;
-        if(token == QXmlStreamReader::StartElement)
-        {
-            if(stream.name() == "create")
-            {
-                while(!(stream.tokenType() == QXmlStreamReader::EndElement &&
-                        stream.name() == "create"))
-                {
-                    if(stream.readNext() != QXmlStreamReader::StartElement)
-                        continue;
-
-                    if(stream.name() == "tag")
-                    {
-                        createTag(stream);
-                    }
-                }
-            }
-            else if(stream.name() == "update")
-            {
-                while(!(stream.tokenType() == QXmlStreamReader::EndElement &&
-                        stream.name() == "update"))
-                {
-                    if(stream.readNext() != QXmlStreamReader::StartElement)
-                        continue;
-
-                    if(stream.name() == "tag")
-                    {
-                        updateTag(stream);
-                    }
-                }
-            }
-        }
-    }
-
-    if(stream.hasError())
-    {
-        qDebug() << __FUNCTION__ << "Error in xml file";
-        qDebug() << __FUNCTION__ << stream.lineNumber();
-        qDebug() << __FUNCTION__ << stream.errorString();
-    }
 
     if(mTagsCreatedQueue.size() > 0)
         sendTagsCreatedToClients();
@@ -130,90 +86,15 @@ void WebSocketServer::processBinaryMessage(QByteArray aMsg)
  */
 void WebSocketServer::socketDisconnected()
 {
-    QWebSocket *client = qobject_cast<QWebSocket *>(sender());
+  /*  QWebSocket *client = qobject_cast<QWebSocket *>(sender());
     qDebug() << "socketDisconnected:" << client;
     if (client)
     {
         mClients.removeAll(client);
         client->deleteLater();
-    }
+    }*/
 }
 
-/**
- * @brief WebSocketServer::createTag
- * @param aStream
- *
- * Create a new tag, and add the tag to create queue.
- */
-void WebSocketServer::createTag(QXmlStreamReader &aStream)
-{
-    QXmlStreamAttributes attribs = aStream.attributes();
-    QString subsystem = attribs.value("subsystem").toString();
-    QString name = attribs.value("name").toString();
-    QString type = attribs.value("type").toString();
-
-    if(TagList::sGetInstance().findByTagName(QString("%1.%2").arg(subsystem).arg(name)))
-        return;
-
-    if(type == "Double")
-    {
-        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eDouble);
-        tag->setValue(attribs.value("value").toDouble());
-        mTagsCreatedQueue.push_back(tag);
-        connect(tag, &Tag::valueChanged, this, &WebSocketServer::onTagValueChanged);
-    }
-    else if(type == "Int")
-    {
-        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eInt);
-        tag->setValue(attribs.value("value").toInt());
-        mTagsCreatedQueue.push_back(tag);
-        connect(tag, &Tag::valueChanged, this, &WebSocketServer::onTagValueChanged);
-    }
-    else if(type == "Bool")
-    {
-        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eBool);
-        tag->setValue(attribs.value("value").toInt() == 1 ? true : false);
-        mTagsCreatedQueue.push_back(tag);
-        connect(tag, &Tag::valueChanged, this, &WebSocketServer::onTagValueChanged);
-    }
-
-}
-
-/**
- * @brief WebSocketServer::updateTag
- * @param aStream
- *
- * Update tag value in taglist and add the tag to the update queue.
- */
-void WebSocketServer::updateTag(QXmlStreamReader &aStream)
-{
-    QXmlStreamAttributes attribs = aStream.attributes();
-    QString subsystem = attribs.value("subsystem").toString();
-    QString name = attribs.value("name").toString();
-
-    QString fullname = QString("%1.%2").arg(subsystem).arg(name);
-    Tag *tag = TagList::sGetInstance().findByTagName(fullname);
-    if(tag)
-    {
-        switch (tag->getType()) {
-        case Tag::eDouble :
-            tag->setValue(attribs.value("value").toDouble());
-            mTagsUpdatedQueue.push_back(tag);
-            break;
-        case Tag::eInt:
-            tag->setValue(attribs.value("value").toInt());
-            mTagsUpdatedQueue.push_back(tag);
-            break;
-        case Tag::eBool:
-            tag->setValue(attribs.value("value").toInt() == 1 ? true : false);
-            mTagsUpdatedQueue.push_back(tag);
-            break;
-        default:
-            Q_UNREACHABLE();
-            break;
-        }
-    }
-}
 
 /**
  * @brief WebSocketServer::sendTagsCreatedToClients
