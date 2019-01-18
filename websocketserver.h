@@ -40,6 +40,8 @@ private slots:
 
     void onTagValueChanged(Tag *aTag);
 
+    void onConnectionEstablished(Client *aClient);
+    void onClientDisconnect(Client *aClient);
 private:
     void sendTagsCreatedToClients();
     void sendTagsUpdatedToClients();

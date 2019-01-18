@@ -2,16 +2,26 @@
 #define CLIENTLISTWIDGET_H
 
 #include <QWidget>
+#include <QListWidget>
+#include <memory>
 
 #include "client.h"
 
-class ClientListWidget
+class ClientListWidget : public QWidget
 {
+    Q_OBJECT
 public:
     ClientListWidget();
+    ClientListWidget(QWidget *parent=nullptr);
 
-public slots:
-    void onNewConnection(Client *aClient);
+    void addClient(Client *aClient);
+
+private slots:
+    void onClientDisconnected(Client *aClient);
+
+private:
+    std::unique_ptr<QListWidget> mListWidget;
+
 };
 
 #endif // CLIENTLISTWIDGET_H

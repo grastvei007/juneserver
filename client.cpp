@@ -15,7 +15,8 @@
 
 Client::Client(QWebSocket *aWebSocket, QObject *aParent) : QObject(aParent),
     mWebSocket(aWebSocket),
-    mInfoFlag(false)
+    mInfoFlag(false),
+    mClientName("Unamed")
 {
     connect(mWebSocket, &QWebSocket::textMessageReceived, this, &Client::onTextMessageRecieved);
     connect(mWebSocket, &QWebSocket::binaryMessageReceived, this, &Client::onBinaryMessageRecieved);
@@ -45,6 +46,7 @@ void Client::onTextMessageRecieved(QString aMsg)
 {
     if(!mInfoFlag)
     {
+        qDebug() << aMsg;
         onInfo(aMsg);
         return;
     }
@@ -96,7 +98,7 @@ void Client::onBinaryMessageRecieved(QByteArray aMsg)
 
 void Client::onDisconnected()
 {
-
+    emit disconnected(this);
 }
 
 /**
@@ -113,6 +115,8 @@ void Client::onInfo(QString aMsg)
     }
     mClientName = info.getName();
     mClientIp = info.getIp();
+
+    emit connectionEstablished(this);
 }
 
 

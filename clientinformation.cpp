@@ -1,5 +1,6 @@
 #include "clientinformation.h"
 
+#include <QDebug>
 #include <QXmlStreamReader>
 
 
@@ -14,20 +15,29 @@ ClientInformation::ClientInformation(QString aInfo, QObject *parent) : QObject(p
            continue;
        if(token == QXmlStreamReader::StartElement)
        {
+           if(stream.name() == "client")
+               continue;
+
            if(stream.name() == "name")
+           {
                mName = stream.readElementText();
-           else if(stream.name() == "ip")
+               qDebug() << mName;
+           }
+           if(stream.name() == "ip")
+           {
                mIp = stream.readElementText();
+               qDebug() << mIp;
+           }
        }
 
     }
-    if(stream.hasError())
+   /* if(stream.hasError())
     {
         mErrorString = stream.errorString();
         mHasError = true;
     }
     else
-    {
+    {*/
         if(mName.isEmpty())
         {
             mErrorString.append("ClientInformation, Name not set.\n");
@@ -38,7 +48,7 @@ ClientInformation::ClientInformation(QString aInfo, QObject *parent) : QObject(p
             mErrorString.append("ClientInformation, Ip not set.\n");
             mHasError = true;
         }
-    }
+   // }
 }
 
 

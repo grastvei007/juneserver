@@ -34,14 +34,7 @@ void WebSocketServer::onNewConnection()
         return;
 
     Client *client = new Client(webSocket);
-    mClients.push_back(client);
-
-    emit newConnection(client);
-
-     // send current initial tags list, ask client to create everything.
-     QByteArray taglist;
-     TagList::sGetInstance().toXml(taglist, true);
-     webSocket->sendBinaryMessage(taglist);
+    connect(client, &Client::connectionEstablished, this, &WebSocketServer::onConnectionEstablished);
 }
 
 
@@ -161,4 +154,22 @@ void WebSocketServer::onTagValueChanged(Tag *aTag)
     mTagsUpdatedQueue.removeAll(aTag);
     mTagsUpdatedQueue.push_back(aTag);
     sendTagsUpdatedToClients();
+}
+
+
+void WebSocketServer::onConnectionEstablished(Client *aClient)
+{
+    mClients.push_back(aClient);
+    emit newConnection(aClient);
+
+    // send current initial tags list, ask client to create everything.
+    QByteArray taglist;
+    TagList::sGetInstance().toXml(taglist, true);
+    aClient->sendBinaryMessage(taglist);
+}
+
+void WebSocketServer::onClientDisconnect(Client *aClient)
+{
+    mClients.removeAll(aClient);
+    aClient->deleteLater();
 }

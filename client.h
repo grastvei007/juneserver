@@ -26,6 +26,7 @@ signals:
     void disconnected(Client *aClient);
     void tagCreated(Tag*);
     void tagUpdated(Tag*);
+    void connectionEstablished(Client*); ///< emitted after client information is recieved.
 
 private slots:
     void onTextMessageRecieved(QString aMsg);

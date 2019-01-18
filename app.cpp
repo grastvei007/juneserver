@@ -24,6 +24,8 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
         mMainWindow->setCentralWidget(new TagListView());
         mMainWindow->show();
 
+        connect(mWebSocketServer, &WebSocketServer::newConnection, mMainWindow, &MainWindow::onNewConnection);
+
     }
 }
 
