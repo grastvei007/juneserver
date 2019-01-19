@@ -16,6 +16,11 @@ MainWindow::MainWindow(QWidget *parent) :
     mMenubar.reset(new Menubar());
     setMenuBar(mMenubar.get());
 
+    mSystemTrayIcon.reset(new QSystemTrayIcon(QIcon(":/icon")));
+    mSystemTrayIcon->setVisible(true);
+    connect(mSystemTrayIcon.get(), &QSystemTrayIcon::activated, this, &MainWindow::onSystemTrayIconActivated);
+
+
     mclientListWidget.reset(new ClientListWidget(this));
 
     mClientListDockWidget.reset(new QDockWidget());
@@ -38,4 +43,25 @@ MainWindow::~MainWindow()
 void MainWindow::onNewConnection(Client *aClient)
 {
     mclientListWidget->addClient(aClient);
+}
+
+
+void MainWindow::onMinimizeToTray()
+{
+
+}
+
+
+void MainWindow::onRaiseWindow()
+{
+
+}
+
+
+void MainWindow::onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    if(reason == QSystemTrayIcon::DoubleClick)
+    {
+        raise();
+    }
 }
