@@ -48,7 +48,9 @@ SOURCES += main.cpp \
     gui/menubar.cpp \
     gui/clientlistwidget.cpp \
     client.cpp \
-    clientinformation.cpp
+    clientinformation.cpp \
+    logger.cpp \
+    gui/loggerwidget.cpp
 
 HEADERS += \
     app.h \
@@ -57,7 +59,9 @@ HEADERS += \
     gui/menubar.h \
     gui/clientlistwidget.h \
     client.h \
-    clientinformation.h
+    clientinformation.h \
+    logger.h \
+    gui/loggerwidget.h
 
 FORMS += \
     mainwindow.ui

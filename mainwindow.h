@@ -12,6 +12,7 @@ class MainWindow;
 class Menubar;
 class Client;
 class ClientListWidget;
+class LoggerWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -29,8 +30,10 @@ private:
 
     std::unique_ptr<Menubar> mMenubar;
     std::unique_ptr<QDockWidget> mClientListDockWidget;
+    std::unique_ptr<QDockWidget> mLoggerDockWidget;
 
     std::unique_ptr<ClientListWidget> mclientListWidget;
+    std::unique_ptr<LoggerWidget> mLoggerWidget;
 };
 
 #endif // MAINWINDOW_H
