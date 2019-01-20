@@ -8,6 +8,8 @@
 #include <tagsystem/taglist.h>
 #include <tagsystem/tag.h>
 
+#include  "logger.h"
+
 WebSocketServer::WebSocketServer(qint16 port, QString aServerName, QObject *parent) : QObject(parent)
 {
     mWebSocketServer.reset(new QWebSocketServer(aServerName, QWebSocketServer::NonSecureMode, this));
@@ -32,6 +34,8 @@ void WebSocketServer::onNewConnection()
     qDebug() << "New Connection ";
     if(!webSocket)
         return;
+
+    Logger::sGetInstance().log(QString("New connection"));
 
     Client *client = new Client(webSocket);
     connect(client, &Client::connectionEstablished, this, &WebSocketServer::onConnectionEstablished);
@@ -161,6 +165,7 @@ void WebSocketServer::onConnectionEstablished(Client *aClient)
 {
     mClients.push_back(aClient);
     emit newConnection(aClient);
+    connect(aClient, &Client::disconnected, this, &WebSocketServer::onClientDisconnect);
 
     // send current initial tags list, ask client to create everything.
     QByteArray taglist;
@@ -172,4 +177,6 @@ void WebSocketServer::onClientDisconnect(Client *aClient)
 {
     mClients.removeAll(aClient);
     aClient->deleteLater();
+    Logger::sGetInstance().log("Client disconnected");
+    Logger::sGetInstance().log(QString("Active connections (%1)").arg(mClients.size()));
 }

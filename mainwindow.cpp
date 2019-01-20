@@ -62,6 +62,7 @@ void MainWindow::onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason rea
 {
     if(reason == QSystemTrayIcon::DoubleClick)
     {
+
         raise();
     }
 }

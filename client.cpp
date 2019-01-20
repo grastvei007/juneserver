@@ -161,6 +161,12 @@ void Client::createTags(QXmlStreamReader &aStream)
         tag->setValue(attribs.value("value").toInt() == 1 ? true : false);
         emit tagCreated(tag);
     }
+    else if(type == "String")
+    {
+        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eString);
+        tag->setValue(attribs.value("value").toString());
+        emit tagCreated(tag);
+    }
 }
 
 
@@ -186,6 +192,10 @@ void Client::updateTags(QXmlStreamReader &aStream)
         break;
     case Tag::eBool:
         tag->setValue(attribs.value("value").toInt() == 1 ? true : false);
+        emit tagUpdated(tag);
+        break;
+    case Tag::eString:
+        tag->setValue(attribs.value("value").toString());
         emit tagUpdated(tag);
         break;
     default:

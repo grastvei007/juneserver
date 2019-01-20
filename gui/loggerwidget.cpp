@@ -4,7 +4,7 @@
 #include <QLabel>
 #include <QDebug>
 #include <QScrollBar>
-
+#include <QTime>
 #include "logger.h"
 
 
@@ -25,7 +25,11 @@ LoggerWidget::LoggerWidget(QWidget *parent) : QWidget(parent)
 
 void LoggerWidget::onLogEntry(QString aMsg)
 {
-    mTextEdit->insertPlainText(aMsg);
+    QString m = QString("[%1] ").arg(QTime::currentTime().toString());
+    m.append(aMsg);
+    m.append("\n");
+
+    mTextEdit->insertPlainText(m);
     QScrollBar *bar = mTextEdit->verticalScrollBar();
     bar->setValue(bar->maximum());
 }
