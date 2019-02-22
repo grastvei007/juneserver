@@ -157,7 +157,7 @@ void Client::createTags(QXmlStreamReader &aStream)
     }
     else if(type == "Bool")
     {
-        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eInt);
+        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eBool);
         tag->setValue(attribs.value("value").toInt() == 1 ? true : false);
         emit tagCreated(tag);
     }

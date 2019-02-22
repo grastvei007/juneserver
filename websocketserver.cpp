@@ -20,6 +20,9 @@ WebSocketServer::WebSocketServer(qint16 port, QString aServerName, QObject *pare
         connect(mWebSocketServer.get(), &QWebSocketServer::newConnection, this, &WebSocketServer::onNewConnection);
         connect(mWebSocketServer.get(), &QWebSocketServer::closed, this, &WebSocketServer::onServerClosed);
     }
+
+    connect(&TagList::sGetInstance(), &TagList::tagValueChanged, this, &WebSocketServer::onTagValueChanged);
+
 }
 
 /**
@@ -166,11 +169,13 @@ void WebSocketServer::onConnectionEstablished(Client *aClient)
     mClients.push_back(aClient);
     emit newConnection(aClient);
     connect(aClient, &Client::disconnected, this, &WebSocketServer::onClientDisconnect);
+    //connect(aClient, &Client::tagUpdated, this, &WebSocketServer::onTagValueChanged);
 
     // send current initial tags list, ask client to create everything.
     QByteArray taglist;
     TagList::sGetInstance().toXml(taglist, true);
     aClient->sendBinaryMessage(taglist);
+
 }
 
 void WebSocketServer::onClientDisconnect(Client *aClient)

@@ -1,7 +1,7 @@
 QT += gui core websockets widgets
 
 
-CONFIG += c++11 console
+CONFIG += c++14 console
 CONFIG -= app_bundle
 TEMPLATE = app
 
@@ -35,6 +35,9 @@ INCLUDEPATH += ../
 if(debug){
 LIBS += -L$$(DEV_LIBS) -ltagsystemd
 #LIBS += -ltagsystemd
+}
+else{
+    LIBS += -L$$(DEV_LIBS) -ltagsystem
 }
 
 
