@@ -81,7 +81,7 @@ void Client::onBinaryMessageRecieved(QByteArray aMsg)
             }
             else if(stream.name() == "update")
             {
-                while(!(stream.readNext() == QXmlStreamReader::EndElement && stream.name() == "update"))
+                while(!(stream.tokenType() == QXmlStreamReader::EndElement && stream.name() == "update"))
                 {
                     if(stream.readNext() != QXmlStreamReader::StartElement)
                         continue;
