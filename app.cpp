@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <QCommandLineParser>
 #include <QStringList>
+#include <QtNetwork>
+#include <QTimer>
 
 #include <tagsystem/taglistview.h>
 
@@ -11,6 +13,7 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
 {
     mWebSocketServer = new WebSocketServer(5000, "JuneServer");
     setApplicationName("June Server");
+    mUdpSocet = new QUdpSocket(this);
     QCommandLineParser parser;
     QCommandLineOption gui(QStringList() << "g" << "gui", "Gui" );
     parser.addOption(gui);
@@ -27,6 +30,12 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
         connect(mWebSocketServer, &WebSocketServer::newConnection, mMainWindow, &MainWindow::onNewConnection);
 
     }
+
+    mBroadcastTimer = new QTimer(this);
+    connect(mBroadcastTimer, &QTimer::timeout, this, &App::broadcast);
+    mBroadcastTimer->setInterval(1000*60);
+    mBroadcastTimer->start();
+    broadcast();
 }
 
 App::~App()
@@ -36,3 +45,15 @@ App::~App()
 }
 
 
+void App::broadcast()
+{
+    QString ip;
+    const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
+    for (const QHostAddress &address: QNetworkInterface::allAddresses()) {
+        if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost)
+             ip = address.toString();
+    }
+    QByteArray msg("juneserveronline:");
+    msg.append(ip);
+    mUdpSocet->writeDatagram(msg, QHostAddress::Broadcast, 45454);
+}
