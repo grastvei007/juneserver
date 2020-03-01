@@ -15,12 +15,12 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
     setApplicationName("June Server");
     mUdpSocet = new QUdpSocket(this);
     QCommandLineParser parser;
-    QCommandLineOption gui(QStringList() << "g" << "gui", "Gui" );
-    parser.addOption(gui);
+    QCommandLineOption noGui(QStringList() << "g" << "no-gui", "Gui" );
+    parser.addOption(noGui);
 
     parser.process(*this);
 
-    if(parser.isSet(gui))
+    if(!parser.isSet(noGui))
     {
         mMainWindow = new MainWindow;
         mMainWindow->setWindowTitle("June Server");
