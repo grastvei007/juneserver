@@ -31,11 +31,11 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
 
     }
 
-    mBroadcastTimer = new QTimer(this);
+    /*mBroadcastTimer = new QTimer(this);
     connect(mBroadcastTimer, &QTimer::timeout, this, &App::broadcast);
     mBroadcastTimer->setInterval(1000*60);
     mBroadcastTimer->start();
-    broadcast();
+    broadcast();*/
 }
 
 App::~App()
