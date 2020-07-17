@@ -1,7 +1,10 @@
 QT += gui core websockets widgets
 
 
-CONFIG += c++14 console
+CONFIG += c++14
+if(debug){
+    CONFIG += console
+}
 CONFIG -= app_bundle
 TEMPLATE = app
 
