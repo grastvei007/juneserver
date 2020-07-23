@@ -138,6 +138,7 @@ void Client::createTags(QXmlStreamReader &aStream)
     QString subsystem = attribs.value("subsystem").toString();
     QString name = attribs.value("name").toString();
     QString type = attribs.value("type").toString();
+    QString timestamp = attribs.value("timestamp").toString();
 
     if(TagList::sGetInstance().findByTagName(QString("%1.%2").arg(subsystem).arg(name)))
         return;
@@ -145,26 +146,26 @@ void Client::createTags(QXmlStreamReader &aStream)
     if(type == "Double")
     {
         Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eDouble);
-        tag->setValue(attribs.value("value").toDouble());
+        tag->setValue(attribs.value("value").toDouble(), timestamp);
         emit tagCreated(tag);
     }
     else if(type == "Int")
     {
         Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eInt);
-        tag->setValue(attribs.value("value").toInt());
+        tag->setValue(attribs.value("value").toInt(), timestamp);
         emit tagCreated(tag);
 
     }
     else if(type == "Bool")
     {
         Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eBool);
-        tag->setValue(attribs.value("value").toInt() == 1 ? true : false);
+        tag->setValue(attribs.value("value").toInt() == 1 ? true : false, timestamp);
         emit tagCreated(tag);
     }
     else if(type == "String")
     {
         Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eString);
-        tag->setValue(attribs.value("value").toString());
+        tag->setValue(attribs.value("value").toString(), timestamp);
         emit tagCreated(tag);
     }
 }
@@ -176,6 +177,7 @@ void Client::updateTags(QXmlStreamReader &aStream)
     QString subsystem = attribs.value("subsystem").toString();
     QString name = attribs.value("name").toString();
     QString fullName = QString("%1.%2").arg(subsystem).arg(name);
+    QString timestamp = attribs.value("timestamp").toString();
 
     Tag *tag = TagList::sGetInstance().findByTagName(fullName);
     if(!tag)
@@ -183,19 +185,19 @@ void Client::updateTags(QXmlStreamReader &aStream)
 
     switch (tag->getType()) {
     case Tag::eDouble:
-        tag->setValue(attribs.value("value").toDouble());
+        tag->setValue(attribs.value("value").toDouble(), timestamp);
         emit tagUpdated(tag);
         break;
     case Tag::eInt:
-        tag->setValue(attribs.value("value").toInt());
+        tag->setValue(attribs.value("value").toInt(), timestamp);
         emit tagUpdated(tag);
         break;
     case Tag::eBool:
-        tag->setValue(attribs.value("value").toInt() == 1 ? true : false);
+        tag->setValue(attribs.value("value").toInt() == 1 ? true : false, timestamp);
         emit tagUpdated(tag);
         break;
     case Tag::eString:
-        tag->setValue(attribs.value("value").toString());
+        tag->setValue(attribs.value("value").toString(), timestamp);
         emit tagUpdated(tag);
         break;
     default:
