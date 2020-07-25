@@ -61,6 +61,7 @@ void Client::onTextMessageRecieved(QString aMsg)
  */
 void Client::onBinaryMessageRecieved(QByteArray aMsg)
 {
+    qDebug() << aMsg;
     QXmlStreamReader stream(aMsg);
     while(!stream.atEnd() && !stream.hasError())
     {
@@ -138,11 +139,9 @@ void Client::createTags(QXmlStreamReader &aStream)
     QString subsystem = attribs.value("subsystem").toString();
     QString name = attribs.value("name").toString();
     QString type = attribs.value("type").toString();
-    QString timestamp;
+    qint64 timestamp = -1;
     if(attribs.hasAttribute("timestamp"))
-        timestamp = attribs.value("timestamp").toString();
-    else
-        QString timestamp = QString();
+        timestamp = attribs.value("timestamp").toLongLong();
 
     if(TagList::sGetInstance().findByTagName(QString("%1.%2").arg(subsystem).arg(name)))
         return;
@@ -181,11 +180,9 @@ void Client::updateTags(QXmlStreamReader &aStream)
     QString subsystem = attribs.value("subsystem").toString();
     QString name = attribs.value("name").toString();
     QString fullName = QString("%1.%2").arg(subsystem).arg(name);
-    QString timestamp;
+    qint64 timestamp = -1;
     if(attribs.hasAttribute("timestamp"))
-         timestamp = attribs.value("timestamp").toString();
-    else
-        timestamp = QString();
+         timestamp = attribs.value("timestamp").toLongLong();
 
     Tag *tag = TagList::sGetInstance().findByTagName(fullName);
     if(!tag)
