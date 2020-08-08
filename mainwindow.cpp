@@ -4,6 +4,7 @@
 #include "gui/menubar.h"
 #include "gui/clientlistwidget.h"
 #include "gui/loggerwidget.h"
+#include "logvalueview.h"
 
 
 
@@ -15,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mMenubar.reset(new Menubar());
     setMenuBar(mMenubar.get());
+    connect(mMenubar.get(), &Menubar::logViewTriggered, this, &MainWindow::onLogValueViewTriggered);
 
     mSystemTrayIcon.reset(new QSystemTrayIcon(QIcon(":/icon")));
     mSystemTrayIcon->setVisible(true);
@@ -65,4 +67,14 @@ void MainWindow::onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason rea
 
         raise();
     }
+}
+
+void MainWindow::onLogValueViewTriggered(bool)
+{
+    if(mLogValueWidget == nullptr)
+    {
+        mLogValueWidget.reset(new LogValueView());
+    }
+    mLogValueWidget->setVisible(true);
+    mLogValueWidget->raise();
 }

@@ -50,6 +50,7 @@ else{
 
 SOURCES += main.cpp \
     app.cpp \
+    logvalueview.cpp \
     websocketserver.cpp \
     mainwindow.cpp \
     gui/menubar.cpp \
@@ -61,6 +62,7 @@ SOURCES += main.cpp \
 
 HEADERS += \
     app.h \
+    logvalueview.h \
     websocketserver.h \
     mainwindow.h \
     gui/menubar.h \
@@ -71,6 +73,7 @@ HEADERS += \
     gui/loggerwidget.h
 
 FORMS += \
+    logvalueview.ui \
     mainwindow.ui
 
 RESOURCES += \

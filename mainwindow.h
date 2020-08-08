@@ -15,6 +15,7 @@ class Menubar;
 class Client;
 class ClientListWidget;
 class LoggerWidget;
+class LogValueView;
 
 class MainWindow : public QMainWindow
 {
@@ -31,6 +32,7 @@ public slots:
 
 private slots:
     void onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
+    void onLogValueViewTriggered(bool);
 
 private:
     Ui::MainWindow *ui;
@@ -42,6 +44,8 @@ private:
     std::unique_ptr<ClientListWidget> mclientListWidget;
     std::unique_ptr<LoggerWidget> mLoggerWidget;
     std::unique_ptr<QSystemTrayIcon> mSystemTrayIcon;
+
+    std::unique_ptr<LogValueView> mLogValueWidget;
 };
 
 #endif // MAINWINDOW_H
