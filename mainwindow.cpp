@@ -6,11 +6,12 @@
 #include "gui/loggerwidget.h"
 #include "logvalueview.h"
 
+#include "logvaluemodel.h"
 
-
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(LogValueData *aLogValueData, QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    mLogValueData(aLogValueData)
 {
     ui->setupUi(this);
 
@@ -73,7 +74,8 @@ void MainWindow::onLogValueViewTriggered(bool)
 {
     if(mLogValueWidget == nullptr)
     {
-        mLogValueWidget.reset(new LogValueView());
+        LogValueTableModel *tableModel = new LogValueTableModel(mLogValueData);
+        mLogValueWidget.reset(new LogValueView(tableModel));
     }
     mLogValueWidget->setVisible(true);
     mLogValueWidget->raise();

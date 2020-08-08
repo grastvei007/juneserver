@@ -50,6 +50,8 @@ else{
 
 SOURCES += main.cpp \
     app.cpp \
+    logvaluedata.cpp \
+    logvaluemodel.cpp \
     logvalueview.cpp \
     websocketserver.cpp \
     mainwindow.cpp \
@@ -62,6 +64,8 @@ SOURCES += main.cpp \
 
 HEADERS += \
     app.h \
+    logvaluedata.h \
+    logvaluemodel.h \
     logvalueview.h \
     websocketserver.h \
     mainwindow.h \

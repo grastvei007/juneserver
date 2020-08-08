@@ -10,8 +10,11 @@
 #include "websocketserver.h"
 #include "mainwindow.h"
 
+
+
 class QUdpSocket;
 class QTimer;
+class LogValueData;
 
 class App : public QApplication
 {
@@ -29,6 +32,8 @@ private:
     QTimer *mBroadcastTimer;
 
     MainWindow *mMainWindow;
+
+    LogValueData *mLogValueData;
 };
 
 #endif // APP_H

@@ -16,13 +16,14 @@ class Client;
 class ClientListWidget;
 class LoggerWidget;
 class LogValueView;
+class LogValueData;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(LogValueData *aLogValueData, QWidget *parent = 0);
     ~MainWindow();
 
 public slots:
@@ -46,6 +47,9 @@ private:
     std::unique_ptr<QSystemTrayIcon> mSystemTrayIcon;
 
     std::unique_ptr<LogValueView> mLogValueWidget;
+
+    // pointer to data
+    LogValueData *mLogValueData;
 };
 
 #endif // MAINWINDOW_H
