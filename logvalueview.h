@@ -17,6 +17,12 @@ public:
     explicit LogValueView(LogValueTableModel *aTableModel, QWidget *parent = nullptr);
     ~LogValueView();
 
+private slots:
+    void onAddClicked(bool);
+    void onRemoveClicked(bool);
+    void onSaveClicked(bool);
+    void onCloseClicked(bool);
+
 private:
     Ui::LogValueView *ui;
 

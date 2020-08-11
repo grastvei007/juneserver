@@ -49,6 +49,7 @@ else{
 
 
 SOURCES += main.cpp \
+    addlogvaluedialog.cpp \
     app.cpp \
     logvaluedata.cpp \
     logvaluemodel.cpp \
@@ -63,6 +64,7 @@ SOURCES += main.cpp \
     gui/loggerwidget.cpp
 
 HEADERS += \
+    addlogvaluedialog.h \
     app.h \
     logvaluedata.h \
     logvaluemodel.h \
@@ -77,6 +79,7 @@ HEADERS += \
     gui/loggerwidget.h
 
 FORMS += \
+    addlogvaluedialog.ui \
     logvalueview.ui \
     mainwindow.ui
 

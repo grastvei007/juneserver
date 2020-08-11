@@ -24,6 +24,10 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
+    void insertLogVallue(const QString &aTable, const QString &aVAlueName, const QString &aTagSubsystem, const QString &aTagName);
+
+    bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
+
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
 private slots:

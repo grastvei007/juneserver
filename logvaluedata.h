@@ -36,9 +36,14 @@ class LogValue : public QObject
     Q_OBJECT
 public:
     LogValue(const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &aTagName);
+
+    const QString& getTableName() const;
+    const QString& getValueNAme() const;
+    const QString& getTagSubsystem() const;
+    const QString& getTagName() const;
 private:
     QString mTableName;
-    QString mDataName;
+    QString mValueName;
     QString mTagSubSystem;
     QString mTagName;
 };

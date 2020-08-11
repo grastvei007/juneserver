@@ -39,9 +39,29 @@ const LogValue *LogValueData::getLogValueByIndex(unsigned int aIndex) const
 
 LogValue::LogValue(const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &aTagName) :
     mTableName(aTableName),
-    mDataName(aValueName),
+    mValueName(aValueName),
     mTagSubSystem(aTagSubSystem),
     mTagName(aTagName)
 {
 
+}
+
+const QString &LogValue::getTableName() const
+{
+    return mTableName;
+}
+
+const QString &LogValue::getValueNAme() const
+{
+    return mValueName;
+}
+
+const QString &LogValue::getTagSubsystem() const
+{
+    return mTagSubSystem;
+}
+
+const QString &LogValue::getTagName() const
+{
+    return mTagName;
 }
