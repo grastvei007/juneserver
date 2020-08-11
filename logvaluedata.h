@@ -6,6 +6,7 @@
 #include <memory>
 
 class LogValue;
+class TagSocket;
 
 class LogValueData : public QObject
 {
@@ -41,11 +42,13 @@ public:
     const QString& getValueNAme() const;
     const QString& getTagSubsystem() const;
     const QString& getTagName() const;
+    QString getTagSocketTypeStr() const;
 private:
     QString mTableName;
     QString mValueName;
     QString mTagSubSystem;
     QString mTagName;
+    TagSocket* mLogValueTagSocket;
 };
 
 #endif // LOGVALUEDATA_H
