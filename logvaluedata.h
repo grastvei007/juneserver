@@ -5,8 +5,9 @@
 #include <vector>
 #include <memory>
 
+#include <tagsystem/tagsocket.h>
+
 class LogValue;
-class TagSocket;
 
 class LogValueData : public QObject
 {
@@ -37,6 +38,7 @@ class LogValue : public QObject
     Q_OBJECT
 public:
     LogValue(const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &aTagName);
+    LogValue(const QString &aTableName, const QString &aValueName, TagSocket::Type aType, const QString &aTagSubSystem, const QString &aTagName);
 
     const QString& getTableName() const;
     const QString& getValueNAme() const;
