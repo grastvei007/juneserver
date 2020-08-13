@@ -45,6 +45,10 @@ public:
     const QString& getTagSubsystem() const;
     const QString& getTagName() const;
     QString getTagSocketTypeStr() const;
+
+private slots:
+    void onTagSocketValueChanged(TagSocket *aTagSocket);
+
 private:
     QString mTableName;
     QString mValueName;

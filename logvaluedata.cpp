@@ -8,9 +8,12 @@
 #include <tagsystem/tagsocket.h>
 #include <tagsystem/taglist.h>
 
+#include <influxdb/influxdb.h>
+
 LogValueData::LogValueData(QObject *parent) : QObject(parent)
 {
     loadLogValueList();
+    InfluxDB::sGetInstance().useDb("june");
 }
 
 void LogValueData::addLogValue(const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &TagName)
@@ -165,6 +168,8 @@ LogValue::LogValue(const QString &aTableName, const QString &aValueName, const Q
 
     mLogValueTagSocket = TagSocket::createTagSocket(aTableName, aValueName, tagSocketType);
     mLogValueTagSocket->hookupTag(tag);
+
+    connect(mLogValueTagSocket, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
 }
 
 LogValue::LogValue(const QString &aTableName, const QString &aValueName, TagSocket::Type aType, const QString &aTagSubSystem, const QString &aTagName) :
@@ -176,6 +181,7 @@ LogValue::LogValue(const QString &aTableName, const QString &aValueName, TagSock
 {
     mLogValueTagSocket = TagSocket::createTagSocket(aTableName, aValueName, aType);
     mLogValueTagSocket->hookupTag(aTagSubSystem, aTagName);
+    connect(mLogValueTagSocket, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
 }
 
 const QString &LogValue::getTableName() const
@@ -203,4 +209,29 @@ QString LogValue::getTagSocketTypeStr() const
     if(mLogValueTagSocket)
         return mLogValueTagSocket->getTypeStr();
     return QString();
+}
+
+void LogValue::onTagSocketValueChanged(TagSocket *aTagSocket)
+{
+    switch (aTagSocket->getType()) {
+        case TagSocket::eInt:
+        {
+            int val;
+            aTagSocket->readValue(val);
+            QString str = QString("%1=%2").arg(aTagSocket->getName()).arg(QString::number(val));
+            InfluxDB::sGetInstance().insert(aTagSocket->getSubSystem(), str, aTagSocket->getTag()->getMsSinceEpoc(), InfluxDB::eMiliSecond);
+            break;
+        }
+        case TagSocket::eDouble:
+        {
+            double val;
+            aTagSocket->readValue(val);
+            QString str = QString("%1=%2").arg(aTagSocket->getName()).arg(QString::number(val));
+            InfluxDB::sGetInstance().insert(aTagSocket->getSubSystem(), str, aTagSocket->getTag()->getMsSinceEpoc(), InfluxDB::eMiliSecond);
+            break;
+        }
+        default:
+            break;
+
+    }
 }
