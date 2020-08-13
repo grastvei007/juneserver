@@ -61,7 +61,6 @@ void Client::onTextMessageRecieved(QString aMsg)
  */
 void Client::onBinaryMessageRecieved(QByteArray aMsg)
 {
-    qDebug() << aMsg;
     QXmlStreamReader stream(aMsg);
     while(!stream.atEnd() && !stream.hasError())
     {

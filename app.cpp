@@ -8,12 +8,17 @@
 
 #include <tagsystem/taglistview.h>
 
+#include "logvaluedata.h"
+
 App::App(int argc, char *argv[]) : QApplication(argc, argv),
     mMainWindow(nullptr)
 {
     mWebSocketServer = new WebSocketServer(5000, "JuneServer");
     setApplicationName("June Server");
     mUdpSocet = new QUdpSocket(this);
+
+    mLogValueData = new LogValueData();
+
     QCommandLineParser parser;
     QCommandLineOption noGui(QStringList() << "g" << "no-gui", "Gui" );
     parser.addOption(noGui);
@@ -22,7 +27,7 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
 
     if(!parser.isSet(noGui))
     {
-        mMainWindow = new MainWindow;
+        mMainWindow = new MainWindow(mLogValueData);
         mMainWindow->setWindowTitle("June Server");
         mMainWindow->setCentralWidget(new TagListView());
         mMainWindow->show();
