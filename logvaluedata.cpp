@@ -16,9 +16,24 @@ LogValueData::LogValueData(QObject *parent) : QObject(parent)
     InfluxDB::sGetInstance().useDb("june");
 }
 
+
+#ifdef __arm__
+LogValueData::~LogValueData()
+{
+    for(int i=0; i<mLogValues.size() ++i)
+        delete mLogValues[i];
+
+    mLogValues.clear();
+}
+#endif
+
 void LogValueData::addLogValue(const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &TagName)
 {
+#ifdef __arm__
+    mLogValues.push_back(new LogValue(aTableName, aValueName, aTagSubSystem, TagName));
+#else
     mLogValues.push_back(std::make_unique<LogValue>(aTableName, aValueName, aTagSubSystem, TagName));
+#endif
     saveLogValueList();
     emit logValueAdded();
 }
@@ -107,8 +122,12 @@ void LogValueData::loadLogValueList()
                 QString type = stream.attributes().value("type").toString();
                 QString tagsubsystem = stream.attributes().value("tagsubsystem").toString();
                 QString tagname = stream.attributes().value("tagname").toString();
-                
+
+#ifdef __arm__
+                mLogValues.push_back(new LogValue(table, tagname, TagSocket::typeFromString(type), tagsubsystem, tagname));
+#else
                 mLogValues.push_back(std::make_unique<LogValue>(table, tagname, TagSocket::typeFromString(type), tagsubsystem, tagname));
+#endif
             }
         }
     }

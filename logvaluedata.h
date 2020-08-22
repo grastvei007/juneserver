@@ -14,6 +14,9 @@ class LogValueData : public QObject
     Q_OBJECT
 public:
     explicit LogValueData(QObject *parent = nullptr);
+#ifdef __arm__
+    ~LogValueData();
+#endif
 
     void addLogValue(const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &TagName);
 
@@ -29,7 +32,11 @@ signals:
     void logValueListLoaded();
 
 private:
+#ifdef __arm__
+    std::vector<LogValue*> mLogValues;
+#else
     std::vector<std::unique_ptr<LogValue>> mLogValues;
+#endif
 };
 
 
