@@ -67,6 +67,7 @@ void LogValueData::saveLogValueList()
 
 void LogValueData::loadLogValueList()
 {
+    qDebug() << __FUNCTION__;
 #ifdef __linux__
     QString path = QDir::homePath() + QDir::separator() + ".config" + QDir::separator() + "june";
 #else
@@ -80,9 +81,11 @@ void LogValueData::loadLogValueList()
     path.append("juneserverlogtags.xml");
     QFile file(path);
     if(!file.open(QIODevice::ReadOnly))
+    {
         qDebug() << __FUNCTION__ << "Error opening file, " << path;
+        return;
+    }
 
-    file.open(QIODevice::ReadOnly);
     QXmlStreamReader stream(&file);
 
     while(!stream.atEnd() && !stream.hasError())
