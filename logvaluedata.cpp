@@ -39,7 +39,10 @@ void LogValueData::saveLogValueList()
     path.append("juneserverlogtags.xml");
     QFile file(path);
     if(!file.open(QIODevice::WriteOnly))
+    {
         qDebug() << __FUNCTION__ << "Error opening file, " << path;
+        return;
+    }
 
     QXmlStreamWriter stream(&file);
     stream.setAutoFormatting(true);
@@ -109,6 +112,8 @@ void LogValueData::loadLogValueList()
             }
         }
     }
+    file.close();
+
     if(stream.hasError())
     {
         qDebug() << __FUNCTION__ << stream.errorString();
@@ -117,7 +122,6 @@ void LogValueData::loadLogValueList()
     {
         emit logValueAdded();
     }
-    file.close();
     qDebug() << __FUNCTION__ << "N LogValues: " << mLogValues.size();
 }
 
