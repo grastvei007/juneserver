@@ -35,12 +35,11 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
         connect(mWebSocketServer, &WebSocketServer::newConnection, mMainWindow, &MainWindow::onNewConnection);
 
     }
-
-    /*mBroadcastTimer = new QTimer(this);
-    connect(mBroadcastTimer, &QTimer::timeout, this, &App::broadcast);
-    mBroadcastTimer->setInterval(1000*60);
-    mBroadcastTimer->start();
-    broadcast();*/
+    mSystemTimeTag = TagList::sGetInstance().createTag("system", "time", Tag::eTime);
+    mSystemTimeTimer = new QTimer(this);
+    mSystemTimeTimer->setInterval(1000);
+    connect(mSystemTimeTimer, &QTimer::timeout, this, &App::onSystemTimeTimer);
+    mSystemTimeTimer->start();
 }
 
 App::~App()
@@ -61,4 +60,9 @@ void App::broadcast()
     QByteArray msg("juneserveronline:");
     msg.append(ip);
     mUdpSocet->writeDatagram(msg, QHostAddress::Broadcast, 45454);
+}
+
+void App::onSystemTimeTimer()
+{
+    mSystemTimeTag->setValue(QDateTime::currentDateTime());
 }
