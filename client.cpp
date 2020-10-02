@@ -170,6 +170,12 @@ void Client::createTags(QXmlStreamReader &aStream)
         tag->setValue(attribs.value("value").toString(), timestamp);
         emit tagCreated(tag);
     }
+    else if(type == "Time")
+    {
+        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eTime);
+        tag->setValue(QDateTime::fromMSecsSinceEpoch(attribs.value("value").toLongLong()), timestamp);
+        emit tagCreated(tag);
+    }
 }
 
 
@@ -202,6 +208,10 @@ void Client::updateTags(QXmlStreamReader &aStream)
         break;
     case Tag::eString:
         tag->setValue(attribs.value("value").toString(), timestamp);
+        emit tagUpdated(tag);
+        break;
+    case Tag::eTime:
+        tag->setValue(QDateTime::fromMSecsSinceEpoch(attribs.value("value").toLongLong()), timestamp);
         emit tagUpdated(tag);
         break;
     default:
