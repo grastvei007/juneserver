@@ -15,7 +15,6 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
 {
     mWebSocketServer = new WebSocketServer(5000, "JuneServer");
     setApplicationName("June Server");
-    mUdpSocet = new QUdpSocket(this);
 
     mLogValueData = new LogValueData();
 
@@ -35,12 +34,11 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
         connect(mWebSocketServer, &WebSocketServer::newConnection, mMainWindow, &MainWindow::onNewConnection);
 
     }
-
-    /*mBroadcastTimer = new QTimer(this);
-    connect(mBroadcastTimer, &QTimer::timeout, this, &App::broadcast);
-    mBroadcastTimer->setInterval(1000*60);
-    mBroadcastTimer->start();
-    broadcast();*/
+    mSystemTimeTag = TagList::sGetInstance().createTag("system", "time", Tag::eTime);
+    mSystemTimeTimer = new QTimer(this);
+    mSystemTimeTimer->setInterval(1000);
+    connect(mSystemTimeTimer, &QTimer::timeout, this, &App::onSystemTimeTimer);
+    mSystemTimeTimer->start();
 }
 
 App::~App()
@@ -50,15 +48,7 @@ App::~App()
 }
 
 
-void App::broadcast()
+void App::onSystemTimeTimer()
 {
-    QString ip;
-    const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
-    for (const QHostAddress &address: QNetworkInterface::allAddresses()) {
-        if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost)
-             ip = address.toString();
-    }
-    QByteArray msg("juneserveronline:");
-    msg.append(ip);
-    mUdpSocet->writeDatagram(msg, QHostAddress::Broadcast, 45454);
+    mSystemTimeTag->setValue(QDateTime::currentDateTime());
 }

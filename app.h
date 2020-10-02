@@ -7,6 +7,8 @@
 
 #include <tagsystem/taglist.h>
 
+#include <tagsystem/tag.h>
+
 #include "websocketserver.h"
 #include "mainwindow.h"
 
@@ -23,17 +25,15 @@ public:
     ~App();
 
 private slots:
-    void broadcast();
-
+    void onSystemTimeTimer();
 
 private:
     WebSocketServer *mWebSocketServer;
-    QUdpSocket *mUdpSocet;
-    QTimer *mBroadcastTimer;
-
     MainWindow *mMainWindow;
 
     LogValueData *mLogValueData;
+    Tag *mSystemTimeTag = nullptr;
+    QTimer *mSystemTimeTimer = nullptr;
 };
 
 #endif // APP_H
