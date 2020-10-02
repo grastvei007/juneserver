@@ -1,4 +1,12 @@
 #include "app.h"
+
+#ifndef __linux__
+int main(int argc, char *argv[])
+{
+    App a(argc, argv);
+    return a.exec();
+}
+#else
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -319,3 +327,4 @@ int main(int argc, char *argv[])
 
         return EXIT_SUCCESS;
 }
+#endif

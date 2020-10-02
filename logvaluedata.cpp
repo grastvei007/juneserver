@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
+#include <QApplication>
 
 #include <tagsystem/tagsocket.h>
 #include <tagsystem/taglist.h>
