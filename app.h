@@ -25,14 +25,10 @@ public:
     ~App();
 
 private slots:
-    void broadcast();
     void onSystemTimeTimer();
 
 private:
     WebSocketServer *mWebSocketServer;
-    QUdpSocket *mUdpSocet;
-    QTimer *mBroadcastTimer;
-
     MainWindow *mMainWindow;
 
     LogValueData *mLogValueData;

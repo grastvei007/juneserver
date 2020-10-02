@@ -15,7 +15,6 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
 {
     mWebSocketServer = new WebSocketServer(5000, "JuneServer");
     setApplicationName("June Server");
-    mUdpSocet = new QUdpSocket(this);
 
     mLogValueData = new LogValueData();
 
@@ -48,19 +47,6 @@ App::~App()
         mMainWindow->deleteLater();
 }
 
-
-void App::broadcast()
-{
-    QString ip;
-    const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
-    for (const QHostAddress &address: QNetworkInterface::allAddresses()) {
-        if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost)
-             ip = address.toString();
-    }
-    QByteArray msg("juneserveronline:");
-    msg.append(ip);
-    mUdpSocet->writeDatagram(msg, QHostAddress::Broadcast, 45454);
-}
 
 void App::onSystemTimeTimer()
 {
