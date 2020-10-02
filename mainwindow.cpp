@@ -4,17 +4,20 @@
 #include "gui/menubar.h"
 #include "gui/clientlistwidget.h"
 #include "gui/loggerwidget.h"
+#include "logvalueview.h"
 
+#include "logvaluemodel.h"
 
-
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(LogValueData *aLogValueData, QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    mLogValueData(aLogValueData)
 {
     ui->setupUi(this);
 
     mMenubar.reset(new Menubar());
     setMenuBar(mMenubar.get());
+    connect(mMenubar.get(), &Menubar::logViewTriggered, this, &MainWindow::onLogValueViewTriggered);
 
     mSystemTrayIcon.reset(new QSystemTrayIcon(QIcon(":/icon")));
     mSystemTrayIcon->setVisible(true);
@@ -65,4 +68,15 @@ void MainWindow::onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason rea
 
         raise();
     }
+}
+
+void MainWindow::onLogValueViewTriggered(bool)
+{
+    if(mLogValueWidget == nullptr)
+    {
+        LogValueTableModel *tableModel = new LogValueTableModel(mLogValueData);
+        mLogValueWidget.reset(new LogValueView(tableModel));
+    }
+    mLogValueWidget->setVisible(true);
+    mLogValueWidget->raise();
 }
