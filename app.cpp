@@ -24,7 +24,7 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
 
     parser.process(*this);
 
-    if(!parser.isSet(noGui))
+    if(parser.isSet(noGui))
     {
         mMainWindow = new MainWindow(mLogValueData);
         mMainWindow->setWindowTitle("June Server");
