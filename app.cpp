@@ -7,6 +7,8 @@
 #include <QTimer>
 
 #include <tagsystem/taglistview.h>
+#include <plugins/pluginload/plugininterface.h>
+#include <plugins/pluginload/pluginloader.h>
 
 #include "logvaluedata.h"
 
@@ -39,6 +41,8 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
     mSystemTimeTimer->setInterval(1000);
     connect(mSystemTimeTimer, &QTimer::timeout, this, &App::onSystemTimeTimer);
     mSystemTimeTimer->start();
+
+    loadPlugins();
 }
 
 App::~App()
@@ -51,4 +55,13 @@ App::~App()
 void App::onSystemTimeTimer()
 {
     mSystemTimeTag->setValue(QDateTime::currentDateTime());
+}
+
+void App::loadPlugins()
+{
+    PluginLoader loader;
+    auto plugin = loader.load("bms");
+
+    plugin->setTagSystem(&TagList::sGetInstance());
+    plugin->initialize();
 }

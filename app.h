@@ -28,6 +28,8 @@ private slots:
     void onSystemTimeTimer();
 
 private:
+    void loadPlugins();
+
     WebSocketServer *mWebSocketServer;
     MainWindow *mMainWindow;
 
