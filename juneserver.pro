@@ -37,11 +37,11 @@ INCLUDEPATH += $$(JUNE_ROOT)
 
 if(debug){
 
-    LIBS += -L$$(DEV_LIBS) -ltagsystemd -linfluxdbd
+    LIBS += -L$$(DEV_LIBS) -ltagsystemd -linfluxdbd -lpluginLoadd
 #LIBS += -ltagsystemd
 }
 else{
-    LIBS += -L$$(DEV_LIBS) -ltagsystem -linfluxdb
+    LIBS += -L$$(DEV_LIBS) -ltagsystem -linfluxdb -lpluginLoad
 }
 
 
