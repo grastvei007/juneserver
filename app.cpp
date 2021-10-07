@@ -64,4 +64,5 @@ void App::loadPlugins()
 
     plugin->setTagSystem(&TagList::sGetInstance());
     plugin->initialize();
+    plugin->run(1000);
 }
