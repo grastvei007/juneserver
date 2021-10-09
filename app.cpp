@@ -5,10 +5,9 @@
 #include <QStringList>
 #include <QtNetwork>
 #include <QTimer>
+#include <QProcessEnvironment>
 
 #include <tagsystem/taglistview.h>
-#include <plugins/pluginload/plugininterface.h>
-#include <plugins/pluginload/pluginloader.h>
 
 #include "logvaluedata.h"
 
@@ -59,10 +58,10 @@ void App::onSystemTimeTimer()
 
 void App::loadPlugins()
 {
-    PluginLoader loader;
-    auto plugin = loader.load("bms");
+    QProcessEnvironment env;
+    QString value = env.value("DEV_LIBS");
 
-    plugin->setTagSystem(&TagList::sGetInstance());
-    plugin->initialize();
-    plugin->run(1000);
+
+    pluginManager_.loadPlugin(QString("%1%2").arg(value).arg("bms").toStdString());
+    pluginManager_.loadPlugin(QString("%1%2").arg(value).arg("heaterd").toStdString());
 }

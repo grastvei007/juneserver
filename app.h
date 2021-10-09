@@ -4,14 +4,15 @@
 #include <QCoreApplication>
 #include <QApplication>
 #include <memory>
+#include <map>
 
 #include <tagsystem/taglist.h>
-
 #include <tagsystem/tag.h>
 
 #include "websocketserver.h"
 #include "mainwindow.h"
 
+#include "pluginmanager.h"
 
 
 class QUdpSocket;
@@ -36,6 +37,8 @@ private:
     LogValueData *mLogValueData;
     Tag *mSystemTimeTag = nullptr;
     QTimer *mSystemTimeTimer = nullptr;
+
+    PluginManager pluginManager_;
 };
 
 #endif // APP_H

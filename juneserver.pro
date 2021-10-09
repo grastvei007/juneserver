@@ -54,6 +54,7 @@ SOURCES += main.cpp \
     logvaluedata.cpp \
     logvaluemodel.cpp \
     logvalueview.cpp \
+    pluginmanager.cpp \
     websocketserver.cpp \
     mainwindow.cpp \
     gui/menubar.cpp \
@@ -69,6 +70,7 @@ HEADERS += \
     logvaluedata.h \
     logvaluemodel.h \
     logvalueview.h \
+    pluginmanager.h \
     websocketserver.h \
     mainwindow.h \
     gui/menubar.h \
