@@ -13,6 +13,7 @@
 #include "mainwindow.h"
 
 #include "pluginmanager.h"
+#include "rest/restserver.h"
 
 
 class QUdpSocket;
@@ -27,8 +28,10 @@ public:
 
 private slots:
     void onSystemTimeTimer();
+    void loadPlugin(QString name);
 
 private:
+    void setupRestResponses();
     void loadPlugins();
 
     WebSocketServer *mWebSocketServer;
@@ -39,6 +42,7 @@ private:
     QTimer *mSystemTimeTimer = nullptr;
 
     PluginManager pluginManager_;
+    std::unique_ptr<RestServer> restServer_;
 };
 
 #endif // APP_H

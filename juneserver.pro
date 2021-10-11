@@ -55,6 +55,13 @@ SOURCES += main.cpp \
     logvaluemodel.cpp \
     logvalueview.cpp \
     pluginmanager.cpp \
+    requests/loadpluginlistener.cpp \
+    rest/connection.cpp \
+    rest/connectionmanager.cpp \
+    rest/httprequest.cpp \
+    rest/requestlistener.cpp \
+    rest/respons.cpp \
+    rest/restserver.cpp \
     websocketserver.cpp \
     mainwindow.cpp \
     gui/menubar.cpp \
@@ -71,6 +78,13 @@ HEADERS += \
     logvaluemodel.h \
     logvalueview.h \
     pluginmanager.h \
+    requests/loadpluginlistener.h \
+    rest/connection.h \
+    rest/connectionmanager.h \
+    rest/httprequest.h \
+    rest/requestlistener.h \
+    rest/respons.h \
+    rest/restserver.h \
     websocketserver.h \
     mainwindow.h \
     gui/menubar.h \

@@ -1,5 +1,7 @@
 #include "app.h"
 
+#include <functional>
+
 #include <QDebug>
 #include <QCommandLineParser>
 #include <QStringList>
@@ -10,6 +12,9 @@
 #include <tagsystem/taglistview.h>
 
 #include "logvaluedata.h"
+
+#include "requests/loadpluginlistener.h"
+
 
 App::App(int argc, char *argv[]) : QApplication(argc, argv),
     mMainWindow(nullptr)
@@ -42,6 +47,10 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
     mSystemTimeTimer->start();
 
     loadPlugins();
+
+    restServer_.reset(new RestServer);
+    restServer_->listen(8080);
+    setupRestResponses();
 }
 
 App::~App()
@@ -56,6 +65,22 @@ void App::onSystemTimeTimer()
     mSystemTimeTag->setValue(QDateTime::currentDateTime());
 }
 
+void App::loadPlugin(QString name)
+{
+    qDebug() << "load plugin, " << name;
+    QProcessEnvironment env;
+    QString value = env.value("DEV_LIBS");
+    pluginManager_.loadPlugin(QString("%1%2").arg(value).arg(name).toStdString());
+}
+
+void App::setupRestResponses()
+{
+    Respons res;
+    std::function<void(QString)> function = std::bind(&App::loadPlugin, this, std::placeholders::_1);
+    LoadPluginListener *lpl = new LoadPluginListener("/loadplugin/", res, function);
+    restServer_->addRequestListener(lpl);
+}
+
 void App::loadPlugins()
 {
     QProcessEnvironment env;
@@ -63,5 +88,5 @@ void App::loadPlugins()
 
 
     pluginManager_.loadPlugin(QString("%1%2").arg(value).arg("bms").toStdString());
-    pluginManager_.loadPlugin(QString("%1%2").arg(value).arg("heaterd").toStdString());
+ //   pluginManager_.loadPlugin(QString("%1%2").arg(value).arg("heaterd").toStdString());
 }
