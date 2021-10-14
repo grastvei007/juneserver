@@ -8,6 +8,8 @@
 
 #include "logvaluemodel.h"
 
+#include <tagsystem/tagsocketlistview.h>
+
 MainWindow::MainWindow(LogValueData *aLogValueData, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -18,6 +20,7 @@ MainWindow::MainWindow(LogValueData *aLogValueData, QWidget *parent) :
     mMenubar.reset(new Menubar());
     setMenuBar(mMenubar.get());
     connect(mMenubar.get(), &Menubar::logViewTriggered, this, &MainWindow::onLogValueViewTriggered);
+    connect(mMenubar.get(), &Menubar::tagsocketViewTriggered, this, &MainWindow::onTagSocketViewTriggered);
 
     mSystemTrayIcon.reset(new QSystemTrayIcon(QIcon(":/icon")));
     mSystemTrayIcon->setVisible(true);
@@ -79,4 +82,14 @@ void MainWindow::onLogValueViewTriggered(bool)
     }
     mLogValueWidget->setVisible(true);
     mLogValueWidget->raise();
+}
+
+void MainWindow::onTagSocketViewTriggered(bool)
+{
+    if(!tagSocketListViewWidget_)
+    {
+        tagSocketListViewWidget_.reset(new TagSocketListView);
+    }
+    tagSocketListViewWidget_->setVisible(true);
+    tagSocketListViewWidget_->raise();
 }
