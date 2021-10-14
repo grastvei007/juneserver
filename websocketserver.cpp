@@ -104,7 +104,6 @@ void WebSocketServer::socketDisconnected()
 void WebSocketServer::sendTagsCreatedToClients()
 {
 
-    qDebug() << "sending n: " << mTagsCreatedQueue.size() << " created tags";
     QByteArray data;
     QXmlStreamWriter stream(&data);
     stream.setAutoFormatting(true);
@@ -133,7 +132,6 @@ void WebSocketServer::sendTagsCreatedToClients()
  */
 void WebSocketServer::sendTagsUpdatedToClients()
 {
-    qDebug() << "sending n: " << mTagsUpdatedQueue.size() << " updated tags";
     QByteArray data;
     QXmlStreamWriter stream(&data);
     stream.setAutoFormatting(true);
