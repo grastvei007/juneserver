@@ -21,7 +21,7 @@ LogValueData::LogValueData(QObject *parent) : QObject(parent)
 #ifdef __arm__
 LogValueData::~LogValueData()
 {
-    for(int i=0; i<mLogValues.size() ++i)
+    for(int i=0; i<mLogValues.size(); ++i)
         delete mLogValues[i];
 
     mLogValues.clear();
@@ -157,7 +157,11 @@ const LogValue *LogValueData::getLogValueByIndex(unsigned int aIndex) const
 {
     if(aIndex < 0 || aIndex > mLogValues.size())
         return nullptr;
+#ifdef __arm__
+    return mLogValues.at(aIndex)
+#else
     return mLogValues.at(aIndex).get();
+#endif
 }
 
 
