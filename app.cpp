@@ -62,6 +62,6 @@ void App::loadPlugins()
     QString value = env.value("DEV_LIBS");
 
 
-    pluginManager_.loadPlugin(QString("%1%2").arg(value).arg("bms").toStdString());
+    pluginManager_.loadPlugin(QString("%1%2").arg(value).arg("bmsd").toStdString());
     pluginManager_.loadPlugin(QString("%1%2").arg(value).arg("heaterd").toStdString());
 }

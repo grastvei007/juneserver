@@ -158,7 +158,7 @@ const LogValue *LogValueData::getLogValueByIndex(unsigned int aIndex) const
     if(aIndex < 0 || aIndex > mLogValues.size())
         return nullptr;
 #ifdef __arm__
-    return mLogValues.at(aIndex)
+    return mLogValues.at(aIndex);
 #else
     return mLogValues.at(aIndex).get();
 #endif
