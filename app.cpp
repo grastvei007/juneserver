@@ -6,6 +6,7 @@
 #include <QtNetwork>
 #include <QTimer>
 #include <QProcessEnvironment>
+#include <QSettings>
 
 #include <tagsystem/taglistview.h>
 
@@ -61,7 +62,13 @@ void App::loadPlugins()
     QProcessEnvironment env;
     QString value = env.value("DEV_LIBS");
 
+    QSettings settings("june", "server");
+    settings.beginGroup("plugins");
 
-    pluginManager_.loadPlugin(QString("%1%2").arg(value).arg("bmsd").toStdString());
-    pluginManager_.loadPlugin(QString("%1%2").arg(value).arg("heaterd").toStdString());
+    if(settings.value("bms").toBool())
+        pluginManager_.loadPlugin(QString("%1%2").arg(value, "bms").toStdString());
+    if(settings.value("heaterd").toBool())
+        pluginManager_.loadPlugin(QString("%1%2").arg(value, "heaterd").toStdString());
+
+    settings.endGroup();
 }
