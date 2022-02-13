@@ -250,6 +250,7 @@ void LogValue::onTagSocketValueChanged(TagSocket *aTagSocket)
             int val;
             aTagSocket->readValue(val);
             QString str = QString("%1=%2").arg(aTagSocket->getName()).arg(QString::number(val));
+            str.replace(QChar::Space, "");
             InfluxDB::sGetInstance().insert(aTagSocket->getSubSystem(), str, aTagSocket->getTag()->getMsSinceEpoc(), InfluxDB::eMiliSecond);
             break;
         }
@@ -258,6 +259,7 @@ void LogValue::onTagSocketValueChanged(TagSocket *aTagSocket)
             double val;
             aTagSocket->readValue(val);
             QString str = QString("%1=%2").arg(aTagSocket->getName()).arg(QString::number(val));
+            str.replace(QChar::Space, "");
             InfluxDB::sGetInstance().insert(aTagSocket->getSubSystem(), str, aTagSocket->getTag()->getMsSinceEpoc(), InfluxDB::eMiliSecond);
             break;
         }
