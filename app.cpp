@@ -64,11 +64,12 @@ void App::loadPlugins()
 
     QSettings settings("june", "server");
     settings.beginGroup("plugins");
-
     if(settings.value("bms").toBool())
         pluginManager_.loadPlugin(QString("%1%2").arg(value, "bms").toStdString());
     if(settings.value("heaterd").toBool())
         pluginManager_.loadPlugin(QString("%1%2").arg(value, "heaterd").toStdString());
+    if(settings.value("bmsd").toBool())
+        pluginManager_.loadPlugin(QString("%1%2").arg(value, "bmsd").toStdString());
 
     settings.endGroup();
 }
