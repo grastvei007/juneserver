@@ -147,21 +147,21 @@ void Client::createTags(QXmlStreamReader &aStream)
 
     if(type == "Double")
     {
-        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eDouble);
-        tag->setValue(attribs.value("value").toDouble(), timestamp);
+        auto value = attribs.value("value").toDouble();
+        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eDouble, value);
         emit tagCreated(tag);
     }
     else if(type == "Int")
     {
-        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eInt);
-        tag->setValue(attribs.value("value").toInt(), timestamp);
+        auto value = attribs.value("value").toInt();
+        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eInt, value);
         emit tagCreated(tag);
 
     }
     else if(type == "Bool")
     {
-        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eBool);
-        tag->setValue(attribs.value("value").toInt() == 1 ? true : false, timestamp);
+        auto value = attribs.value("value").toInt() == 1 ? true : false;
+        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eBool, value);
         emit tagCreated(tag);
     }
     else if(type == "String")
