@@ -69,7 +69,7 @@ void WebSocketServer::processTextMessage(QString aMsg)
  * or tags with updated values.
  *
  */
-void WebSocketServer::processBinaryMessage(QByteArray aMsg)
+void WebSocketServer::processBinaryMessage(QByteArray /*aMsg*/)
 {
 
 

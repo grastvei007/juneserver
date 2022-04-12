@@ -69,23 +69,23 @@ void Client::onBinaryMessageRecieved(QByteArray aMsg)
             continue;
         if(token == QXmlStreamReader::StartElement)
         {
-            if(stream.name() == "create")
+            if(stream.name() == QString("create"))
             {
-                while(!(stream.tokenType() == QXmlStreamReader::EndElement && stream.name() == "create"))
+                while(!(stream.tokenType() == QXmlStreamReader::EndElement && stream.name() == QString("create")))
                 {
                     if(stream.readNext() != QXmlStreamReader::StartElement)
                         continue;
-                    if(stream.name() == "tag")
+                    if(stream.name() == QString("tag"))
                         createTags(stream);
                 }
             }
-            else if(stream.name() == "update")
+            else if(stream.name() == QString("update"))
             {
-                while(!(stream.tokenType() == QXmlStreamReader::EndElement && stream.name() == "update"))
+                while(!(stream.tokenType() == QXmlStreamReader::EndElement && stream.name() == QString("update")))
                 {
                     if(stream.readNext() != QXmlStreamReader::StartElement)
                         continue;
-                    if(stream.name() == "tag")
+                    if(stream.name() == QString("tag"))
                     {
                         updateTags(stream);
                     }

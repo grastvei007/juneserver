@@ -114,9 +114,9 @@ void LogValueData::loadLogValueList()
             continue;
         if(token == QXmlStreamReader::StartElement)
         {
-            if(stream.name() == "logvalues")
+            if(stream.name() == QString("logvalues"))
                 continue;
-            if(stream.name() == "logvalue")
+            if(stream.name() == QString("logvalue"))
             {
                 QString table = stream.attributes().value("tagsocket").toString();
                 QString valuename = stream.attributes().value("name").toString();
@@ -155,7 +155,7 @@ int LogValueData::numberOfLogVAlues() const
 
 const LogValue *LogValueData::getLogValueByIndex(unsigned int aIndex) const
 {
-    if(aIndex < 0 || aIndex > mLogValues.size())
+    if(aIndex > mLogValues.size())
         return nullptr;
 #ifdef __arm__
     return mLogValues.at(aIndex);
