@@ -12,8 +12,12 @@
 
 #include "logvaluedata.h"
 
+#ifdef NO_GUI
+App::App(int argc, char *argv[]) : QCoreApplication(argc, argv)
+#else
 App::App(int argc, char *argv[]) : QApplication(argc, argv),
     mMainWindow(nullptr)
+#endif
 {
     mWebSocketServer = new WebSocketServer(5000, "JuneServer");
     setApplicationName("June Server");
@@ -25,7 +29,7 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
     parser.addOption(noGui);
 
     parser.process(*this);
-
+#ifndef NO_GUI
     if(parser.isSet(noGui))
     {
         mMainWindow = new MainWindow(mLogValueData);
@@ -34,8 +38,8 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
         mMainWindow->show();
 
         connect(mWebSocketServer, &WebSocketServer::newConnection, mMainWindow, &MainWindow::onNewConnection);
-
     }
+#endif
     mSystemTimeTag = TagList::sGetInstance().createTag("system", "time", Tag::eTime);
     mSystemTimeTimer = new QTimer(this);
     mSystemTimeTimer->setInterval(1000);
@@ -47,8 +51,10 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
 
 App::~App()
 {
+#ifndef NO_GUI
     if(mMainWindow)
         mMainWindow->deleteLater();
+#endif
 }
 
 

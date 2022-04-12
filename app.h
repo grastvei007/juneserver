@@ -19,7 +19,11 @@ class QUdpSocket;
 class QTimer;
 class LogValueData;
 
+#ifdef NO_GUI
+class App : public QCoreApplication
+#else
 class App : public QApplication
+#endif
 {
 public:
     App(int argc, char *argv[]);
@@ -32,7 +36,9 @@ private:
     void loadPlugins();
 
     WebSocketServer *mWebSocketServer;
+#ifndef NO_GUI
     MainWindow *mMainWindow;
+#endif
 
     LogValueData *mLogValueData;
     Tag *mSystemTimeTag = nullptr;

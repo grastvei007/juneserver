@@ -1,5 +1,6 @@
 QT += gui core websockets widgets
 
+DEFINES += NO_GUI
 
 CONFIG += c++14
 if(debug){
