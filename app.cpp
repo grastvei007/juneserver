@@ -77,5 +77,10 @@ void App::loadPlugins()
     if(settings.value("bmsd").toBool())
         pluginManager_.loadPlugin(QString("%1%2").arg(value, "bmsd").toStdString());
 
+    if(settings.value("mcp3008").toBool())
+        pluginManager_.loadPlugin(QString("%1%2").arg(value, "mcp3008").toStdString());
+    else if(settings.value("mcp3008d").toBool())
+        pluginManager_.loadPlugin(QString("%1%2").arg(value, "mcp3008d").toStdString());
+
     settings.endGroup();
 }
