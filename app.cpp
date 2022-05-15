@@ -66,21 +66,15 @@ void App::onSystemTimeTimer()
 void App::loadPlugins()
 {
     QProcessEnvironment env;
-    QString value = env.value("DEV_LIBS");
+    QString pluginPath = env.value("DEV_LIBS");
 
     QSettings settings("june", "server");
     settings.beginGroup("plugins");
-    if(settings.value("bms").toBool())
-        pluginManager_.loadPlugin(QString("%1%2").arg(value, "bms").toStdString());
-    if(settings.value("heaterd").toBool())
-        pluginManager_.loadPlugin(QString("%1%2").arg(value, "heaterd").toStdString());
-    if(settings.value("bmsd").toBool())
-        pluginManager_.loadPlugin(QString("%1%2").arg(value, "bmsd").toStdString());
 
-    if(settings.value("mcp3008").toBool())
-        pluginManager_.loadPlugin(QString("%1%2").arg(value, "mcp3008").toStdString());
-    else if(settings.value("mcp3008d").toBool())
-        pluginManager_.loadPlugin(QString("%1%2").arg(value, "mcp3008d").toStdString());
-
-    settings.endGroup();
+    for(const auto &pluginName : settings.childKeys())
+    {
+        auto isLodingPlugin = settings.value(pluginName).toBool();
+        if(isLodingPlugin)
+            pluginManager_.loadPlugin(QString("%1%2").arg(pluginPath, pluginName).toStdString());
+    }
 }
