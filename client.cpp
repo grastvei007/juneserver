@@ -5,6 +5,7 @@
 #include <QByteArray>
 #include <QXmlStreamAttributes>
 #include <QXmlStreamReader>
+#include <QStringView>
 
 #include <tagsystem/taglist.h>
 #include <tagsystem/tag.h>

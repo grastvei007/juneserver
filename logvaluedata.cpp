@@ -2,6 +2,7 @@
 
 #include <QDir>
 #include <QDebug>
+#include <QFile>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QApplication>
