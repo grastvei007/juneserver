@@ -31,6 +31,7 @@ public:
 
 private slots:
     void onSystemTimeTimer();
+    void onLogEntry(QString message);
 
 private:
     void loadPlugins();

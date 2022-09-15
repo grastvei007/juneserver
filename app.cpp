@@ -11,6 +11,7 @@
 #include <tagsystem/taglistview.h>
 
 #include "logvaluedata.h"
+#include "logger.h"
 
 #ifdef NO_GUI
 App::App(int argc, char *argv[]) : QCoreApplication(argc, argv)
@@ -39,6 +40,10 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
 
         connect(mWebSocketServer, &WebSocketServer::newConnection, mMainWindow, &MainWindow::onNewConnection);
     }
+    else
+        connect(&Logger::sGetInstance(), &Logger::logEntry, this, &App::onLogEntry);
+#else
+    connect(&Logger::sGetInstance(), &Logger::logEntry, this, &App::onLogEntry);
 #endif
     mSystemTimeTag = TagList::sGetInstance().createTag("system", "time", Tag::eTime);
     mSystemTimeTimer = new QTimer(this);
@@ -61,6 +66,11 @@ App::~App()
 void App::onSystemTimeTimer()
 {
     mSystemTimeTag->setValue(QDateTime::currentDateTime());
+}
+
+void App::onLogEntry(QString message)
+{
+    qDebug() << message;
 }
 
 void App::loadPlugins()
