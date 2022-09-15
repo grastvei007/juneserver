@@ -176,10 +176,11 @@ void WebSocketServer::onConnectionEstablished(Client *aClient)
 
 }
 
-void WebSocketServer::onClientDisconnect(Client *aClient)
+void WebSocketServer::onClientDisconnect(Client *client)
 {
-    mClients.removeAll(aClient);
-    aClient->deleteLater();
-    Logger::sGetInstance().log("Client disconnected");
+    auto clientName = client->getName();
+    mClients.removeAll(client);
+    client->deleteLater();
+    Logger::sGetInstance().log(QString("Client: %1 disconnected").arg(clientName));
     Logger::sGetInstance().log(QString("Active connections (%1)").arg(mClients.size()));
 }
