@@ -23,13 +23,9 @@ LoggerWidget::LoggerWidget(QWidget *parent) : QWidget(parent)
 }
 
 
-void LoggerWidget::onLogEntry(QString aMsg)
+void LoggerWidget::onLogEntry(QString message)
 {
-    QString m = QString("[%1] ").arg(QTime::currentTime().toString());
-    m.append(aMsg);
-    m.append("\n");
-
-    mTextEdit->insertPlainText(m);
+    mTextEdit->insertPlainText(message);
     QScrollBar *bar = mTextEdit->verticalScrollBar();
     bar->setValue(bar->maximum());
 }

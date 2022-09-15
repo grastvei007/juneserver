@@ -1,4 +1,5 @@
 #include "logger.h"
+#include <QTime>
 
 Logger::Logger()
 {
@@ -13,8 +14,12 @@ Logger& Logger::sGetInstance()
 }
 
 
-void Logger::log(QString aMsg)
+void Logger::log(QString message)
 {
-    emit logEntry(aMsg);
+    auto messageWithTimeStamp = QString("[%1] ").arg(QTime::currentTime().toString());
+    messageWithTimeStamp.append(message);
+    messageWithTimeStamp.append("\n");
+
+    emit logEntry(messageWithTimeStamp);
     //TODO: Log to disk.
 }
