@@ -139,6 +139,8 @@ void Client::createTags(QXmlStreamReader &aStream)
     QString subsystem = attribs.value("subsystem").toString();
     QString name = attribs.value("name").toString();
     QString type = attribs.value("type").toString();
+    QString description = attribs.value("description").toString();
+
     qint64 timestamp = -1;
     if(attribs.hasAttribute("timestamp"))
         timestamp = attribs.value("timestamp").toLongLong();
@@ -149,31 +151,31 @@ void Client::createTags(QXmlStreamReader &aStream)
     if(type == "Double")
     {
         auto value = attribs.value("value").toDouble();
-        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eDouble, value);
+        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eDouble, value, description);
         emit tagCreated(tag);
     }
     else if(type == "Int")
     {
         auto value = attribs.value("value").toInt();
-        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eInt, value);
+        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eInt, value, description);
         emit tagCreated(tag);
 
     }
     else if(type == "Bool")
     {
         auto value = attribs.value("value").toInt() == 1 ? true : false;
-        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eBool, value);
+        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eBool, value, description);
         emit tagCreated(tag);
     }
     else if(type == "String")
     {
-        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eString);
+        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eString, QString(), description);
         tag->setValue(attribs.value("value").toString(), timestamp);
         emit tagCreated(tag);
     }
     else if(type == "Time")
     {
-        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eTime);
+        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eTime, QDateTime(), description);
         tag->setValue(QDateTime::fromMSecsSinceEpoch(attribs.value("value").toLongLong()), timestamp);
         emit tagCreated(tag);
     }
