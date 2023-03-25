@@ -23,7 +23,7 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
     mWebSocketServer = new WebSocketServer(5000, "JuneServer");
     setApplicationName("June Server");
 
-    mLogValueData = new LogValueData();
+    logValueData_ = new LogValueData(networkAcessManager_);
 
     QCommandLineParser parser;
     QCommandLineOption noGui(QStringList() << "g" << "no-gui", "Gui" );
@@ -33,7 +33,7 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
 #ifndef NO_GUI
     if(parser.isSet(noGui))
     {
-        mMainWindow = new MainWindow(mLogValueData);
+        mMainWindow = new MainWindow(logValueData_);
         mMainWindow->setWindowTitle("June Server");
         mMainWindow->setCentralWidget(new TagListView());
         mMainWindow->show();

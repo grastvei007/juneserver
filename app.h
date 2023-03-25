@@ -13,6 +13,7 @@
 #include "mainwindow.h"
 
 #include "pluginmanager.h"
+#include <QNetworkAccessManager>
 
 
 class QUdpSocket;
@@ -35,13 +36,13 @@ private slots:
 
 private:
     void loadPlugins();
-
+    QNetworkAccessManager networkAcessManager_;
     WebSocketServer *mWebSocketServer;
 #ifndef NO_GUI
     MainWindow *mMainWindow;
 #endif
 
-    LogValueData *mLogValueData;
+    LogValueData *logValueData_;
     Tag *mSystemTimeTag = nullptr;
     QTimer *mSystemTimeTimer = nullptr;
 
