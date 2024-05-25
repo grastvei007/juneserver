@@ -80,23 +80,6 @@ void WebSocketServer::processBinaryMessage(QByteArray /*aMsg*/)
 }
 
 /**
- * @brief WebSocketServer::socketDisconnected
- *
- * Client disconnected from server.
- */
-void WebSocketServer::socketDisconnected()
-{
-  /*  QWebSocket *client = qobject_cast<QWebSocket *>(sender());
-    qDebug() << "socketDisconnected:" << client;
-    if (client)
-    {
-        mClients.removeAll(client);
-        client->deleteLater();
-    }*/
-}
-
-
-/**
  * @brief WebSocketServer::sendTagsCreatedToClients
  *
  * Send all tags in created queue to all connected clients.
@@ -167,7 +150,6 @@ void WebSocketServer::onConnectionEstablished(Client *aClient)
     mClients.push_back(aClient);
     emit newConnection(aClient);
     connect(aClient, &Client::disconnected, this, &WebSocketServer::onClientDisconnect);
-    //connect(aClient, &Client::tagUpdated, this, &WebSocketServer::onTagValueChanged);
 
     // send current initial tags list, ask client to create everything.
     QByteArray taglist;
