@@ -47,10 +47,10 @@ void WebSocketServer::onNewConnection()
 
 void WebSocketServer::onServerClosed()
 {
-    for(int i=0; i<mClients.size(); ++i)
+    for(auto &client : mClients)
     {
-        mClients[i]->close();
-        mClients[i]->deleteLater();
+        client->close();
+        client->deleteLater();
     }
     mClients.clear();
 }
@@ -93,18 +93,18 @@ void WebSocketServer::sendTagsCreatedToClients()
     stream.writeStartDocument();
     stream.writeStartElement("create");
 
-    for(int i=0; i<mTagsCreatedQueue.size(); ++i)
+    for(auto &createdTag : mTagsCreatedQueue)
     {
-        mTagsCreatedQueue[i]->writeToXml(stream);
+        createdTag->writeToXml(stream);
     }
     mTagsCreatedQueue.clear();
 
     stream.writeEndElement();
     stream.writeEndDocument();
 
-    for(int i=0; i<mClients.size(); ++i)
+    for(auto &client : mClients)
     {
-        mClients[i]->sendBinaryMessage(data);
+        client->sendBinaryMessage(data);
     }
 }
 
@@ -121,18 +121,18 @@ void WebSocketServer::sendTagsUpdatedToClients()
     stream.writeStartDocument();
     stream.writeStartElement("update");
 
-    for(int i=0; i<mTagsUpdatedQueue.size(); ++i)
+    for(auto &updatedTag : mTagsUpdatedQueue)
     {
-        mTagsUpdatedQueue[i]->writeToXml(stream);
+        updatedTag->writeToXml(stream);
     }
     mTagsUpdatedQueue.clear();
 
     stream.writeEndElement();
     stream.writeEndDocument();
 
-    for(int i=0; i<mClients.size(); ++i)
+    for(auto &client : mClients)
     {
-        mClients[i]->sendBinaryMessage(data);
+        client->sendBinaryMessage(data);
     }
 }
 
