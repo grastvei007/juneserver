@@ -85,6 +85,6 @@ void App::loadPlugins()
     {
         auto isLodingPlugin = settings.value(pluginName).toBool();
         if(isLodingPlugin)
-            pluginManager_.loadPlugin(QString("%1%2").arg(pluginPath, pluginName).toStdString());
+            pluginManager_.loadPlugin(QString("%1/%2").arg(pluginPath, pluginName).toStdString());
     }
 }

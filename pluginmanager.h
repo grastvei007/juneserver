@@ -5,12 +5,12 @@
 #include <string>
 
 #include <plugins/pluginload/plugininterface.h>
-#include <plugins/pluginload/pluginloader.h>
 
-class PluginManager
+class PluginManager : public QObject
 {
+    Q_OBJECT
 public:
-    PluginManager();
+    explicit PluginManager() = default;
 
     void loadPlugin(std::string pluginName);
 private:
