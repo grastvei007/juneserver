@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QString>
-#include <QXmlStreamReader>
 
 class QWebSocket;
 class Tag;
@@ -35,8 +34,6 @@ private slots:
 
 private:
     void onInfo(QString aMsg);
-    void createTags(QXmlStreamReader &aStream);
-    void updateTags(QXmlStreamReader &aStream);
 
 private:
     QWebSocket *mWebSocket;

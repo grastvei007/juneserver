@@ -35,22 +35,16 @@ private slots:
     void onServerClosed();
     //
     void processTextMessage(QString aMsg);
-    void processBinaryMessage(QByteArray aMsg);
+    void socketDisconnected();
 
     void onTagValueChanged(Tag *aTag);
 
     void onConnectionEstablished(Client *aClient);
     void onClientDisconnect(Client *aClient);
 private:
-    void sendTagsCreatedToClients();
-    void sendTagsUpdatedToClients();
-private:
     std::unique_ptr<QWebSocketServer> mWebSocketServer;
 
     QVector<Client*> mClients;
-
-    QVector<Tag*> mTagsCreatedQueue;
-    QVector<Tag*> mTagsUpdatedQueue;
 };
 
 #endif // WEBSOCKETSERVER_H
