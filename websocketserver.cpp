@@ -62,83 +62,6 @@ void WebSocketServer::processTextMessage(QString aMsg)
 }
 
 /**
-<<<<<<< HEAD
- * @brief WebSocketServer::processBinaryMessage
- * @param aMsg
- *
- * Recieve a xml from a client that can contain new tags to be created
- * or tags with updated values.
- *
- */
-void WebSocketServer::processBinaryMessage(QByteArray /*aMsg*/)
-{
-
-
-    if(mTagsCreatedQueue.size() > 0)
-        sendTagsCreatedToClients();
-    if(mTagsUpdatedQueue.size() > 0)
-        sendTagsUpdatedToClients();
-}
-
-/**
- * @brief WebSocketServer::sendTagsCreatedToClients
- *
- * Send all tags in created queue to all connected clients.
- */
-void WebSocketServer::sendTagsCreatedToClients()
-{
-
-    QByteArray data;
-    QXmlStreamWriter stream(&data);
-    stream.setAutoFormatting(true);
-    stream.writeStartDocument();
-    stream.writeStartElement("create");
-
-    for(auto &createdTag : mTagsCreatedQueue)
-    {
-        createdTag->writeToXml(stream);
-    }
-    mTagsCreatedQueue.clear();
-
-    stream.writeEndElement();
-    stream.writeEndDocument();
-
-    for(auto &client : mClients)
-    {
-        client->sendBinaryMessage(data);
-    }
-}
-
-/**
- * @brief WebSocketServer::sendTagsUpdatedToClients
- *
- * Send all tags in update queue to all connected clients.
- */
-void WebSocketServer::sendTagsUpdatedToClients()
-{
-    QByteArray data;
-    QXmlStreamWriter stream(&data);
-    stream.setAutoFormatting(true);
-    stream.writeStartDocument();
-    stream.writeStartElement("update");
-
-    for(auto &updatedTag : mTagsUpdatedQueue)
-    {
-        updatedTag->writeToXml(stream);
-    }
-    mTagsUpdatedQueue.clear();
-
-    stream.writeEndElement();
-    stream.writeEndDocument();
-
-    for(auto &client : mClients)
-    {
-        client->sendBinaryMessage(data);
-    }
-}
-
-
-=======
  * @brief WebSocketServer::socketDisconnected
  *
  * Client disconnected from server.
@@ -154,7 +77,6 @@ void WebSocketServer::socketDisconnected()
     }*/
 }
 
->>>>>>> eb81df3 (Refactor to use json)
 void WebSocketServer::onTagValueChanged(Tag *aTag)
 {
     QJsonArray array;
