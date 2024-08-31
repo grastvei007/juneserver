@@ -1,9 +1,9 @@
 #include "websocketserver.h"
 
 #include <QDebug>
-#include <QXmlStreamReader>
-#include <QXmlStreamWriter>
-#include <QXmlStreamAttributes>
+
+#include <QJsonArray>
+#include <QJsonDocument>
 
 #include <tagsystem/taglist.h>
 #include <tagsystem/tag.h>
@@ -62,6 +62,7 @@ void WebSocketServer::processTextMessage(QString aMsg)
 }
 
 /**
+<<<<<<< HEAD
  * @brief WebSocketServer::processBinaryMessage
  * @param aMsg
  *
@@ -137,11 +138,35 @@ void WebSocketServer::sendTagsUpdatedToClients()
 }
 
 
+=======
+ * @brief WebSocketServer::socketDisconnected
+ *
+ * Client disconnected from server.
+ */
+void WebSocketServer::socketDisconnected()
+{
+  /*  QWebSocket *client = qobject_cast<QWebSocket *>(sender());
+    qDebug() << "socketDisconnected:" << client;
+    if (client)
+    {
+        mClients.removeAll(client);
+        client->deleteLater();
+    }*/
+}
+
+>>>>>>> eb81df3 (Refactor to use json)
 void WebSocketServer::onTagValueChanged(Tag *aTag)
 {
-    mTagsUpdatedQueue.removeAll(aTag);
-    mTagsUpdatedQueue.push_back(aTag);
-    sendTagsUpdatedToClients();
+    QJsonArray array;
+    array.push_back(aTag->toJson());
+    QJsonDocument document(array);
+    auto binaryData = document.toJson();
+
+    for(int i=0; i<mClients.size(); ++i)
+    {
+        mClients[i]->sendBinaryMessage(binaryData);
+    }
+    aTag->resetUpdateFlag();
 }
 
 
@@ -152,10 +177,9 @@ void WebSocketServer::onConnectionEstablished(Client *aClient)
     connect(aClient, &Client::disconnected, this, &WebSocketServer::onClientDisconnect);
 
     // send current initial tags list, ask client to create everything.
-    QByteArray taglist;
-    TagList::sGetInstance().toXml(taglist, true);
-    aClient->sendBinaryMessage(taglist);
-
+    auto tagList = TagList::sGetInstance().toJson();
+    QJsonDocument document(tagList);
+    aClient->sendBinaryMessage(document.toJson());
 }
 
 void WebSocketServer::onClientDisconnect(Client *client)

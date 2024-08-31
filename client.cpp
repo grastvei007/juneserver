@@ -3,9 +3,10 @@
 #include <QWebSocket>
 #include <QDebug>
 #include <QByteArray>
-#include <QXmlStreamAttributes>
-#include <QXmlStreamReader>
 #include <QStringView>
+
+#include <QJsonDocument>
+#include <QJsonArray>
 
 #include <tagsystem/taglist.h>
 #include <tagsystem/tag.h>
@@ -62,37 +63,15 @@ void Client::onTextMessageRecieved(QString aMsg)
  */
 void Client::onBinaryMessageRecieved(QByteArray aMsg)
 {
-    QXmlStreamReader stream(aMsg);
-    while(!stream.atEnd() && !stream.hasError())
+    auto document = QJsonDocument::fromJson(aMsg);
+    auto array = document.array();
+
+    for (const auto &jsonRef : array)
     {
-        QXmlStreamReader::TokenType token = stream.readNext();
-        if(token == QXmlStreamReader::StartDocument)
-            continue;
-        if(token == QXmlStreamReader::StartElement)
-        {
-            if(stream.name() == QString("create"))
-            {
-                while(!(stream.tokenType() == QXmlStreamReader::EndElement && stream.name() == QString("create")))
-                {
-                    if(stream.readNext() != QXmlStreamReader::StartElement)
-                        continue;
-                    if(stream.name() == QString("tag"))
-                        createTags(stream);
-                }
-            }
-            else if(stream.name() == QString("update"))
-            {
-                while(!(stream.tokenType() == QXmlStreamReader::EndElement && stream.name() == QString("update")))
-                {
-                    if(stream.readNext() != QXmlStreamReader::StartElement)
-                        continue;
-                    if(stream.name() == QString("tag"))
-                    {
-                        updateTags(stream);
-                    }
-                }
-            }
-        }
+        const auto &jsonTag = jsonRef.toObject();
+        auto tag = TagList::sGetInstance().UpdateOrCreateTag(jsonTag);
+        // sync an updated tag with all clients.
+        tag->setUpdatedFlag();
     }
 }
 
@@ -130,20 +109,4 @@ QString Client::getName() const
 QString Client::getIp() const
 {
     return mClientIp;
-}
-
-
-void Client::createTags(QXmlStreamReader &stream)
-{
-    Tag *tag = TagList::sGetInstance().createTag(stream);
-    if(tag)
-        emit tagCreated(tag);
-}
-
-
-void Client::updateTags(QXmlStreamReader &stream)
-{
-    Tag *tag = TagList::sGetInstance().updateTag(stream);
-    if(tag)
-        emit tagUpdated(tag);
 }
