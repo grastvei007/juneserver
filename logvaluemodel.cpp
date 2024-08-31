@@ -61,7 +61,7 @@ QVariant LogValueTableModel::data(const QModelIndex &index, int role) const
             return QColor(Qt::gray);
     }
 
-    return QVariant(QVariant::Invalid);
+    return QVariant();
 }
 
 QVariant LogValueTableModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -88,7 +88,7 @@ QVariant LogValueTableModel::headerData(int section, Qt::Orientation orientation
             return QString::number(section);
     }
 
-    return QVariant(QVariant::Invalid);
+    return QVariant();
 }
 
 void LogValueTableModel::insertLogVallue(const QString &aTable, const QString &aVAlueName, const QString &aTagSubsystem, const QString &aTagName)

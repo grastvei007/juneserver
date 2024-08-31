@@ -17,6 +17,7 @@ class ClientListWidget;
 class LoggerWidget;
 class LogValueView;
 class LogValueData;
+class TagSocketListView;
 
 class MainWindow : public QMainWindow
 {
@@ -34,6 +35,7 @@ public slots:
 private slots:
     void onSystemTrayIconActivated(QSystemTrayIcon::ActivationReason reason);
     void onLogValueViewTriggered(bool);
+    void onTagSocketViewTriggered(bool);
 
 private:
     Ui::MainWindow *ui;
@@ -47,6 +49,7 @@ private:
     std::unique_ptr<QSystemTrayIcon> mSystemTrayIcon;
 
     std::unique_ptr<LogValueView> mLogValueWidget;
+    std::unique_ptr<TagSocketListView> tagSocketListViewWidget_;
 
     // pointer to data
     LogValueData *mLogValueData;

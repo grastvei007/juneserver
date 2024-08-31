@@ -15,15 +15,15 @@ ClientInformation::ClientInformation(QString aInfo, QObject *parent) : QObject(p
            continue;
        if(token == QXmlStreamReader::StartElement)
        {
-           if(stream.name() == "client")
+           if(stream.name() == QString("client"))
                continue;
 
-           if(stream.name() == "name")
+           if(stream.name() == QString("name"))
            {
                mName = stream.readElementText();
                qDebug() << mName;
            }
-           if(stream.name() == "ip")
+           if(stream.name() == QString("ip"))
            {
                mIp = stream.readElementText();
                qDebug() << mIp;

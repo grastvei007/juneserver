@@ -47,10 +47,10 @@ void WebSocketServer::onNewConnection()
 
 void WebSocketServer::onServerClosed()
 {
-    for(int i=0; i<mClients.size(); ++i)
+    for(auto &client : mClients)
     {
-        mClients[i]->close();
-        mClients[i]->deleteLater();
+        client->close();
+        client->deleteLater();
     }
     mClients.clear();
 }
@@ -69,7 +69,7 @@ void WebSocketServer::processTextMessage(QString aMsg)
  * or tags with updated values.
  *
  */
-void WebSocketServer::processBinaryMessage(QByteArray aMsg)
+void WebSocketServer::processBinaryMessage(QByteArray /*aMsg*/)
 {
 
 
@@ -80,23 +80,6 @@ void WebSocketServer::processBinaryMessage(QByteArray aMsg)
 }
 
 /**
- * @brief WebSocketServer::socketDisconnected
- *
- * Client disconnected from server.
- */
-void WebSocketServer::socketDisconnected()
-{
-  /*  QWebSocket *client = qobject_cast<QWebSocket *>(sender());
-    qDebug() << "socketDisconnected:" << client;
-    if (client)
-    {
-        mClients.removeAll(client);
-        client->deleteLater();
-    }*/
-}
-
-
-/**
  * @brief WebSocketServer::sendTagsCreatedToClients
  *
  * Send all tags in created queue to all connected clients.
@@ -104,25 +87,24 @@ void WebSocketServer::socketDisconnected()
 void WebSocketServer::sendTagsCreatedToClients()
 {
 
-    qDebug() << "sending n: " << mTagsCreatedQueue.size() << " created tags";
     QByteArray data;
     QXmlStreamWriter stream(&data);
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
     stream.writeStartElement("create");
 
-    for(int i=0; i<mTagsCreatedQueue.size(); ++i)
+    for(auto &createdTag : mTagsCreatedQueue)
     {
-        mTagsCreatedQueue[i]->writeToXml(stream);
+        createdTag->writeToXml(stream);
     }
     mTagsCreatedQueue.clear();
 
     stream.writeEndElement();
     stream.writeEndDocument();
 
-    for(int i=0; i<mClients.size(); ++i)
+    for(auto &client : mClients)
     {
-        mClients[i]->sendBinaryMessage(data);
+        client->sendBinaryMessage(data);
     }
 }
 
@@ -133,25 +115,24 @@ void WebSocketServer::sendTagsCreatedToClients()
  */
 void WebSocketServer::sendTagsUpdatedToClients()
 {
-    qDebug() << "sending n: " << mTagsUpdatedQueue.size() << " updated tags";
     QByteArray data;
     QXmlStreamWriter stream(&data);
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
     stream.writeStartElement("update");
 
-    for(int i=0; i<mTagsUpdatedQueue.size(); ++i)
+    for(auto &updatedTag : mTagsUpdatedQueue)
     {
-        mTagsUpdatedQueue[i]->writeToXml(stream);
+        updatedTag->writeToXml(stream);
     }
     mTagsUpdatedQueue.clear();
 
     stream.writeEndElement();
     stream.writeEndDocument();
 
-    for(int i=0; i<mClients.size(); ++i)
+    for(auto &client : mClients)
     {
-        mClients[i]->sendBinaryMessage(data);
+        client->sendBinaryMessage(data);
     }
 }
 
@@ -169,7 +150,6 @@ void WebSocketServer::onConnectionEstablished(Client *aClient)
     mClients.push_back(aClient);
     emit newConnection(aClient);
     connect(aClient, &Client::disconnected, this, &WebSocketServer::onClientDisconnect);
-    //connect(aClient, &Client::tagUpdated, this, &WebSocketServer::onTagValueChanged);
 
     // send current initial tags list, ask client to create everything.
     QByteArray taglist;
@@ -178,10 +158,11 @@ void WebSocketServer::onConnectionEstablished(Client *aClient)
 
 }
 
-void WebSocketServer::onClientDisconnect(Client *aClient)
+void WebSocketServer::onClientDisconnect(Client *client)
 {
-    mClients.removeAll(aClient);
-    aClient->deleteLater();
-    Logger::sGetInstance().log("Client disconnected");
+    auto clientName = client->getName();
+    mClients.removeAll(client);
+    client->deleteLater();
+    Logger::sGetInstance().log(QString("Client: %1 disconnected").arg(clientName));
     Logger::sGetInstance().log(QString("Active connections (%1)").arg(mClients.size()));
 }

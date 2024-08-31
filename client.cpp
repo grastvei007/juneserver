@@ -5,6 +5,7 @@
 #include <QByteArray>
 #include <QXmlStreamAttributes>
 #include <QXmlStreamReader>
+#include <QStringView>
 
 #include <tagsystem/taglist.h>
 #include <tagsystem/tag.h>
@@ -69,23 +70,23 @@ void Client::onBinaryMessageRecieved(QByteArray aMsg)
             continue;
         if(token == QXmlStreamReader::StartElement)
         {
-            if(stream.name() == "create")
+            if(stream.name() == QString("create"))
             {
-                while(!(stream.tokenType() == QXmlStreamReader::EndElement && stream.name() == "create"))
+                while(!(stream.tokenType() == QXmlStreamReader::EndElement && stream.name() == QString("create")))
                 {
                     if(stream.readNext() != QXmlStreamReader::StartElement)
                         continue;
-                    if(stream.name() == "tag")
+                    if(stream.name() == QString("tag"))
                         createTags(stream);
                 }
             }
-            else if(stream.name() == "update")
+            else if(stream.name() == QString("update"))
             {
-                while(!(stream.tokenType() == QXmlStreamReader::EndElement && stream.name() == "update"))
+                while(!(stream.tokenType() == QXmlStreamReader::EndElement && stream.name() == QString("update")))
                 {
                     if(stream.readNext() != QXmlStreamReader::StartElement)
                         continue;
-                    if(stream.name() == "tag")
+                    if(stream.name() == QString("tag"))
                     {
                         updateTags(stream);
                     }
@@ -132,80 +133,17 @@ QString Client::getIp() const
 }
 
 
-void Client::createTags(QXmlStreamReader &aStream)
+void Client::createTags(QXmlStreamReader &stream)
 {
-    QXmlStreamAttributes attribs = aStream.attributes();
-    QString subsystem = attribs.value("subsystem").toString();
-    QString name = attribs.value("name").toString();
-    QString type = attribs.value("type").toString();
-    qint64 timestamp = -1;
-    if(attribs.hasAttribute("timestamp"))
-        timestamp = attribs.value("timestamp").toLongLong();
-
-    if(TagList::sGetInstance().findByTagName(QString("%1.%2").arg(subsystem).arg(name)))
-        return;
-
-    if(type == "Double")
-    {
-        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eDouble);
-        tag->setValue(attribs.value("value").toDouble(), timestamp);
+    Tag *tag = TagList::sGetInstance().createTag(stream);
+    if(tag)
         emit tagCreated(tag);
-    }
-    else if(type == "Int")
-    {
-        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eInt);
-        tag->setValue(attribs.value("value").toInt(), timestamp);
-        emit tagCreated(tag);
-
-    }
-    else if(type == "Bool")
-    {
-        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eBool);
-        tag->setValue(attribs.value("value").toInt() == 1 ? true : false, timestamp);
-        emit tagCreated(tag);
-    }
-    else if(type == "String")
-    {
-        Tag *tag = TagList::sGetInstance().createTag(subsystem, name, Tag::eString);
-        tag->setValue(attribs.value("value").toString(), timestamp);
-        emit tagCreated(tag);
-    }
 }
 
 
-void Client::updateTags(QXmlStreamReader &aStream)
+void Client::updateTags(QXmlStreamReader &stream)
 {
-    QXmlStreamAttributes attribs = aStream.attributes();
-    QString subsystem = attribs.value("subsystem").toString();
-    QString name = attribs.value("name").toString();
-    QString fullName = QString("%1.%2").arg(subsystem).arg(name);
-    qint64 timestamp = -1;
-    if(attribs.hasAttribute("timestamp"))
-         timestamp = attribs.value("timestamp").toLongLong();
-
-    Tag *tag = TagList::sGetInstance().findByTagName(fullName);
-    if(!tag)
-        return;
-
-    switch (tag->getType()) {
-    case Tag::eDouble:
-        tag->setValue(attribs.value("value").toDouble(), timestamp);
+    Tag *tag = TagList::sGetInstance().updateTag(stream);
+    if(tag)
         emit tagUpdated(tag);
-        break;
-    case Tag::eInt:
-        tag->setValue(attribs.value("value").toInt(), timestamp);
-        emit tagUpdated(tag);
-        break;
-    case Tag::eBool:
-        tag->setValue(attribs.value("value").toInt() == 1 ? true : false, timestamp);
-        emit tagUpdated(tag);
-        break;
-    case Tag::eString:
-        tag->setValue(attribs.value("value").toString(), timestamp);
-        emit tagUpdated(tag);
-        break;
-    default:
-        Q_UNREACHABLE();
-    }
-
 }

@@ -15,12 +15,14 @@ public:
 
 signals:
     void logViewTriggered(bool);
+    void tagsocketViewTriggered(bool);
 
 private:
     std::unique_ptr<QMenu> mViewMenu;
     std::unique_ptr<QMenu> mFileMenu;
 
     std::unique_ptr<QAction> mLogViewAction;
+    std::unique_ptr<QAction> tagsocketView_;
 };
 
 #endif // MENUBAR_H

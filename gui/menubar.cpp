@@ -14,7 +14,11 @@ Menubar::Menubar()
     connect(mLogViewAction.get(), &QAction::triggered, this, &Menubar::logViewTriggered);
     mViewMenu->addAction(mLogViewAction.get());
 
+    tagsocketView_ = std::make_unique<QAction>("TagSocket View");
+    connect(tagsocketView_.get(), &QAction::triggered, this, &Menubar::tagsocketViewTriggered);
+    mViewMenu->addAction(tagsocketView_.get());
 
     addMenu(mViewMenu.get());
 }
+
 

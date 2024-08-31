@@ -53,5 +53,5 @@ void LogValueView::onSaveClicked(bool)
 
 void LogValueView::onCloseClicked(bool)
 {
-
+    hide();
 }

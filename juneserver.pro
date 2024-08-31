@@ -1,7 +1,8 @@
 QT += gui core websockets widgets
 
+#DEFINES += NO_GUI
 
-CONFIG += c++14
+CONFIG += c++20
 if(debug){
     CONFIG += console
 }
@@ -37,11 +38,11 @@ INCLUDEPATH += $$(JUNE_ROOT)
 
 if(debug){
 
-    LIBS += -L$$(DEV_LIBS) -ltagsystemd -linfluxdbd
+    LIBS += -L$$(DEV_LIBS) -ltagsystemd -linfluxdbd -lpluginLoadd
 #LIBS += -ltagsystemd
 }
 else{
-    LIBS += -L$$(DEV_LIBS) -ltagsystem -linfluxdb
+    LIBS += -L$$(DEV_LIBS) -ltagsystem -linfluxdb -lpluginLoad
 }
 
 
@@ -54,6 +55,7 @@ SOURCES += main.cpp \
     logvaluedata.cpp \
     logvaluemodel.cpp \
     logvalueview.cpp \
+    pluginmanager.cpp \
     websocketserver.cpp \
     mainwindow.cpp \
     gui/menubar.cpp \
@@ -69,6 +71,7 @@ HEADERS += \
     logvaluedata.h \
     logvaluemodel.h \
     logvalueview.h \
+    pluginmanager.h \
     websocketserver.h \
     mainwindow.h \
     gui/menubar.h \
