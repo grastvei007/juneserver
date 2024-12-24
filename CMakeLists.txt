@@ -1,0 +1,88 @@
+cmake_minimum_required(VERSION 3.16)
+project(juneserver)
+
+set_target_properties(PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
+
+include_directories($ENV{JUNE_ROOT})
+link_directories($ENV{DEV_LIBS})
+
+add_definitions(-DNO_GUI)
+
+set(CMAKE_INCLUDE_CURRENT_DIR "YES")
+set(CMAKE_AUTOMOC "YES")
+set(CMAKE_AUTOUIC "YES")
+
+find_package(Qt6 COMPONENTS WebSockets REQUIRED)
+find_package(Qt6 COMPONENTS Widgets REQUIRED)
+find_package(Qt6 COMPONENTS Gui REQUIRED)
+find_package(Qt6 COMPONENTS Core REQUIRED)
+
+qt_add_executable(juneserver
+    main.cpp
+    addlogvaluedialog.cpp
+    app.cpp
+    logvaluedata.cpp
+    logvaluemodel.cpp
+    logvalueview.cpp
+    pluginmanager.cpp
+    websocketserver.cpp
+    mainwindow.cpp
+    gui/menubar.cpp
+    gui/clientlistwidget.cpp
+    client.cpp
+    clientinformation.cpp
+    logger.cpp
+    gui/loggerwidget.cpp
+
+    addlogvaluedialog.h
+    app.h
+    logvaluedata.h
+    logvaluemodel.h
+    logvalueview.h
+    pluginmanager.h
+    websocketserver.h
+    mainwindow.h
+    gui/menubar.h
+    gui/clientlistwidget.h
+    client.h
+    clientinformation.h
+    logger.h
+    gui/loggerwidget.h
+
+    addlogvaluedialog.ui
+    logvalueview.ui
+    mainwindow.ui
+)
+
+qt_add_resources(juneserver resources
+    PREFIX "/resources"
+    FILES resources/icon.png
+)
+
+target_link_libraries(juneserver PRIVATE Qt6::WebSockets
+    Qt6::Widgets
+    Qt6::Gui
+    Qt6::Core)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message("Debug mode")
+    target_link_libraries(juneserver PRIVATE tagsystemd)
+    target_link_libraries(juneserver PRIVATE influxdbd)
+    target_link_libraries(juneserver PRIVATE pluginLoadd)
+    target_link_libraries(juneserver PRIVATE cored)
+else()
+    message("Release mode")
+    target_link_libraries(juneserver PRIVATE tagsystem)
+    target_link_libraries(juneserver PRIVATE influxdb)
+    target_link_libraries(juneserver PRIVATE pluginLoad)
+    target_link_libraries(juneserver PRIVATE core)
+endif()
+
+target_include_directories(juneserver INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+
+
+add_custom_command(TARGET juneserver
+                   POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:juneserver> $ENV{DEV_BIN} )
+
+
