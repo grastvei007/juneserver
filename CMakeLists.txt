@@ -81,8 +81,10 @@ endif()
 target_include_directories(juneserver INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
 
-add_custom_command(TARGET juneserver
-                   POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:juneserver> $ENV{DEV_BIN} )
+set_target_properties(juneserver
+    PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/lib
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/bin
+)
 
 
