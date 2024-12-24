@@ -75,7 +75,7 @@ void App::onLogEntry(QString message)
 
 void App::loadPlugins()
 {
-    QProcessEnvironment env;
+    auto env = QProcessEnvironment::systemEnvironment();
     QString pluginPath = env.value("DEV_LIBS") + "/";
 
     QSettings settings("june", "server");
