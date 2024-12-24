@@ -1,8 +1,8 @@
 #ifndef PLUGINMANAGER_H
 #define PLUGINMANAGER_H
 
-#include <map>
-#include <string>
+#include <QMap>
+#include <QString>
 
 #include <plugins/pluginload/plugininterface.h>
 
@@ -12,9 +12,9 @@ class PluginManager : public QObject
 public:
     explicit PluginManager() = default;
 
-    void loadPlugin(std::string pluginName);
+    void loadPlugin(const QString &path, const QString &name);
 private:
-    std::map<std::string, PluginInterface*> plugins_;
+    QMap<QString, PluginInterface*> plugins_;
 };
 
 #endif // PLUGINMANAGER_H

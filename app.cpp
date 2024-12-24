@@ -76,7 +76,7 @@ void App::onLogEntry(QString message)
 void App::loadPlugins()
 {
     QProcessEnvironment env;
-    QString pluginPath = env.value("DEV_LIBS");
+    QString pluginPath = env.value("DEV_LIBS") + "/";
 
     QSettings settings("june", "server");
     settings.beginGroup("plugins");
@@ -85,6 +85,6 @@ void App::loadPlugins()
     {
         auto isLodingPlugin = settings.value(pluginName).toBool();
         if(isLodingPlugin)
-            pluginManager_.loadPlugin(QString("%1/%2").arg(pluginPath, pluginName).toStdString());
+            pluginManager_.loadPlugin(pluginPath, pluginName);
     }
 }

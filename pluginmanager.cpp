@@ -5,20 +5,19 @@
 #include <QDebug>
 
 
-void PluginManager::loadPlugin(std::string pluginName)
+
+void PluginManager::loadPlugin(const QString &path, const QString &name)
 {
-#ifndef _DEBUG
-   // pluginName + "d";
-#endif
-    //pluginName += ".so";
-    qDebug() << pluginName;
-    PluginLoader *loader = new PluginLoader();
-    auto plugin = loader->load(QString::fromStdString(pluginName));
+    auto plugin = pluginloader::load(path, name);
     if(!plugin)
+    {
+        qDebug() << "Error loading plugin " << QString("%1%2").arg(path, name);
         return;
+    }
+
     plugin->setTagSystem(&TagList::sGetInstance());
     plugin->initialize();
     plugin->run(1000);
 
-    plugins_.insert(std::make_pair(pluginName, plugin));
+    plugins_.insert(name, plugin);
 }
