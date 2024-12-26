@@ -16,6 +16,8 @@ find_package(Qt6 COMPONENTS WebSockets REQUIRED)
 find_package(Qt6 COMPONENTS Widgets REQUIRED)
 find_package(Qt6 COMPONENTS Gui REQUIRED)
 find_package(Qt6 COMPONENTS Core REQUIRED)
+find_package(Qt6 COMPONENTS HttpServer REQUIRED)
+find_package(Qt6 COMPONENTS Network REQUIRED)
 
 qt_add_executable(juneserver
     main.cpp
@@ -62,7 +64,9 @@ qt_add_resources(juneserver resources
 target_link_libraries(juneserver PRIVATE Qt6::WebSockets
     Qt6::Widgets
     Qt6::Gui
-    Qt6::Core)
+    Qt6::Core
+    Qt6::HttpServer
+    Qt6::Network)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message("Debug mode")

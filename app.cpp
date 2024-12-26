@@ -51,6 +51,9 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
     mSystemTimeTimer->start();
 
     loadPlugins();
+
+    // start http server on port
+    setupHttpServer(5005);
 }
 
 App::~App()
@@ -82,4 +85,20 @@ void App::loadPlugins()
         if(isLodingPlugin)
             pluginManager_.loadPlugin(pluginName);
     }
+}
+
+void App::setupHttpServer(quint16 port)
+{
+    // setup all routes on httpserver
+    httpServer_.route("/", []() {
+        return "June rest api up an running";
+    });
+
+    tcpServer_ = std::make_unique<QTcpServer>();
+    if(!tcpServer_->listen(QHostAddress::Any, port))
+    {
+        qDebug() << "Http server not running";
+        return;
+    }
+    httpServer_.bind(tcpServer_.get());
 }

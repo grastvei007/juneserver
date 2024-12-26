@@ -14,6 +14,7 @@
 
 #include "pluginmanager.h"
 #include <QNetworkAccessManager>
+#include <QHttpServer>
 
 
 class QUdpSocket;
@@ -36,8 +37,11 @@ private slots:
 
 private:
     void loadPlugins();
+    void setupHttpServer(quint16 port);
     QNetworkAccessManager networkAcessManager_;
     WebSocketServer *mWebSocketServer;
+    QHttpServer httpServer_;
+    std::unique_ptr<QTcpServer> tcpServer_;
 #ifndef NO_GUI
     MainWindow *mMainWindow;
 #endif
