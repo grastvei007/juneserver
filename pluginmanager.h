@@ -12,7 +12,10 @@ class PluginManager : public QObject
 public:
     explicit PluginManager() = default;
 
-    void loadPlugin(const QString &path, const QString &name);
+    bool loadPlugin(const QString& pluginName);
+    bool loadPlugin(const QString &path, const QString &name);
+
+    bool unloadPlugin(const QString& name);
 private:
     QMap<QString, PluginInterface*> plugins_;
 };

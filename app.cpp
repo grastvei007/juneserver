@@ -5,7 +5,6 @@
 #include <QStringList>
 #include <QtNetwork>
 #include <QTimer>
-#include <QProcessEnvironment>
 #include <QSettings>
 
 #include <tagsystem/taglistview.h>
@@ -75,16 +74,12 @@ void App::onLogEntry(QString message)
 
 void App::loadPlugins()
 {
-    auto env = QProcessEnvironment::systemEnvironment();
-    QString pluginPath = env.value("DEV_LIBS") + "/";
-
     QSettings settings("june", "server");
     settings.beginGroup("plugins");
-
     for(const auto &pluginName : settings.childKeys())
     {
         auto isLodingPlugin = settings.value(pluginName).toBool();
         if(isLodingPlugin)
-            pluginManager_.loadPlugin(pluginPath, pluginName);
+            pluginManager_.loadPlugin(pluginName);
     }
 }
