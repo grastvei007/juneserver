@@ -3,6 +3,7 @@
 
 #include <QMap>
 #include <QString>
+#include <QList>
 
 #include <plugins/pluginload/plugininterface.h>
 
@@ -12,7 +13,12 @@ class PluginManager : public QObject
 public:
     explicit PluginManager() = default;
 
-    void loadPlugin(const QString &path, const QString &name);
+    bool loadPlugin(const QString& pluginName);
+    bool loadPlugin(const QString &path, const QString &name);
+
+    bool unloadPlugin(const QString& name);
+
+    QList<QString> runningPlugins() const;
 private:
     QMap<QString, PluginInterface*> plugins_;
 };

@@ -5,13 +5,14 @@
 #include <QStringList>
 #include <QtNetwork>
 #include <QTimer>
-#include <QProcessEnvironment>
 #include <QSettings>
 
 #include <tagsystem/taglistview.h>
 
 #include "logvaluedata.h"
 #include "logger.h"
+
+#include "api/pluginapi.h"
 
 #ifdef NO_GUI
 App::App(int argc, char *argv[]) : QCoreApplication(argc, argv)
@@ -52,6 +53,9 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
     mSystemTimeTimer->start();
 
     loadPlugins();
+
+    // start http server on port
+    setupHttpServer(5005);
 }
 
 App::~App()
@@ -75,16 +79,30 @@ void App::onLogEntry(QString message)
 
 void App::loadPlugins()
 {
-    auto env = QProcessEnvironment::systemEnvironment();
-    QString pluginPath = env.value("DEV_LIBS") + "/";
-
     QSettings settings("june", "server");
     settings.beginGroup("plugins");
-
     for(const auto &pluginName : settings.childKeys())
     {
         auto isLodingPlugin = settings.value(pluginName).toBool();
         if(isLodingPlugin)
-            pluginManager_.loadPlugin(pluginPath, pluginName);
+            pluginManager_.loadPlugin(pluginName);
     }
+}
+
+void App::setupHttpServer(quint16 port)
+{
+    // setup all routes on httpserver
+    httpServer_.route("/", []() {
+        return "June rest api up an running";
+    });
+
+    pluginApi_ = std::make_unique<PluginApi>(httpServer_, pluginManager_);
+
+    tcpServer_ = std::make_unique<QTcpServer>();
+    if(!tcpServer_->listen(QHostAddress::Any, port))
+    {
+        qDebug() << "Http server not running";
+        return;
+    }
+    httpServer_.bind(tcpServer_.get());
 }

@@ -14,11 +14,13 @@
 
 #include "pluginmanager.h"
 #include <QNetworkAccessManager>
+#include <QHttpServer>
 
 
 class QUdpSocket;
 class QTimer;
 class LogValueData;
+class PluginApi;
 
 #ifdef NO_GUI
 class App : public QCoreApplication
@@ -36,12 +38,15 @@ private slots:
 
 private:
     void loadPlugins();
+    void setupHttpServer(quint16 port);
     QNetworkAccessManager networkAcessManager_;
     WebSocketServer *mWebSocketServer;
+    QHttpServer httpServer_;
+    std::unique_ptr<QTcpServer> tcpServer_;
 #ifndef NO_GUI
     MainWindow *mMainWindow;
 #endif
-
+    std::unique_ptr<PluginApi> pluginApi_;
     LogValueData *logValueData_;
     Tag *mSystemTimeTag = nullptr;
     QTimer *mSystemTimeTimer = nullptr;
