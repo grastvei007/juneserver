@@ -44,3 +44,8 @@ bool PluginManager::unloadPlugin(const QString &name)
     plugins_.remove(name);
     return true;
 }
+
+QList<QString> PluginManager::runningPlugins() const
+{
+    return plugins_.keys();
+}

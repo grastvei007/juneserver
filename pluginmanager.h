@@ -3,6 +3,7 @@
 
 #include <QMap>
 #include <QString>
+#include <QList>
 
 #include <plugins/pluginload/plugininterface.h>
 
@@ -16,6 +17,8 @@ public:
     bool loadPlugin(const QString &path, const QString &name);
 
     bool unloadPlugin(const QString& name);
+
+    QList<QString> runningPlugins() const;
 private:
     QMap<QString, PluginInterface*> plugins_;
 };

@@ -20,6 +20,7 @@
 class QUdpSocket;
 class QTimer;
 class LogValueData;
+class PluginApi;
 
 #ifdef NO_GUI
 class App : public QCoreApplication
@@ -45,7 +46,7 @@ private:
 #ifndef NO_GUI
     MainWindow *mMainWindow;
 #endif
-
+    std::unique_ptr<PluginApi> pluginApi_;
     LogValueData *logValueData_;
     Tag *mSystemTimeTag = nullptr;
     QTimer *mSystemTimeTimer = nullptr;

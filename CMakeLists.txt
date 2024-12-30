@@ -54,6 +54,9 @@ qt_add_executable(juneserver
     addlogvaluedialog.ui
     logvalueview.ui
     mainwindow.ui
+
+    api/pluginapi.h
+    api/pluginapi.cpp
 )
 
 qt_add_resources(juneserver resources

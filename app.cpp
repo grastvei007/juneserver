@@ -12,6 +12,8 @@
 #include "logvaluedata.h"
 #include "logger.h"
 
+#include "api/pluginapi.h"
+
 #ifdef NO_GUI
 App::App(int argc, char *argv[]) : QCoreApplication(argc, argv)
 #else
@@ -93,6 +95,8 @@ void App::setupHttpServer(quint16 port)
     httpServer_.route("/", []() {
         return "June rest api up an running";
     });
+
+    pluginApi_ = std::make_unique<PluginApi>(httpServer_, pluginManager_);
 
     tcpServer_ = std::make_unique<QTcpServer>();
     if(!tcpServer_->listen(QHostAddress::Any, port))
