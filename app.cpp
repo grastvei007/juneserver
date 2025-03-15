@@ -13,6 +13,7 @@
 #include "logger.h"
 
 #include "api/pluginapi.h"
+#include "api/tagapi.h"
 
 #ifdef NO_GUI
 App::App(int argc, char *argv[]) : QCoreApplication(argc, argv)
@@ -96,7 +97,13 @@ void App::setupHttpServer(quint16 port)
         return "June rest api up an running";
     });
 
+    httpServer_.setMissingHandler([](const QHttpServerRequest& request,
+                                QHttpServerResponder&& responder) {
+        qDebug() << request.url();
+    });
+
     pluginApi_ = std::make_unique<PluginApi>(httpServer_, pluginManager_);
+    tagApi_ = std::make_unique<TagApi>(httpServer_, TagList::sGetInstance());
 
     tcpServer_ = std::make_unique<QTcpServer>();
     if(!tcpServer_->listen(QHostAddress::Any, port))
