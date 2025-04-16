@@ -57,6 +57,8 @@ qt_add_executable(juneserver
 
     api/pluginapi.h
     api/pluginapi.cpp
+    api/tagapi.h
+    api/tagapi.cpp
 )
 
 qt_add_resources(juneserver resources
