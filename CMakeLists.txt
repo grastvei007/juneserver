@@ -59,6 +59,19 @@ qt_add_executable(juneserver
     api/pluginapi.cpp
     api/tagapi.h
     api/tagapi.cpp
+
+    automation/automationmanager.h
+    automation/automationmanager.cpp
+    automation/trigger.h
+    automation/trigger.cpp
+    automation/triggerfactory.h
+    automation/trigger/triggereverytimeabove.h
+    automation/trigger/triggereverytimeabove.cpp
+    automation/trigger/triggereverytimebelow.h
+    automation/trigger/triggereverytimebelow.cpp
+    automation/trigger/triggerontime.h
+    automation/trigger/triggerontime.cpp
+
 )
 
 qt_add_resources(juneserver resources

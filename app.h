@@ -12,6 +12,7 @@
 
 #include "websocketserver.h"
 #include "mainwindow.h"
+#include "automation/automationmanager.h"
 
 #include "pluginmanager.h"
 #include <QNetworkAccessManager>
@@ -56,6 +57,8 @@ private:
 
     PluginManager pluginManager_;
     InfluxDB influxdb_ = InfluxDB(networkAcessManager_);
+
+    std::unique_ptr<AutomationManager> automationManager_;
 };
 
 #endif // APP_H
