@@ -1,4 +1,5 @@
 #include "app.h"
+#include <QDateTime>
 
 #ifdef __linux__
     #include <stdio.h>
@@ -20,6 +21,34 @@ int main(int argc, char *argv[])
 }
 #else
 
+
+QtMessageHandler defaultHandler {};
+
+void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString & msg)
+{
+    QString text;
+    QString timestamp = QDateTime::currentDateTime().toString();
+    switch (type)
+    {
+    case QtInfoMsg:
+        text = QString("Info [%1]: %2").arg(timestamp, msg);
+        break;
+    case QtDebugMsg:
+        text = QString("Debug [%1]: %2").arg(timestamp, msg);
+        break;
+    case QtWarningMsg:
+        text = QString("Warning [%1]: %2").arg(timestamp, msg);
+        break;
+    case QtCriticalMsg:
+        text = QString("Critical [%1]: %2").arg(timestamp, msg);
+        break;
+    case QtFatalMsg:
+        text = QString("Fatal [%1]: %2").arg(timestamp, msg);
+        break;
+    }
+
+    defaultHandler(type, context, text);
+}
 
 static void deamonize()
 {
@@ -77,38 +106,36 @@ static void deamonize()
 
 int main(int argc, char *argv[])
 {
-        QStringList list;
-        for(int i=0; i<argc; ++i)
-        {
-            list << argv[i];
-        }
-        bool deamon = false;
-        if(list.contains("deamon"))
-        {
-            deamon = true;
-        }
+    defaultHandler = qInstallMessageHandler(myMessageHandler);
+    QStringList list;
+    for(int i=0; i<argc; ++i)
+    {
+        list << argv[i];
+    }
+    bool deamon = false;
+    if(list.contains("deamon"))
+    {
+        deamon = true;
+    }
 
-        if(deamon)
-        {
-            deamonize();
-            syslog (LOG_NOTICE, "JuneServer daemon started.");
-        }
+    if(deamon)
+    {
+        deamonize();
+        syslog (LOG_NOTICE, "JuneServer daemon started.");
+    }
 
-        /* Never ending loop of server */
-        App a(argc, argv);
-        a.exec();
+    /* Never ending loop of server */
+    App a(argc, argv);
+    a.exec();
 
-        if(deamon)
-        {
-            syslog (LOG_NOTICE, "JuneServer daemon terminated.");
-            closelog();
+    if(deamon)
+    {
+        syslog (LOG_NOTICE, "JuneServer daemon terminated.");
+        closelog();
 
-            return EXIT_SUCCESS;
-        }
-        return 0;
-
-
-
+        return EXIT_SUCCESS;
+    }
+    return 0;
 
 }
 #endif
