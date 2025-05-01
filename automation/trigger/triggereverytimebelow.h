@@ -8,7 +8,7 @@
 class TriggerEveryTimeBelow : public TriggerBase
 {
 public:
-    TriggerEveryTimeBelow(const QJsonObject &obj);
+    TriggerEveryTimeBelow(TagList &tagList, const QJsonObject &obj);
 };
 
 #endif // TRIGGEREVERYTIMEBELOW_H

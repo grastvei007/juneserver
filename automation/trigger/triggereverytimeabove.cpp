@@ -1,6 +1,7 @@
 #include "triggereverytimeabove.h"
 
-TriggerEveryTimeAbove::TriggerEveryTimeAbove(const QJsonObject &obj) : TriggerBase(obj)
+TriggerEveryTimeAbove::TriggerEveryTimeAbove(TagList &tagList, const QJsonObject &obj)
+    : TriggerBase(tagList, obj)
 {
 
 }

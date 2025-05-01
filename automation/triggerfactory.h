@@ -8,21 +8,22 @@
 
 
 class TriggerBase;
+class TagList;
 
 template<typename Type>
-TriggerBase* createType(const QJsonObject &obj) { return new Type(obj); }
+TriggerBase* createType(TagList &tagList, const QJsonObject &obj) { return new Type(tagList, obj); }
 
 class TriggerFactory
 {
 public:
     TriggerFactory(){}
 
-    TriggerBase* createTrigger(const std::string &key, const QJsonObject &obj)
+    TriggerBase* createTrigger(const std::string &key, TagList &tagList, const QJsonObject &obj)
     {
         if(constructors_.find(key) == constructors_.end())
             return nullptr;
         Creator createor = constructors_[key];
-        return createor(obj);
+        return createor(tagList, obj);
     }
 
     template<typename Type>
@@ -30,7 +31,7 @@ public:
 
 
 protected:
-    typedef TriggerBase* (*Creator)(const QJsonObject&);
+    typedef TriggerBase* (*Creator)(TagList &, const QJsonObject&);
 
     std::map<std::string, Creator> constructors_;
 };

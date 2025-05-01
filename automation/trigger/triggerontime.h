@@ -8,7 +8,7 @@
 class TriggerOnTime : public TriggerBase
 {
 public:
-    TriggerOnTime(const QJsonObject &obj);
+    TriggerOnTime(TagList &tagList, const QJsonObject &obj);
 };
 
 #endif // TRIGGERONTIME_H

@@ -1,6 +1,7 @@
 #include "triggerontime.h"
 
-TriggerOnTime::TriggerOnTime(const QJsonObject &obj) : TriggerBase(obj)
+TriggerOnTime::TriggerOnTime(TagList &tagList, const QJsonObject &obj)
+    : TriggerBase(tagList, obj)
 {
 
 }
