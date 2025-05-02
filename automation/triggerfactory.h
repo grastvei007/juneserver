@@ -2,7 +2,7 @@
 #define TRIGGERFACTORY_H
 
 #include <map>
-#include <string>
+#include <QString>
 #include <iostream>
 #include <QJsonObject>
 
@@ -18,7 +18,7 @@ class TriggerFactory
 public:
     TriggerFactory(){}
 
-    TriggerBase* createTrigger(const std::string &key, TagList &tagList, const QJsonObject &obj)
+    TriggerBase* createTrigger(const QString &key, TagList &tagList, const QJsonObject &obj)
     {
         if(constructors_.find(key) == constructors_.end())
             return nullptr;
@@ -27,18 +27,18 @@ public:
     }
 
     template<typename Type>
-    void addFactory(const std::string &aCreateKey);
+    void addFactory(const QString &aCreateKey);
 
 
 protected:
     typedef TriggerBase* (*Creator)(TagList &, const QJsonObject&);
 
-    std::map<std::string, Creator> constructors_;
+    std::map<QString, Creator> constructors_;
 };
 
 
 template<typename Type>
-void TriggerFactory::addFactory(const std::string &aCreateKey)
+void TriggerFactory::addFactory(const QString &aCreateKey)
 {
     Creator creator = &createType<Type>;
     constructors_.insert(std::make_pair(aCreateKey, creator));

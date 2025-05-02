@@ -4,10 +4,68 @@ TriggerBase::TriggerBase(TagList &tagList, const QJsonObject &obj, QObject *pare
     tagList_(tagList),
     QObject{parent}
 {
+    subsystem_ = obj.value("subsystem").toString();
+    name_ = obj.value("name").toString();
+    triggerName_ = obj.value("triggername").toString();
 
+    watchTag_ = tagList_.findByTagName(subsystem_, name_);
+
+    if(watchTag())
+    {
+        watchTagSocket_ = TagSocket::createTagSocket("trigger", triggerName(), TagSocket::typeMatchingTag(watchTag()));
+        watchTagSocket_->hookupTag(watchTag());
+
+        connect(watchTagSocket_, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &TriggerBase::onTagSocketValueChanged);
+
+        triggerTag_ = tagList_.createTag("trigger", triggerName_, Tag::eBool, isActive_, "Target trigger");
+    }
 }
 
 bool TriggerBase::isActive() const
 {
     return isActive_;
+}
+
+bool TriggerBase::hasWatchTag() const
+{
+    return watchTag_ != nullptr;
+}
+
+Tag *TriggerBase::watchTag() const
+{
+    return watchTag_;
+}
+
+const QString &TriggerBase::subsystem() const
+{
+    return subsystem_;
+}
+
+const QString &TriggerBase::triggerName() const
+{
+    return triggerName_;
+}
+
+void TriggerBase::setActive()
+{
+    if(triggerTag_)
+    {
+        isActive_ = true;
+        triggerTag_->setValue(isActive_);
+    }
+
+}
+
+void TriggerBase::setDeactive()
+{
+    if(triggerTag_)
+    {
+        isActive_ = false;
+        triggerTag_->setValue(isActive_);
+    }
+}
+
+void TriggerBase::onTagSocketValueChanged(TagSocket *tagSocket)
+{
+    tagSocketValueChanged(tagSocket);
 }

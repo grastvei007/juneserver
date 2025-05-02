@@ -5,8 +5,8 @@
 #include <QJsonObject>
 
 #include <tagsystem/tag.h>
-#include <tagsystem/tagsocket.h>
 #include <tagsystem/taglist.h>
+#include <tagsystem/tagsocket.h>
 
 enum class RuleType
 {
@@ -22,14 +22,31 @@ public:
     explicit TriggerBase(TagList &tagList, const QJsonObject &obj, QObject *parent = nullptr);
 
     bool isActive() const;
+    bool hasWatchTag() const;
 
-signals:
+    Tag* watchTag() const;
+    const QString& subsystem() const;
+    const QString& triggerName() const;
+
+protected:
+    virtual void tagSocketValueChanged(TagSocket *tagSocket) = 0;
+    void setActive();
+    void setDeactive();
+
+private slots:
+    void onTagSocketValueChanged(TagSocket *tagSocket);
 
 private:
     bool isActive_ = false;
-    Tag *watchTag_;
-    TagSocket *watchTagSocket_;
+    Tag *watchTag_ = nullptr;
+    Tag *triggerTag_ = nullptr;
     TagList &tagList_;
+
+    QString subsystem_;
+    QString name_;
+    QString triggerName_;
+
+    TagSocket *watchTagSocket_ = nullptr;
 };
 
 #endif // TRIGGER_H

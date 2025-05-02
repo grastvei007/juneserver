@@ -4,7 +4,7 @@
 #include <QObject>
 #include <tagsystem/taglist.h>
 
-#include <map>
+#include <vector>
 #include <memory>
 
 #include "trigger.h"
@@ -16,12 +16,15 @@ class AutomationManager : public QObject
 public:
     explicit AutomationManager(TagList &taglist, QObject *parent = nullptr);
 
+    bool createTrigger(const QJsonObject &obj);
+
 signals:
+    void triggerCreated(QString);
 
 private:
     TagList &tagList_;
 
-    std::map<int, std::unique_ptr<TriggerBase>> rules_;
+    std::vector<std::unique_ptr<TriggerBase>> triggers_;
     TriggerFactory triggerFactory_;
 };
 
