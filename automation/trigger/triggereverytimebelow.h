@@ -10,6 +10,8 @@ class TriggerEveryTimeBelow : public TriggerBase
 public:
     TriggerEveryTimeBelow(TagList &tagList, const QJsonObject &obj);
 
+    QJsonObject toJson() const override;
+
 protected:
     void tagSocketValueChanged(TagSocket *tagSocket) override;
 

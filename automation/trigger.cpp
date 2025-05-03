@@ -46,6 +46,17 @@ const QString &TriggerBase::triggerName() const
     return triggerName_;
 }
 
+QJsonObject TriggerBase::toJson() const
+{
+    QJsonObject json;
+
+    json.insert("subsystem", subsystem_);
+    json.insert("name", name_);
+    json.insert("triggername", triggerName_);
+
+    return json;
+}
+
 void TriggerBase::setActive()
 {
     if(triggerTag_)

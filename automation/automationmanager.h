@@ -10,6 +10,8 @@
 #include "trigger.h"
 #include "triggerfactory.h"
 
+class QJsonArray;
+
 class AutomationManager : public QObject
 {
     Q_OBJECT
@@ -17,6 +19,8 @@ public:
     explicit AutomationManager(TagList &taglist, QObject *parent = nullptr);
 
     bool createTrigger(const QJsonObject &obj);
+
+    QJsonArray toJsonArray() const;
 
 signals:
     void triggerCreated(QString);

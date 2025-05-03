@@ -10,6 +10,8 @@ class TriggerOnTime : public TriggerBase
 public:
     TriggerOnTime(TagList &tagList, const QJsonObject &obj);
 
+    QJsonObject toJson() const override;
+
 protected:
     void tagSocketValueChanged(TagSocket *tagSocket) override;
 

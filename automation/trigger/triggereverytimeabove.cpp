@@ -11,6 +11,15 @@ TriggerEveryTimeAbove::TriggerEveryTimeAbove(TagList &tagList, const QJsonObject
     }
 }
 
+QJsonObject TriggerEveryTimeAbove::toJson() const
+{
+    auto json = TriggerBase::toJson();
+
+    json.insert("triggervalue", triggerValue_);
+
+    return json;
+}
+
 void TriggerEveryTimeAbove::tagSocketValueChanged(TagSocket *tagSocket)
 {
     if(!isValidTagSocketType(tagSocket))

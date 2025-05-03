@@ -14,6 +14,14 @@ TriggerOnTime::TriggerOnTime(TagList &tagList, const QJsonObject &obj)
 
 }
 
+QJsonObject TriggerOnTime::toJson() const
+{
+    auto json = TriggerBase::toJson();
+    json.insert("triggervalue", triggerTimeOfDay_);
+    json.insert("duration", duration_);
+    return json;
+}
+
 void TriggerOnTime::tagSocketValueChanged(TagSocket *tagSocket)
 {
     if(tagSocket->getType() != TagSocket::eTime)

@@ -28,6 +28,8 @@ public:
     const QString& subsystem() const;
     const QString& triggerName() const;
 
+    virtual QJsonObject toJson() const;
+
 protected:
     virtual void tagSocketValueChanged(TagSocket *tagSocket) = 0;
     void setActive();

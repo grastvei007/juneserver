@@ -1,6 +1,7 @@
 #include "automationmanager.h"
 
 #include <QJsonObject>
+#include <QJsonArray>
 
 #include "trigger/triggereverytimeabove.h"
 #include "trigger/triggereverytimebelow.h"
@@ -32,4 +33,14 @@ bool AutomationManager::createTrigger(const QJsonObject &obj)
     }
 
     return false;
+}
+
+QJsonArray AutomationManager::toJsonArray() const
+{
+    QJsonArray array;
+    for(auto &trigger : triggers_)
+    {
+        array.push_back(trigger->toJson());
+    }
+    return array;
 }
