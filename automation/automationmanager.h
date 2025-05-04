@@ -20,6 +20,9 @@ public:
 
     bool createTrigger(const QJsonObject &obj);
 
+    void removeTrigger(const QString &triggerName);
+    void updateTrigger(const QJsonObject &obj);
+
     QJsonArray toJsonArray() const;
 
 signals:

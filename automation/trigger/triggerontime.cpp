@@ -3,14 +3,7 @@
 TriggerOnTime::TriggerOnTime(TagList &tagList, const QJsonObject &obj)
     : TriggerBase(tagList, obj)
 {
-    if(obj.contains("triggervalue"))
-    {
-        triggerTimeOfDay_ = obj.value("triggervalue").toInt();
-    }
-    if(obj.contains("duration"))
-    {
-        duration_ = obj.value("duration").toInt();
-    }
+    TriggerOnTime::update(obj);
 
 }
 
@@ -20,6 +13,18 @@ QJsonObject TriggerOnTime::toJson() const
     json.insert("triggervalue", triggerTimeOfDay_);
     json.insert("duration", duration_);
     return json;
+}
+
+void TriggerOnTime::update(const QJsonObject &obj)
+{
+    if(obj.contains("triggervalue"))
+    {
+        triggerTimeOfDay_ = obj.value("triggervalue").toInt();
+    }
+    if(obj.contains("duration"))
+    {
+        duration_ = obj.value("duration").toInt();
+    }
 }
 
 void TriggerOnTime::tagSocketValueChanged(TagSocket *tagSocket)

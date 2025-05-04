@@ -5,10 +5,7 @@
 TriggerEveryTimeAbove::TriggerEveryTimeAbove(TagList &tagList, const QJsonObject &obj)
     : TriggerBase(tagList, obj)
 {
-    if(obj.contains("triggervalue"))
-    {
-        triggerValue_ = obj.value("triggervalue").toDouble();
-    }
+    TriggerEveryTimeAbove::update(obj);
 }
 
 QJsonObject TriggerEveryTimeAbove::toJson() const
@@ -18,6 +15,14 @@ QJsonObject TriggerEveryTimeAbove::toJson() const
     json.insert("triggervalue", triggerValue_);
 
     return json;
+}
+
+void TriggerEveryTimeAbove::update(const QJsonObject &obj)
+{
+    if(obj.contains("triggervalue"))
+    {
+        triggerValue_ = obj.value("triggervalue").toDouble();
+    }
 }
 
 void TriggerEveryTimeAbove::tagSocketValueChanged(TagSocket *tagSocket)

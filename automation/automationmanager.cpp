@@ -3,6 +3,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include <ranges>
+
 #include "trigger/triggereverytimeabove.h"
 #include "trigger/triggereverytimebelow.h"
 #include "trigger/triggerontime.h"
@@ -33,6 +35,21 @@ bool AutomationManager::createTrigger(const QJsonObject &obj)
     }
 
     return false;
+}
+
+void AutomationManager::removeTrigger(const QString &triggerName)
+{
+    std::erase_if(triggers_, [&triggerName](auto &trigger)
+                  {return trigger->triggerName() == triggerName;});
+}
+
+void AutomationManager::updateTrigger(const QJsonObject &obj)
+{
+    for(auto &trigger : triggers_ | std::views::filter([&obj]
+        (auto &element){return obj.value("triggername").toString() == element->triggerName();}))
+    {
+        trigger->update(obj);
+    }
 }
 
 QJsonArray AutomationManager::toJsonArray() const

@@ -11,6 +11,7 @@ public:
     TriggerOnTime(TagList &tagList, const QJsonObject &obj);
 
     QJsonObject toJson() const override;
+    void update(const QJsonObject &obj) override;
 
 protected:
     void tagSocketValueChanged(TagSocket *tagSocket) override;
