@@ -14,6 +14,7 @@
 
 #include "api/pluginapi.h"
 #include "api/tagapi.h"
+#include "api/triggerapi.h"
 
 #ifdef NO_GUI
 App::App(int argc, char *argv[]) : QCoreApplication(argc, argv)
@@ -133,6 +134,7 @@ void App::setupHttpServer(quint16 port)
 
     pluginApi_ = std::make_unique<PluginApi>(httpServer_, pluginManager_);
     tagApi_ = std::make_unique<TagApi>(httpServer_, TagList::sGetInstance());
+    triggerApi_ = std::make_unique<TriggerApi>(httpServer_, *automationManager_.get());
 
     tcpServer_ = std::make_unique<QTcpServer>();
     if(!tcpServer_->listen(QHostAddress::Any, port))

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(juneserver)
 
+set(CMAKE_CXX_STANDARD 20)
+
 set_target_properties(PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
 
 include_directories($ENV{JUNE_ROOT})
@@ -71,6 +73,7 @@ qt_add_executable(juneserver
     automation/trigger/triggereverytimebelow.cpp
     automation/trigger/triggerontime.h
     automation/trigger/triggerontime.cpp
+    api/triggerapi.h api/triggerapi.cpp
 
 )
 

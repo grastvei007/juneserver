@@ -24,6 +24,7 @@ class QTimer;
 class LogValueData;
 class PluginApi;
 class TagApi;
+class TriggerApi;
 
 #ifdef NO_GUI
 class App : public QCoreApplication
@@ -51,6 +52,8 @@ private:
 #endif
     std::unique_ptr<PluginApi> pluginApi_;
     std::unique_ptr<TagApi> tagApi_;
+    std::unique_ptr<TriggerApi> triggerApi_;
+
     LogValueData *logValueData_;
     Tag *mSystemTimeTag = nullptr;
     QTimer *mSystemTimeTimer = nullptr;
