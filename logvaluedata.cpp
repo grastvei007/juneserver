@@ -12,8 +12,8 @@
 
 #include <influxdb/influxdb.h>
 
-LogValueData::LogValueData(QNetworkAccessManager &networkAccessManager, QObject *parent) : QObject(parent),
-    networkAccessManager_(networkAccessManager)
+LogValueData::LogValueData(InfluxDB &influxDb, QObject *parent) : QObject(parent),
+    influxDb_(influxDb)
 {
     loadLogValueList();
 }
@@ -32,9 +32,9 @@ LogValueData::~LogValueData()
 void LogValueData::addLogValue(const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &TagName)
 {
 #ifdef __arm__
-    mLogValues.push_back(new LogValue(networkAccessManager_, aTableName, aValueName, aTagSubSystem, TagName));
+    mLogValues.push_back(new LogValue(influxDb_, aTableName, aValueName, aTagSubSystem, TagName));
 #else
-    mLogValues.push_back(std::make_unique<LogValue>(networkAccessManager_, aTableName, aValueName, aTagSubSystem, TagName));
+    mLogValues.push_back(std::make_unique<LogValue>(influxDb_, aTableName, aValueName, aTagSubSystem, TagName));
 #endif
     saveLogValueList();
     emit logValueAdded();
@@ -126,9 +126,9 @@ void LogValueData::loadLogValueList()
                 QString tagname = stream.attributes().value("tagname").toString();
 
 #ifdef __arm__
-                mLogValues.push_back(new LogValue(networkAccessManager_, table, tagname, TagSocket::typeFromString(type), tagsubsystem, tagname));
+                mLogValues.push_back(new LogValue(influxDb_, table, tagname, TagSocket::typeFromString(type), tagsubsystem, tagname));
 #else
-                mLogValues.push_back(std::make_unique<LogValue>(networkAccessManager_, table, tagname, TagSocket::typeFromString(type), tagsubsystem, tagname));
+                mLogValues.push_back(std::make_unique<LogValue>(influxDb_, table, tagname, TagSocket::typeFromString(type), tagsubsystem, tagname));
 #endif
             }
         }
@@ -167,15 +167,14 @@ const LogValue *LogValueData::getLogValueByIndex(unsigned int aIndex) const
 
 
 
-LogValue::LogValue(QNetworkAccessManager &networkAccessManager, const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &aTagName) :
-    networkAccessManager_(networkAccessManager),
+LogValue::LogValue(InfluxDB &influxDb, const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &aTagName) :
+    influxdb_(influxDb),
     mTableName(aTableName),
     mValueName(aValueName),
     mTagSubSystem(aTagSubSystem),
     mTagName(aTagName),
     mLogValueTagSocket(nullptr)
 {
-    influxdb_.useDb("june");
     QString tagname = QString("%1.%2").arg(aTagSubSystem).arg(aTagName);
     Tag *tag = TagList::sGetInstance().findByTagName(tagname);
 
@@ -185,15 +184,14 @@ LogValue::LogValue(QNetworkAccessManager &networkAccessManager, const QString &a
     connect(mLogValueTagSocket, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
 }
 
-LogValue::LogValue(QNetworkAccessManager &networkAccessManager, const QString &aTableName, const QString &aValueName, TagSocket::Type aType, const QString &aTagSubSystem, const QString &aTagName) :
-    networkAccessManager_(networkAccessManager),
+LogValue::LogValue(InfluxDB &influxDb, const QString &aTableName, const QString &aValueName, TagSocket::Type aType, const QString &aTagSubSystem, const QString &aTagName) :
+    influxdb_(influxDb),
     mTableName(aTableName),
     mValueName(aValueName),
     mTagSubSystem(aTagSubSystem),
     mTagName(aTagName),
     mLogValueTagSocket(nullptr)
 {
-    influxdb_.useDb("june");
     mLogValueTagSocket = TagSocket::createTagSocket(aTableName, aValueName, aType);
     mLogValueTagSocket->hookupTag(aTagSubSystem, aTagName);
     connect(mLogValueTagSocket, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
