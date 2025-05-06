@@ -9,13 +9,12 @@
 #include <influxdb/influxdb.h>
 
 class LogValue;
-class QNetworkAccessManager;
 
 class LogValueData : public QObject
 {
     Q_OBJECT
 public:
-    explicit LogValueData(QNetworkAccessManager &networkAccessManager, QObject *parent = nullptr);
+    explicit LogValueData(InfluxDB &influxDb, QObject *parent = nullptr);
 #ifdef __arm__
     ~LogValueData();
 #endif
@@ -34,7 +33,7 @@ signals:
     void logValueListLoaded();
 
 private:
-    QNetworkAccessManager &networkAccessManager_;
+    InfluxDB &influxDb_;
 #ifdef __arm__
     std::vector<LogValue*> mLogValues;
 #else
@@ -47,8 +46,8 @@ class LogValue : public QObject
 {
     Q_OBJECT
 public:
-    LogValue(QNetworkAccessManager &networkAccessManager, const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &aTagName);
-    LogValue(QNetworkAccessManager &networkAccessManager, const QString &aTableName, const QString &aValueName, TagSocket::Type aType, const QString &aTagSubSystem, const QString &aTagName);
+    LogValue(InfluxDB &infuxDb, const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &aTagName);
+    LogValue(InfluxDB &infuxDb, const QString &aTableName, const QString &aValueName, TagSocket::Type aType, const QString &aTagSubSystem, const QString &aTagName);
 
     const QString& getTableName() const;
     const QString& getValueNAme() const;
@@ -60,15 +59,13 @@ private slots:
     void onTagSocketValueChanged(TagSocket *aTagSocket);
 
 private:
-    QNetworkAccessManager &networkAccessManager_;
+    InfluxDB &influxdb_;
 
     QString mTableName;
     QString mValueName;
     QString mTagSubSystem;
     QString mTagName;
     TagSocket* mLogValueTagSocket;
-
-    InfluxDB influxdb_ = InfluxDB(networkAccessManager_);
 };
 
 #endif // LOGVALUEDATA_H

@@ -25,7 +25,8 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
     mWebSocketServer = new WebSocketServer(5000, "JuneServer");
     setApplicationName("June Server");
 
-    logValueData_ = new LogValueData(networkAcessManager_);
+    influxdb_.useDb("june");
+    logValueData_ = new LogValueData(influxdb_);
 
     QCommandLineParser parser;
     QCommandLineOption noGui(QStringList() << "g" << "no-gui", "Gui" );

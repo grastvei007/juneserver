@@ -8,6 +8,7 @@
 
 #include <tagsystem/taglist.h>
 #include <tagsystem/tag.h>
+#include <influxdb/influxdb.h>
 
 #include "websocketserver.h"
 #include "mainwindow.h"
@@ -54,6 +55,7 @@ private:
     QTimer *mSystemTimeTimer = nullptr;
 
     PluginManager pluginManager_;
+    InfluxDB influxdb_ = InfluxDB(networkAcessManager_);
 };
 
 #endif // APP_H
