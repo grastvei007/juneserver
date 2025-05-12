@@ -25,14 +25,40 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
     mWebSocketServer = new WebSocketServer(5000, "JuneServer");
     setApplicationName("June Server");
 
-    influxdb_.useDb("june");
     logValueData_ = new LogValueData(influxdb_);
 
     QCommandLineParser parser;
+    parser.addHelpOption();
     QCommandLineOption noGui(QStringList() << "g" << "no-gui", "Gui" );
     parser.addOption(noGui);
 
+    QCommandLineOption influxDbToken("influx", "InfluxDB Token for api v2", "token");
+    parser.addOption(influxDbToken);
+
+    QCommandLineOption influxDbEndPoint("endpoint", "InfluxDb endpoint", "ip");
+    parser.addOption(influxDbEndPoint);
+
     parser.process(*this);
+
+    if(parser.isSet(influxDbEndPoint))
+    {
+        auto ip = parser.value(influxDbEndPoint);
+        influxdb_.setAdress(ip);
+    }
+
+    if(parser.isSet(influxDbToken))
+    {
+        // if token is passed it is to use influxDb v2.
+        // add token, and setup the url for the db.
+        auto token = parser.value(influxDbToken).toUtf8();
+        influxdb_.setApiToken(token);
+        influxdb_.getBuckets("june");
+    }
+    else
+    {
+        influxdb_.useDb("june");
+    }
+
 #ifndef NO_GUI
     if(parser.isSet(noGui))
     {
