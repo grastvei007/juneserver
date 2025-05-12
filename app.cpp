@@ -124,10 +124,10 @@ void App::setupHttpServer(quint16 port)
         return "June rest api up an running";
     });
 
-    httpServer_.setMissingHandler([](const QHttpServerRequest& request,
-                                QHttpServerResponder&& responder) {
+    /*httpServer_.setMissingHandler([](const QHttpServerRequest& request,
+                                QHttpServerResponder &responder) {
         qDebug() << request.url();
-    });
+    });*/
 
     pluginApi_ = std::make_unique<PluginApi>(httpServer_, pluginManager_);
     tagApi_ = std::make_unique<TagApi>(httpServer_, TagList::sGetInstance());
