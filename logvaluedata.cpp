@@ -221,28 +221,30 @@ QString LogValue::getTagSocketTypeStr() const
 {
     if(mLogValueTagSocket)
         return mLogValueTagSocket->getTypeStr();
-    return QString();
+    return {};
 }
 
-void LogValue::onTagSocketValueChanged(TagSocket *aTagSocket)
+void LogValue::onTagSocketValueChanged(TagSocket *tagSocket)
 {
-    switch (aTagSocket->getType()) {
+    switch (tagSocket->getType()) {
         case TagSocket::eInt:
         {
             int val;
-            aTagSocket->readValue(val);
-            QString str = QString("%1=%2").arg(aTagSocket->getName()).arg(QString::number(val));
+            tagSocket->readValue(val);
+            QString str = QString("%1=%2").arg(tagSocket->getName(), QString::number(val));
             str.replace(QChar::Space, "");
-            influxdb_.insert(aTagSocket->getSubSystem(), str, aTagSocket->getTag()->getMsSinceEpoc(), InfluxDB::eMiliSecond);
+            auto measurement = QString("%1_%2").arg(tagSocket->getSubSystem(), tagSocket->getName());
+            influxdb_.insert(measurement, str, tagSocket->getTag()->getMsSinceEpoc(), InfluxDB::eMiliSecond);
             break;
         }
         case TagSocket::eDouble:
         {
             double val;
-            aTagSocket->readValue(val);
-            QString str = QString("%1=%2").arg(aTagSocket->getName()).arg(QString::number(val));
+            tagSocket->readValue(val);
+            QString str = QString("%1=%2").arg(tagSocket->getName(), QString::number(val));
             str.replace(QChar::Space, "");
-            influxdb_.insert(aTagSocket->getSubSystem(), str, aTagSocket->getTag()->getMsSinceEpoc(), InfluxDB::eMiliSecond);
+            auto measurement = QString("%1_%2").arg(tagSocket->getSubSystem(), tagSocket->getName());
+            influxdb_.insert(measurement, str, tagSocket->getTag()->getMsSinceEpoc(), InfluxDB::eMiliSecond);
             break;
         }
         default:
