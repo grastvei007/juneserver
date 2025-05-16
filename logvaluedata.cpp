@@ -233,8 +233,7 @@ void LogValue::onTagSocketValueChanged(TagSocket *tagSocket)
             tagSocket->readValue(val);
             QString str = QString("%1=%2").arg(tagSocket->getName(), QString::number(val));
             str.replace(QChar::Space, "");
-            auto measurement = QString("%1_%2").arg(tagSocket->getSubSystem(), tagSocket->getName());
-            influxdb_.insert(measurement, str, tagSocket->getTag()->getMsSinceEpoc(), InfluxDB::eMiliSecond);
+            influxdb_.insert(tagSocket->getSubSystem(), str, tagSocket->getTag()->getMsSinceEpoc(), InfluxDB::eMiliSecond);
             break;
         }
         case TagSocket::eDouble:
@@ -243,8 +242,7 @@ void LogValue::onTagSocketValueChanged(TagSocket *tagSocket)
             tagSocket->readValue(val);
             QString str = QString("%1=%2").arg(tagSocket->getName(), QString::number(val));
             str.replace(QChar::Space, "");
-            auto measurement = QString("%1_%2").arg(tagSocket->getSubSystem(), tagSocket->getName());
-            influxdb_.insert(measurement, str, tagSocket->getTag()->getMsSinceEpoc(), InfluxDB::eMiliSecond);
+            influxdb_.insert(tagSocket->getSubSystem(), str, tagSocket->getTag()->getMsSinceEpoc(), InfluxDB::eMiliSecond);
             break;
         }
         default:
