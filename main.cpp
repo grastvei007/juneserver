@@ -1,5 +1,7 @@
 #include "app.h"
 #include <QDateTime>
+#include <QFile>
+#include <QTextStream>
 
 #ifdef __linux__
     #include <stdio.h>
@@ -23,6 +25,8 @@ int main(int argc, char *argv[])
 
 
 QtMessageHandler defaultHandler {};
+QFile logFile;
+
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString & msg)
 {
@@ -47,7 +51,16 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
         break;
     }
 
+    QTextStream stream(&logFile);
+    stream << text << "\n";
+
     defaultHandler(type, context, text);
+
+    if(type == QtFatalMsg)
+    {
+        logFile.close();
+        abort();
+    }
 }
 
 static void deamonize()
@@ -107,6 +120,9 @@ static void deamonize()
 int main(int argc, char *argv[])
 {
     defaultHandler = qInstallMessageHandler(myMessageHandler);
+    logFile.setFileName("juneserver.log");
+    logFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
+
     QStringList list;
     for(int i=0; i<argc; ++i)
     {
