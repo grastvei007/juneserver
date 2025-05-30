@@ -83,10 +83,10 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
 
     loadPlugins();
 
+    automationManager_ = std::make_unique<AutomationManager>(TagList::sGetInstance());
+
     // start http server on port
     setupHttpServer(5005);
-
-    automationManager_ = std::make_unique<AutomationManager>(TagList::sGetInstance());
 }
 
 App::~App()
