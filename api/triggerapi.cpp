@@ -15,7 +15,7 @@ TriggerApi::TriggerApi(QHttpServer &httpServer, AutomationManager &automationMan
     httpServer_(httpServer),
     automationManager_(automationManager)
 {
-    httpServer_.route("/api/trigger", QHttpServerRequest::Method::Get,
+    httpServer_.route("/api/trigger/get", QHttpServerRequest::Method::Get,
             [this](const QHttpServerRequest &request){return triggerList(request);});
 
     httpServer_.route("/api/trigger/create", QHttpServerRequest::Method::Post,
