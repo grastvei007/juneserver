@@ -14,6 +14,7 @@
 
 #include "api/pluginapi.h"
 #include "api/tagapi.h"
+#include "api/triggerapi.h"
 
 #ifdef NO_GUI
 App::App(int argc, char *argv[]) : QCoreApplication(argc, argv)
@@ -60,7 +61,7 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
     }
 
 #ifndef NO_GUI
-    if(parser.isSet(noGui))
+    if(!parser.isSet(noGui))
     {
         mMainWindow = new MainWindow(logValueData_);
         mMainWindow->setWindowTitle("June Server");
@@ -81,6 +82,8 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
     mSystemTimeTimer->start();
 
     loadPlugins();
+
+    automationManager_ = std::make_unique<AutomationManager>(TagList::sGetInstance());
 
     // start http server on port
     setupHttpServer(5005);
@@ -124,13 +127,14 @@ void App::setupHttpServer(quint16 port)
         return "June rest api up an running";
     });
 
-    /*httpServer_.setMissingHandler([](const QHttpServerRequest& request,
+    httpServer_.setMissingHandler(this, [](const QHttpServerRequest& request,
                                 QHttpServerResponder &responder) {
         qDebug() << request.url();
-    });*/
+    });
 
     pluginApi_ = std::make_unique<PluginApi>(httpServer_, pluginManager_);
     tagApi_ = std::make_unique<TagApi>(httpServer_, TagList::sGetInstance());
+    triggerApi_ = std::make_unique<TriggerApi>(httpServer_, *automationManager_.get());
 
     tcpServer_ = std::make_unique<QTcpServer>();
     if(!tcpServer_->listen(QHostAddress::Any, port))
