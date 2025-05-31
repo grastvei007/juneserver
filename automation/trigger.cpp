@@ -53,6 +53,7 @@ QJsonObject TriggerBase::toJson() const
     json.insert("subsystem", subsystem_);
     json.insert("name", name_);
     json.insert("triggername", triggerName_);
+    json.insert("type", triggerTypeToString(type()));
 
     return json;
 }
@@ -79,4 +80,19 @@ void TriggerBase::setDeactive()
 void TriggerBase::onTagSocketValueChanged(TagSocket *tagSocket)
 {
     tagSocketValueChanged(tagSocket);
+}
+
+QString TriggerBase::triggerTypeToString(TriggerType type) const
+{
+    switch (type) {
+    case TriggerType::TriggerEveryTimeAbove:
+        return "triggerAbove";
+    case TriggerType::TriggerEveryTimeBelow:
+        return "trigggerBelow";
+    case TriggerType::TriggerOnTime:
+        return "triggerOnTime";
+    default:
+        break;
+    }
+    return {};
 }
