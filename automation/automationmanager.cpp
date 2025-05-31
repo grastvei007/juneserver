@@ -2,6 +2,7 @@
 
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QDir>
 
 #include <ranges>
 
@@ -9,13 +10,18 @@
 #include "trigger/triggereverytimebelow.h"
 #include "trigger/triggerontime.h"
 
-AutomationManager::AutomationManager(TagList &taglist, QObject *parent) :
-    tagList_(taglist),
-    QObject(parent)
+#include "util/util.h"
+
+AutomationManager::AutomationManager(const QString &appName, TagList &taglist, QObject *parent)
+    : appName_(appName)
+    ,tagList_(taglist)
+    , QObject(parent)
 {
     triggerFactory_.addFactory<TriggerEveryTimeAbove>("triggerAbove");
     triggerFactory_.addFactory<TriggerEveryTimeBelow>("trigggerBelow");
     triggerFactory_.addFactory<TriggerOnTime>("triggerOnTime");
+
+    loadTriggers();
 }
 
 bool AutomationManager::createTrigger(const QJsonObject &obj)
@@ -31,6 +37,8 @@ bool AutomationManager::createTrigger(const QJsonObject &obj)
         QString name = trigger->triggerName();
         triggers_.emplace_back(std::unique_ptr<TriggerBase>(trigger));
         emit triggerCreated(name);
+
+        saveTriggers();
         return true;
     }
 
@@ -60,4 +68,51 @@ QJsonArray AutomationManager::toJsonArray() const
         array.push_back(trigger->toJson());
     }
     return array;
+}
+
+void AutomationManager::saveTriggers() const
+{
+    if(triggers_.empty())
+        return;
+
+    QString configFile = util::configDirPath(appName_) + QDir::separator() + triggerFile_;
+    QFile file(configFile);
+    if(!file.open(QIODevice::WriteOnly))
+    {
+        qDebug() << "Error opening file: " << configFile;
+        return;
+    }
+
+    QJsonObject obj;
+    obj.insert("triggers", toJsonArray());
+    QJsonDocument document(obj);
+
+    QTextStream stream(&file);
+    stream << document.toJson();
+    file.close();
+}
+
+void AutomationManager::loadTriggers()
+{
+    QString configFile = util::configDirPath(appName_) + QDir::separator() + triggerFile_;
+    QFile file(configFile);
+
+    if(!file.exists())
+        return;
+
+    file.open(QIODevice::ReadOnly);
+    QJsonDocument document = QJsonDocument::fromJson(file.readAll());
+
+    if(document.isObject())
+    {
+        QJsonObject object = document.object();
+        const QJsonArray triggers = object.value("triggers").toArray();
+        for(const auto &triggerRef : triggers)
+        {
+            const QJsonObject &trigger = triggerRef.toObject();
+            createTrigger(trigger);
+        }
+        qDebug() << "Triggers loaded: " << triggers.size();
+    }
+    file.close();
 }

@@ -23,14 +23,14 @@ App::App(int argc, char *argv[]) : QCoreApplication(argc, argv)
 App::App(int argc, char *argv[]) : QApplication(argc, argv),
     mMainWindow(nullptr)
 #endif
-{
+{   const QString appName("JuneServer");
     // Setup tagsocket list to load all tagsockets at startup.
-    TagSocketList::sGetInstance().setApplicationName("JuneServer");
+    TagSocketList::sGetInstance().setApplicationName(appName);
     TagSocketList::sGetInstance().loadBindingList();
     TagSocketList::sGetInstance().setAutoSave();
 
-    mWebSocketServer = new WebSocketServer(5000, "JuneServer");
-    setApplicationName("June Server");
+    mWebSocketServer = new WebSocketServer(5000, appName);
+    setApplicationName(appName);
 
     logValueData_ = new LogValueData(influxdb_);
 
@@ -89,7 +89,7 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
 
     loadPlugins();
 
-    automationManager_ = std::make_unique<AutomationManager>(TagList::sGetInstance());
+    automationManager_ = std::make_unique<AutomationManager>(appName, TagList::sGetInstance());
 
     // start http server on port
     setupHttpServer(5005);

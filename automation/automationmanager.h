@@ -16,7 +16,7 @@ class AutomationManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit AutomationManager(TagList &taglist, QObject *parent = nullptr);
+    explicit AutomationManager(const QString& appName, TagList &taglist, QObject *parent = nullptr);
 
     bool createTrigger(const QJsonObject &obj);
 
@@ -25,14 +25,20 @@ public:
 
     QJsonArray toJsonArray() const;
 
+    void saveTriggers() const;
+    void loadTriggers();
+
 signals:
     void triggerCreated(QString);
 
 private:
+    QString appName_;
     TagList &tagList_;
 
     std::vector<std::unique_ptr<TriggerBase>> triggers_;
     TriggerFactory triggerFactory_;
+
+    const QString triggerFile_ = {"triggers.json"};
 };
 
 #endif // AUTOMATIONMANAGER_H
