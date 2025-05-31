@@ -27,6 +27,11 @@ void TriggerOnTime::update(const QJsonObject &obj)
     }
 }
 
+TriggerType TriggerOnTime::type() const
+{
+    return TriggerType::TriggerOnTime;
+}
+
 void TriggerOnTime::tagSocketValueChanged(TagSocket *tagSocket)
 {
     if(tagSocket->getType() != TagSocket::eTime)

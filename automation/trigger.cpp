@@ -1,4 +1,6 @@
 #include "trigger.h"
+#include <tagsystem/taglist.h>
+#include <tagsystem/tagsocketlist.h>
 
 TriggerBase::TriggerBase(TagList &tagList, const QJsonObject &obj, QObject *parent) :
     tagList_(tagList),
@@ -10,9 +12,19 @@ TriggerBase::TriggerBase(TagList &tagList, const QJsonObject &obj, QObject *pare
 
     watchTag_ = tagList_.findByTagName(subsystem_, name_);
 
+    // if the tag does not exist, will most likely happen when server is started, and it is a tag
+    // created by another module. Then the tagsocket should be loaded at startup.
+    // create the tag if it does not exist.
+    watchTagSocket_ = TagSocketList::sGetInstance().findTagSocketByName("trigger", triggerName_);
+    if(!watchTag_ && watchTagSocket_)
+    {
+        watchTag_ = tagList.createTag(subsystem_, name_, Tag::typeMatchTagSocket(watchTagSocket_));
+    }
+
     if(watchTag())
     {
-        watchTagSocket_ = TagSocket::createTagSocket("trigger", triggerName(), TagSocket::typeMatchingTag(watchTag()));
+        if(!watchTagSocket_)
+            watchTagSocket_ = TagSocket::createTagSocket("trigger", triggerName(), TagSocket::typeMatchingTag(watchTag()));
         watchTagSocket_->hookupTag(watchTag());
 
         connect(watchTagSocket_, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &TriggerBase::onTagSocketValueChanged);
@@ -53,6 +65,7 @@ QJsonObject TriggerBase::toJson() const
     json.insert("subsystem", subsystem_);
     json.insert("name", name_);
     json.insert("triggername", triggerName_);
+    json.insert("type", triggerTypeToString(type()));
 
     return json;
 }
@@ -79,4 +92,19 @@ void TriggerBase::setDeactive()
 void TriggerBase::onTagSocketValueChanged(TagSocket *tagSocket)
 {
     tagSocketValueChanged(tagSocket);
+}
+
+QString TriggerBase::triggerTypeToString(TriggerType type) const
+{
+    switch (type) {
+    case TriggerType::TriggerEveryTimeAbove:
+        return "triggerAbove";
+    case TriggerType::TriggerEveryTimeBelow:
+        return "trigggerBelow";
+    case TriggerType::TriggerOnTime:
+        return "triggerOnTime";
+    default:
+        break;
+    }
+    return {};
 }

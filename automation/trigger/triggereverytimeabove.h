@@ -13,6 +13,8 @@ public:
     QJsonObject toJson() const override;
     void update(const QJsonObject &obj) override;
 
+    TriggerType type() const override;
+
 protected:
     void tagSocketValueChanged(TagSocket *tagSocket) override;
 

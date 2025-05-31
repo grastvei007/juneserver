@@ -21,6 +21,11 @@ void TriggerEveryTimeBelow::update(const QJsonObject &obj)
     }
 }
 
+TriggerType TriggerEveryTimeBelow::type() const
+{
+    return TriggerType::TriggerEveryTimeBelow;
+}
+
 void TriggerEveryTimeBelow::tagSocketValueChanged(TagSocket *tagSocket)
 {
     if(!isValidTagSocketType(tagSocket))

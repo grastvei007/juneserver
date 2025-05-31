@@ -8,7 +8,7 @@
 #include <tagsystem/taglist.h>
 #include <tagsystem/tagsocket.h>
 
-enum class RuleType
+enum class TriggerType
 {
     TriggerEveryTimeAbove,
     TriggerEveryTimeBelow,
@@ -30,6 +30,7 @@ public:
 
     virtual QJsonObject toJson() const;
     virtual void update(const QJsonObject &obj) = 0;
+    virtual TriggerType type() const = 0;
 
 protected:
     virtual void tagSocketValueChanged(TagSocket *tagSocket) = 0;
@@ -38,6 +39,7 @@ protected:
 
 private slots:
     void onTagSocketValueChanged(TagSocket *tagSocket);
+    QString triggerTypeToString(TriggerType type) const;
 
 private:
     bool isActive_ = false;
