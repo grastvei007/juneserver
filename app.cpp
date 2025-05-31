@@ -8,6 +8,7 @@
 #include <QSettings>
 
 #include <tagsystem/taglistview.h>
+#include <tagsystem/tagsocketlist.h>
 
 #include "logvaluedata.h"
 #include "logger.h"
@@ -23,6 +24,11 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
     mMainWindow(nullptr)
 #endif
 {
+    // Setup tagsocket list to load all tagsockets at startup.
+    TagSocketList::sGetInstance().setApplicationName("JuneServer");
+    TagSocketList::sGetInstance().loadBindingList();
+    TagSocketList::sGetInstance().setAutoSave();
+
     mWebSocketServer = new WebSocketServer(5000, "JuneServer");
     setApplicationName("June Server");
 
