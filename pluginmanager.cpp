@@ -6,6 +6,12 @@
 #include <QPluginLoader>
 #include <QProcessEnvironment>
 
+PluginManager::PluginManager(QHttpServer &httpserver) :
+    httpserver_(httpserver)
+{
+
+}
+
 bool PluginManager::loadPlugin(const QString &pluginName)
 {
     auto env = QProcessEnvironment::systemEnvironment();
@@ -25,6 +31,7 @@ bool PluginManager::loadPlugin(const QString &path, const QString &name)
 
     plugin->setTagSystem(&TagList::sGetInstance());
     plugin->initialize();
+    plugin->createApi(httpserver_);
     plugin->run(1000);
 
     plugins_.insert(name, plugin);
