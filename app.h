@@ -58,7 +58,7 @@ private:
     Tag *mSystemTimeTag = nullptr;
     QTimer *mSystemTimeTimer = nullptr;
 
-    PluginManager pluginManager_;
+    PluginManager pluginManager_{httpServer_};
     InfluxDB influxdb_ = InfluxDB(networkAcessManager_);
 
     std::unique_ptr<AutomationManager> automationManager_;

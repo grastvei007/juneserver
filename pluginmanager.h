@@ -7,11 +7,13 @@
 
 #include <plugins/pluginload/plugininterface.h>
 
+class QHttpServer;
+
 class PluginManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit PluginManager() = default;
+    explicit PluginManager(QHttpServer &httpserver);
 
     bool loadPlugin(const QString& pluginName);
     bool loadPlugin(const QString &path, const QString &name);
@@ -21,6 +23,7 @@ public:
     QList<QString> runningPlugins() const;
 private:
     QMap<QString, PluginInterface*> plugins_;
+    QHttpServer &httpserver_;
 };
 
 #endif // PLUGINMANAGER_H
