@@ -24,6 +24,7 @@ public:
 private:
     QMap<QString, PluginInterface*> plugins_;
     QHttpServer &httpserver_;
+    QString pluginPath_;
 };
 
 #endif // PLUGINMANAGER_H

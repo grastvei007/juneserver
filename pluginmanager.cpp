@@ -4,20 +4,18 @@
 #include <plugins/pluginload/pluginloader.h>
 #include <QDebug>
 #include <QPluginLoader>
-#include <QProcessEnvironment>
+#include <QSettings>
 
 PluginManager::PluginManager(QHttpServer &httpserver) :
     httpserver_(httpserver)
 {
-
+    QSettings settings("june", "server");
+    pluginPath_ = settings.value("global/plugindir").toString() + "/";
 }
 
 bool PluginManager::loadPlugin(const QString &pluginName)
 {
-    auto env = QProcessEnvironment::systemEnvironment();
-    QString pluginPath = env.value("DEV_LIBS") + "/";
-
-    return loadPlugin(pluginPath, pluginName);
+    return loadPlugin(pluginPath_, pluginName);
 }
 
 bool PluginManager::loadPlugin(const QString &path, const QString &name)
