@@ -12,6 +12,7 @@
 
 #include <tagsystem/tagsocket.h>
 #include <tagsystem/taglist.h>
+#include <tagsystem/util/json.h>
 
 #include <influxdb/influxdb.h>
 
@@ -78,6 +79,34 @@ void LogValueData::saveLogValueList()
 }
 
 void LogValueData::loadLogValueList()
+{
+    QString path = util::configDirPath(appName_);
+    path.append(QDir::separator());
+    path.append(configFile_);
+
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        qDebug() << __FUNCTION__ << "Error opening file, " << path;
+        // fall back to old style if file is not there.
+        deprecatedLoadLogValueList();
+        return;
+    }
+
+    auto data = file.readAll();
+    auto value = util::json::byteArrayToJsonObject(data);
+    if (!value.has_value())
+        return;
+    QJsonObject object = value.value();
+    const QJsonArray array = object.value("logvalues").toArray();
+    for (const auto &logValue : array)
+    {
+        if(logValue.isObject())
+            mLogValues.push_back(std::make_unique<LogValue>(logValue.toObject(), influxDb_));
+    }
+}
+
+void LogValueData::deprecatedLoadLogValueList()
 {
     qDebug() << __FUNCTION__;
 #ifdef __linux__
@@ -186,6 +215,20 @@ LogValue::LogValue(InfluxDB &influxDb, const QString &aTableName, const QString 
 {
     mLogValueTagSocket = TagSocket::createTagSocket(aTableName, aValueName, aType);
     mLogValueTagSocket->hookupTag(aTagSubSystem, aTagName);
+    connect(mLogValueTagSocket, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
+}
+
+LogValue::LogValue(const QJsonObject &json, InfluxDB &infuxDb)
+    : influxdb_(infuxDb)
+{
+    mTableName = json.value("tagsocket").toString();
+    mValueName = json.value("name").toString();
+    auto tagSocketType = TagSocket::typeFromString(json.value("type").toString());
+    mTagSubSystem = json.value("tagsubsystem").toString();
+    mTagName = json.value("tagname").toString();
+
+    mLogValueTagSocket = TagSocket::createTagSocket(mTableName, mValueName, tagSocketType);
+    mLogValueTagSocket->hookupTag(mTagSubSystem, mTagName);
     connect(mLogValueTagSocket, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
 }
 

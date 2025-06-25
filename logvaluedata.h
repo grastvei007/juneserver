@@ -34,6 +34,7 @@ signals:
     void logValueListLoaded();
 
 private:
+    void deprecatedLoadLogValueList();
     InfluxDB &influxDb_;
     const QString &appName_;
     const QString configFile_{"juneserverlogtags.json"};
@@ -51,6 +52,7 @@ class LogValue : public QObject
 public:
     LogValue(InfluxDB &infuxDb, const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &aTagName);
     LogValue(InfluxDB &infuxDb, const QString &aTableName, const QString &aValueName, TagSocket::Type aType, const QString &aTagSubSystem, const QString &aTagName);
+    LogValue(const QJsonObject &json, InfluxDB &infuxDb);
 
     const QString& getTableName() const;
     const QString& getValueNAme() const;
