@@ -32,7 +32,7 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
     mWebSocketServer = new WebSocketServer(5000, appName);
     setApplicationName(appName);
 
-    logValueData_ = new LogValueData(influxdb_);
+    logValueData_ = new LogValueData(appName, influxdb_);
 
     QCommandLineParser parser;
     parser.addHelpOption();

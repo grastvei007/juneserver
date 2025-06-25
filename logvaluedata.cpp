@@ -12,7 +12,8 @@
 
 #include <influxdb/influxdb.h>
 
-LogValueData::LogValueData(InfluxDB &influxDb, QObject *parent) : QObject(parent),
+LogValueData::LogValueData(const QString &appName, InfluxDB &influxDb, QObject *parent) : QObject(parent),
+    appName_(appName),
     influxDb_(influxDb)
 {
     loadLogValueList();

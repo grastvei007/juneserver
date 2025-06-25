@@ -14,7 +14,7 @@ class LogValueData : public QObject
 {
     Q_OBJECT
 public:
-    explicit LogValueData(InfluxDB &influxDb, QObject *parent = nullptr);
+    explicit LogValueData(const QString &appName, InfluxDB &influxDb, QObject *parent = nullptr);
 #ifdef __arm__
     ~LogValueData();
 #endif
@@ -34,6 +34,7 @@ signals:
 
 private:
     InfluxDB &influxDb_;
+    const QString &appName_;
 #ifdef __arm__
     std::vector<LogValue*> mLogValues;
 #else
