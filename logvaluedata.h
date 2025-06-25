@@ -9,6 +9,7 @@
 #include <influxdb/influxdb.h>
 
 class LogValue;
+class QJsonObject;
 
 class LogValueData : public QObject
 {
@@ -35,6 +36,7 @@ signals:
 private:
     InfluxDB &influxDb_;
     const QString &appName_;
+    const QString configFile_{"juneserverlogtags.json"};
 #ifdef __arm__
     std::vector<LogValue*> mLogValues;
 #else
@@ -55,6 +57,8 @@ public:
     const QString& getTagSubsystem() const;
     const QString& getTagName() const;
     QString getTagSocketTypeStr() const;
+
+    QJsonObject toJson() const;
 
 private slots:
     void onTagSocketValueChanged(TagSocket *aTagSocket);

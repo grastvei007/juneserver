@@ -6,11 +6,16 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QApplication>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QTextStream>
 
 #include <tagsystem/tagsocket.h>
 #include <tagsystem/taglist.h>
 
 #include <influxdb/influxdb.h>
+
+#include "util/util.h"
 
 LogValueData::LogValueData(const QString &appName, InfluxDB &influxDb, QObject *parent) : QObject(parent),
     appName_(appName),
@@ -43,18 +48,10 @@ void LogValueData::addLogValue(const QString &aTableName, const QString &aValueN
 
 void LogValueData::saveLogValueList()
 {
-#ifdef __linux__
-    QString path = QDir::homePath() + QDir::separator() + ".config" + QDir::separator() + "june";
-
-#else
-    QString path = qApp->applicationDirPath();
-#endif
-
-    QDir dir(path);
-    if(!dir.exists())
-        QDir().mkpath(path);
+    QString path = util::configDirPath(appName_);
     path.append(QDir::separator());
-    path.append("juneserverlogtags.xml");
+    path.append(configFile_);
+
     QFile file(path);
     if(!file.open(QIODevice::WriteOnly))
     {
@@ -62,27 +59,21 @@ void LogValueData::saveLogValueList()
         return;
     }
 
-    QXmlStreamWriter stream(&file);
-    stream.setAutoFormatting(true);
-    stream.writeStartDocument();
-    stream.writeStartElement("logvalues");
+    QJsonArray array;
 
     for(const auto& logValue : mLogValues)
     {
-        stream.writeStartElement("logvalue");
-        stream.writeAttribute("tagsocket", logValue->getTableName());
-        stream.writeAttribute("name", logValue->getValueNAme());
-        stream.writeAttribute("type", logValue->getTagSocketTypeStr());
-        stream.writeAttribute("tagsubsystem", logValue->getTagSubsystem());
-        stream.writeAttribute("tagname", logValue->getTagName());
-
-        stream.writeEndElement();
+        array.push_back(logValue->toJson());
     }
 
-    stream.writeEndElement();
-    stream.writeEndDocument();
+    QJsonObject obj;
+    obj.insert("logvalues", array);
+    QJsonDocument document(obj);
 
+    QTextStream stream(&file);
+    stream << document.toJson();
     file.close();
+
     emit logValueListSaved();
 }
 
@@ -223,6 +214,18 @@ QString LogValue::getTagSocketTypeStr() const
     if(mLogValueTagSocket)
         return mLogValueTagSocket->getTypeStr();
     return {};
+}
+
+QJsonObject LogValue::toJson() const
+{
+    QJsonObject object;
+    object.insert("tagsocket", mTableName);
+    object.insert("name", mValueName);
+    object.insert("type", getTagSocketTypeStr());
+    object.insert("tagsubsystem", mTagSubSystem);
+    object.insert("tagname", mTagName);
+
+    return object;
 }
 
 void LogValue::onTagSocketValueChanged(TagSocket *tagSocket)
