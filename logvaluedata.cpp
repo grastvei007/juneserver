@@ -26,9 +26,9 @@ LogValueData::LogValueData(const QString &appName, InfluxDB &influxDb, QObject *
 }
 
 
-void LogValueData::addLogValue(const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &TagName)
+void LogValueData::addLogValue(const QString &tableName, const QString &valueName, const QString &tagSubSystem, const QString &tagName)
 {
-    mLogValues.push_back(std::make_unique<LogValue>(influxDb_, aTableName, aValueName, aTagSubSystem, TagName));
+    logValues_.push_back(std::make_unique<LogValue>(influxDb_, tableName, valueName, tagSubSystem, tagName));
     saveLogValueList();
     emit logValueAdded();
 }
@@ -48,7 +48,7 @@ void LogValueData::saveLogValueList()
 
     QJsonArray array;
 
-    for(const auto& logValue : mLogValues)
+    for(const auto& logValue : logValues_)
     {
         array.push_back(logValue->toJson());
     }
@@ -88,7 +88,7 @@ void LogValueData::loadLogValueList()
     for (const auto &logValue : array)
     {
         if(logValue.isObject())
-            mLogValues.push_back(std::make_unique<LogValue>(logValue.toObject(), influxDb_));
+            logValues_.push_back(std::make_unique<LogValue>(logValue.toObject(), influxDb_));
     }
 }
 
@@ -128,7 +128,7 @@ void LogValueData::deprecatedLoadLogValueList()
                 QString tagsubsystem = stream.attributes().value("tagsubsystem").toString();
                 QString tagname = stream.attributes().value("tagname").toString();
 
-                mLogValues.push_back(std::make_unique<LogValue>(influxDb_, table, tagname, TagSocket::typeFromString(type), tagsubsystem, tagname));
+                logValues_.push_back(std::make_unique<LogValue>(influxDb_, table, tagname, TagSocket::typeFromString(type), tagsubsystem, tagname));
             }
         }
     }
@@ -142,106 +142,105 @@ void LogValueData::deprecatedLoadLogValueList()
     {
         emit logValueAdded();
     }
-    qDebug() << __FUNCTION__ << "N LogValues: " << mLogValues.size();
+    qDebug() << __FUNCTION__ << "N LogValues: " << logValues_.size();
 }
 
 
 int LogValueData::numberOfLogVAlues() const
 {
-    if(mLogValues.empty())
+    if(logValues_.empty())
         return 0;
-    return mLogValues.size();
+    return logValues_.size();
 }
 
 const LogValue *LogValueData::getLogValueByIndex(unsigned int aIndex) const
 {
-    if(aIndex > mLogValues.size())
+    if(aIndex > logValues_.size())
         return nullptr;
 
-    return mLogValues.at(aIndex).get();
+    return logValues_.at(aIndex).get();
 }
 
 
 
-LogValue::LogValue(InfluxDB &influxDb, const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &aTagName) :
+LogValue::LogValue(InfluxDB &influxDb, const QString &tableName, const QString &valueName, const QString &tagSubSystem, const QString &tagName) :
     influxdb_(influxDb),
-    mTableName(aTableName),
-    mValueName(aValueName),
-    mTagSubSystem(aTagSubSystem),
-    mTagName(aTagName),
-    mLogValueTagSocket(nullptr)
+    tableName_(tableName),
+    valueName_(valueName),
+    tagSubSystem_(tagSubSystem),
+    tagName_(tagName),
+    logValueTagSocket_(nullptr)
 {
-    QString tagname = QString("%1.%2").arg(aTagSubSystem).arg(aTagName);
-    Tag *tag = TagList::sGetInstance().findByTagName(tagname);
+    Tag *tag = TagList::sGetInstance().findByTagName(tagSubSystem, tagName);
 
-    mLogValueTagSocket = TagSocket::createTagSocket(aTableName, aValueName, TagSocket::typeMatchingTag(tag));
-    mLogValueTagSocket->hookupTag(tag);
+    logValueTagSocket_ = TagSocket::createTagSocket(tableName, valueName, TagSocket::typeMatchingTag(tag));
+    logValueTagSocket_->hookupTag(tag);
 
-    connect(mLogValueTagSocket, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
+    connect(logValueTagSocket_, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
 }
 
-LogValue::LogValue(InfluxDB &influxDb, const QString &aTableName, const QString &aValueName, TagSocket::Type aType, const QString &aTagSubSystem, const QString &aTagName) :
+LogValue::LogValue(InfluxDB &influxDb, const QString &tableName, const QString &valueName, TagSocket::Type type, const QString &tagSubSystem, const QString &tagName) :
     influxdb_(influxDb),
-    mTableName(aTableName),
-    mValueName(aValueName),
-    mTagSubSystem(aTagSubSystem),
-    mTagName(aTagName),
-    mLogValueTagSocket(nullptr)
+    tableName_(tableName),
+    valueName_(valueName),
+    tagSubSystem_(tagSubSystem),
+    tagName_(tagName),
+    logValueTagSocket_(nullptr)
 {
-    mLogValueTagSocket = TagSocket::createTagSocket(aTableName, aValueName, aType);
-    mLogValueTagSocket->hookupTag(aTagSubSystem, aTagName);
-    connect(mLogValueTagSocket, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
+    logValueTagSocket_ = TagSocket::createTagSocket(tableName, valueName, type);
+    logValueTagSocket_->hookupTag(tagSubSystem, tagName);
+    connect(logValueTagSocket_, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
 }
 
 LogValue::LogValue(const QJsonObject &json, InfluxDB &infuxDb)
     : influxdb_(infuxDb)
 {
-    mTableName = json.value("tagsocket").toString();
-    mValueName = json.value("name").toString();
+    tableName_ = json.value("tagsocket").toString();
+    valueName_ = json.value("name").toString();
     auto tagSocketType = TagSocket::typeFromString(json.value("type").toString());
-    mTagSubSystem = json.value("tagsubsystem").toString();
-    mTagName = json.value("tagname").toString();
+    tagSubSystem_ = json.value("tagsubsystem").toString();
+    tagName_ = json.value("tagname").toString();
 
-    mLogValueTagSocket = TagSocket::createTagSocket(mTableName, mValueName, tagSocketType);
-    mLogValueTagSocket->hookupTag(mTagSubSystem, mTagName);
-    connect(mLogValueTagSocket, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
+    logValueTagSocket_ = TagSocket::createTagSocket(tableName_, valueName_, tagSocketType);
+    logValueTagSocket_->hookupTag(tagSubSystem_, tagName_);
+    connect(logValueTagSocket_, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
 }
 
 const QString &LogValue::getTableName() const
 {
-    return mTableName;
+    return tableName_;
 }
 
 const QString &LogValue::getValueNAme() const
 {
-    return mValueName;
+    return valueName_;
 }
 
 const QString &LogValue::getTagSubsystem() const
 {
-    return mTagSubSystem;
+    return tagSubSystem_;
 }
 
 const QString &LogValue::getTagName() const
 {
-    return mTagName;
+    return tagName_;
 }
 
 QString LogValue::getTagSocketTypeStr() const
 {
-    if(mLogValueTagSocket)
-        return mLogValueTagSocket->getTypeStr();
+    if(logValueTagSocket_)
+        return logValueTagSocket_->getTypeStr();
     return {};
 }
 
 QJsonObject LogValue::toJson() const
 {
     QJsonObject object;
-    object.insert("tagsocket", mTableName);
-    object.insert("name", mValueName);
+    object.insert("tagsocket", tableName_);
+    object.insert("name", valueName_);
     object.insert("type", getTagSocketTypeStr());
-    object.insert("tagsubsystem", mTagSubSystem);
-    object.insert("tagname", mTagName);
+    object.insert("tagsubsystem", tagSubSystem_);
+    object.insert("tagname", tagName_);
 
     return object;
 }
