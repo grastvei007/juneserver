@@ -26,23 +26,9 @@ LogValueData::LogValueData(const QString &appName, InfluxDB &influxDb, QObject *
 }
 
 
-#ifdef __arm__
-LogValueData::~LogValueData()
-{
-    for(int i=0; i<mLogValues.size(); ++i)
-        delete mLogValues[i];
-
-    mLogValues.clear();
-}
-#endif
-
 void LogValueData::addLogValue(const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &TagName)
 {
-#ifdef __arm__
-    mLogValues.push_back(new LogValue(influxDb_, aTableName, aValueName, aTagSubSystem, TagName));
-#else
     mLogValues.push_back(std::make_unique<LogValue>(influxDb_, aTableName, aValueName, aTagSubSystem, TagName));
-#endif
     saveLogValueList();
     emit logValueAdded();
 }
@@ -109,11 +95,7 @@ void LogValueData::loadLogValueList()
 void LogValueData::deprecatedLoadLogValueList()
 {
     qDebug() << __FUNCTION__;
-#ifdef __linux__
     QString path = QDir::homePath() + QDir::separator() + ".config" + QDir::separator() + "june";
-#else
-    QString path = qApp->applicationDirPath();
-#endif
 
     QDir dir(path);
     if(!dir.exists())
@@ -146,11 +128,7 @@ void LogValueData::deprecatedLoadLogValueList()
                 QString tagsubsystem = stream.attributes().value("tagsubsystem").toString();
                 QString tagname = stream.attributes().value("tagname").toString();
 
-#ifdef __arm__
-                mLogValues.push_back(new LogValue(influxDb_, table, tagname, TagSocket::typeFromString(type), tagsubsystem, tagname));
-#else
                 mLogValues.push_back(std::make_unique<LogValue>(influxDb_, table, tagname, TagSocket::typeFromString(type), tagsubsystem, tagname));
-#endif
             }
         }
     }
@@ -179,11 +157,8 @@ const LogValue *LogValueData::getLogValueByIndex(unsigned int aIndex) const
 {
     if(aIndex > mLogValues.size())
         return nullptr;
-#ifdef __arm__
-    return mLogValues.at(aIndex);
-#else
+
     return mLogValues.at(aIndex).get();
-#endif
 }
 
 
