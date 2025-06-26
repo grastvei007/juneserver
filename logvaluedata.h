@@ -9,23 +9,21 @@
 #include <influxdb/influxdb.h>
 
 class LogValue;
+class QJsonObject;
 
 class LogValueData : public QObject
 {
     Q_OBJECT
 public:
-    explicit LogValueData(InfluxDB &influxDb, QObject *parent = nullptr);
-#ifdef __arm__
-    ~LogValueData();
-#endif
+    explicit LogValueData(const QString &appName, InfluxDB &influxDb, QObject *parent = nullptr);
 
-    void addLogValue(const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &TagName);
+    void addLogValue(const QString &tableName, const QString &valueName, const QString &tagSubSystem, const QString &tagName);
 
     void saveLogValueList();
     void loadLogValueList();
 
     int numberOfLogVAlues() const;
-    const LogValue* getLogValueByIndex(unsigned int aIndex) const;
+    const LogValue* getLogValueByIndex(unsigned int index) const;
 signals:
     void logValueAdded();
     void logValueRemoved();
@@ -33,12 +31,12 @@ signals:
     void logValueListLoaded();
 
 private:
+    void deprecatedLoadLogValueList();
     InfluxDB &influxDb_;
-#ifdef __arm__
-    std::vector<LogValue*> mLogValues;
-#else
-    std::vector<std::unique_ptr<LogValue>> mLogValues;
-#endif
+    const QString &appName_;
+    const QString configFile_{"juneserverlogtags.json"};
+
+    std::vector<std::unique_ptr<LogValue>> logValues_;
 };
 
 
@@ -46,8 +44,9 @@ class LogValue : public QObject
 {
     Q_OBJECT
 public:
-    LogValue(InfluxDB &infuxDb, const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &aTagName);
-    LogValue(InfluxDB &infuxDb, const QString &aTableName, const QString &aValueName, TagSocket::Type aType, const QString &aTagSubSystem, const QString &aTagName);
+    LogValue(InfluxDB &infuxDb, const QString &tableName, const QString &valueName, const QString &tagSubSystem, const QString &tagName);
+    LogValue(InfluxDB &infuxDb, const QString &tableName, const QString &valueName, TagSocket::Type type, const QString &tagSubSystem, const QString &tagName);
+    LogValue(const QJsonObject &json, InfluxDB &infuxDb);
 
     const QString& getTableName() const;
     const QString& getValueNAme() const;
@@ -55,17 +54,19 @@ public:
     const QString& getTagName() const;
     QString getTagSocketTypeStr() const;
 
+    QJsonObject toJson() const;
+
 private slots:
-    void onTagSocketValueChanged(TagSocket *aTagSocket);
+    void onTagSocketValueChanged(TagSocket *tagSocket);
 
 private:
     InfluxDB &influxdb_;
 
-    QString mTableName;
-    QString mValueName;
-    QString mTagSubSystem;
-    QString mTagName;
-    TagSocket* mLogValueTagSocket;
+    QString tableName_;
+    QString valueName_;
+    QString tagSubSystem_;
+    QString tagName_;
+    TagSocket* logValueTagSocket_;
 };
 
 #endif // LOGVALUEDATA_H

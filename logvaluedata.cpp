@@ -6,54 +6,39 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QApplication>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QTextStream>
 
 #include <tagsystem/tagsocket.h>
 #include <tagsystem/taglist.h>
+#include <tagsystem/util/json.h>
 
 #include <influxdb/influxdb.h>
 
-LogValueData::LogValueData(InfluxDB &influxDb, QObject *parent) : QObject(parent),
+#include "util/util.h"
+
+LogValueData::LogValueData(const QString &appName, InfluxDB &influxDb, QObject *parent) : QObject(parent),
+    appName_(appName),
     influxDb_(influxDb)
 {
     loadLogValueList();
 }
 
 
-#ifdef __arm__
-LogValueData::~LogValueData()
+void LogValueData::addLogValue(const QString &tableName, const QString &valueName, const QString &tagSubSystem, const QString &tagName)
 {
-    for(int i=0; i<mLogValues.size(); ++i)
-        delete mLogValues[i];
-
-    mLogValues.clear();
-}
-#endif
-
-void LogValueData::addLogValue(const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &TagName)
-{
-#ifdef __arm__
-    mLogValues.push_back(new LogValue(influxDb_, aTableName, aValueName, aTagSubSystem, TagName));
-#else
-    mLogValues.push_back(std::make_unique<LogValue>(influxDb_, aTableName, aValueName, aTagSubSystem, TagName));
-#endif
+    logValues_.push_back(std::make_unique<LogValue>(influxDb_, tableName, valueName, tagSubSystem, tagName));
     saveLogValueList();
     emit logValueAdded();
 }
 
 void LogValueData::saveLogValueList()
 {
-#ifdef __linux__
-    QString path = QDir::homePath() + QDir::separator() + ".config" + QDir::separator() + "june";
-
-#else
-    QString path = qApp->applicationDirPath();
-#endif
-
-    QDir dir(path);
-    if(!dir.exists())
-        QDir().mkpath(path);
+    QString path = util::configDirPath(appName_);
     path.append(QDir::separator());
-    path.append("juneserverlogtags.xml");
+    path.append(configFile_);
+
     QFile file(path);
     if(!file.open(QIODevice::WriteOnly))
     {
@@ -61,38 +46,64 @@ void LogValueData::saveLogValueList()
         return;
     }
 
-    QXmlStreamWriter stream(&file);
-    stream.setAutoFormatting(true);
-    stream.writeStartDocument();
-    stream.writeStartElement("logvalues");
+    QJsonArray array;
 
-    for(const auto& logValue : mLogValues)
+    for(const auto& logValue : logValues_)
     {
-        stream.writeStartElement("logvalue");
-        stream.writeAttribute("tagsocket", logValue->getTableName());
-        stream.writeAttribute("name", logValue->getValueNAme());
-        stream.writeAttribute("type", logValue->getTagSocketTypeStr());
-        stream.writeAttribute("tagsubsystem", logValue->getTagSubsystem());
-        stream.writeAttribute("tagname", logValue->getTagName());
-
-        stream.writeEndElement();
+        array.push_back(logValue->toJson());
     }
 
-    stream.writeEndElement();
-    stream.writeEndDocument();
+    QJsonObject obj;
+    obj.insert("logvalues", array);
+    QJsonDocument document(obj);
 
+    QTextStream stream(&file);
+    stream << document.toJson();
     file.close();
+
     emit logValueListSaved();
 }
 
 void LogValueData::loadLogValueList()
 {
+    QString path = util::configDirPath(appName_);
+    path.append(QDir::separator());
+    path.append(configFile_);
+
+    QFile file(path);
+
+    if (!file.exists())
+    {
+        // fall back to old style if file is not there.
+        deprecatedLoadLogValueList();
+        return;
+    }
+
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        qDebug() << __FUNCTION__ << "Error opening file, " << path;
+        return;
+    }
+
+    auto data = file.readAll();
+    auto value = util::json::byteArrayToJsonObject(data);
+    if (!value.has_value())
+        return;
+    QJsonObject object = value.value();
+    const QJsonArray array = object.value("logvalues").toArray();
+    for (const auto &logValue : array)
+    {
+        if(logValue.isObject())
+            logValues_.push_back(std::make_unique<LogValue>(logValue.toObject(), influxDb_));
+    }
+
+    qDebug() << __FUNCTION__ << "N LogValues: " << logValues_.size();
+}
+
+void LogValueData::deprecatedLoadLogValueList()
+{
     qDebug() << __FUNCTION__;
-#ifdef __linux__
     QString path = QDir::homePath() + QDir::separator() + ".config" + QDir::separator() + "june";
-#else
-    QString path = qApp->applicationDirPath();
-#endif
 
     QDir dir(path);
     if(!dir.exists())
@@ -125,11 +136,7 @@ void LogValueData::loadLogValueList()
                 QString tagsubsystem = stream.attributes().value("tagsubsystem").toString();
                 QString tagname = stream.attributes().value("tagname").toString();
 
-#ifdef __arm__
-                mLogValues.push_back(new LogValue(influxDb_, table, tagname, TagSocket::typeFromString(type), tagsubsystem, tagname));
-#else
-                mLogValues.push_back(std::make_unique<LogValue>(influxDb_, table, tagname, TagSocket::typeFromString(type), tagsubsystem, tagname));
-#endif
+                logValues_.push_back(std::make_unique<LogValue>(influxDb_, table, tagname, TagSocket::typeFromString(type), tagsubsystem, tagname));
             }
         }
     }
@@ -143,85 +150,111 @@ void LogValueData::loadLogValueList()
     {
         emit logValueAdded();
     }
-    qDebug() << __FUNCTION__ << "N LogValues: " << mLogValues.size();
+    qDebug() << __FUNCTION__ << "N LogValues: " << logValues_.size();
+    // if there has been a fallback to this, save the current loaded values
+    // in nex json format, then this function can be removed later.
+
+    saveLogValueList();
 }
 
 
 int LogValueData::numberOfLogVAlues() const
 {
-    if(mLogValues.empty())
+    if(logValues_.empty())
         return 0;
-    return mLogValues.size();
+    return logValues_.size();
 }
 
 const LogValue *LogValueData::getLogValueByIndex(unsigned int aIndex) const
 {
-    if(aIndex > mLogValues.size())
+    if(aIndex > logValues_.size())
         return nullptr;
-#ifdef __arm__
-    return mLogValues.at(aIndex);
-#else
-    return mLogValues.at(aIndex).get();
-#endif
+
+    return logValues_.at(aIndex).get();
 }
 
 
 
-LogValue::LogValue(InfluxDB &influxDb, const QString &aTableName, const QString &aValueName, const QString &aTagSubSystem, const QString &aTagName) :
+LogValue::LogValue(InfluxDB &influxDb, const QString &tableName, const QString &valueName, const QString &tagSubSystem, const QString &tagName) :
     influxdb_(influxDb),
-    mTableName(aTableName),
-    mValueName(aValueName),
-    mTagSubSystem(aTagSubSystem),
-    mTagName(aTagName),
-    mLogValueTagSocket(nullptr)
+    tableName_(tableName),
+    valueName_(valueName),
+    tagSubSystem_(tagSubSystem),
+    tagName_(tagName),
+    logValueTagSocket_(nullptr)
 {
-    QString tagname = QString("%1.%2").arg(aTagSubSystem).arg(aTagName);
-    Tag *tag = TagList::sGetInstance().findByTagName(tagname);
+    Tag *tag = TagList::sGetInstance().findByTagName(tagSubSystem, tagName);
 
-    mLogValueTagSocket = TagSocket::createTagSocket(aTableName, aValueName, TagSocket::typeMatchingTag(tag));
-    mLogValueTagSocket->hookupTag(tag);
+    logValueTagSocket_ = TagSocket::createTagSocket(tableName, valueName, TagSocket::typeMatchingTag(tag));
+    logValueTagSocket_->hookupTag(tag);
 
-    connect(mLogValueTagSocket, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
+    connect(logValueTagSocket_, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
 }
 
-LogValue::LogValue(InfluxDB &influxDb, const QString &aTableName, const QString &aValueName, TagSocket::Type aType, const QString &aTagSubSystem, const QString &aTagName) :
+LogValue::LogValue(InfluxDB &influxDb, const QString &tableName, const QString &valueName, TagSocket::Type type, const QString &tagSubSystem, const QString &tagName) :
     influxdb_(influxDb),
-    mTableName(aTableName),
-    mValueName(aValueName),
-    mTagSubSystem(aTagSubSystem),
-    mTagName(aTagName),
-    mLogValueTagSocket(nullptr)
+    tableName_(tableName),
+    valueName_(valueName),
+    tagSubSystem_(tagSubSystem),
+    tagName_(tagName),
+    logValueTagSocket_(nullptr)
 {
-    mLogValueTagSocket = TagSocket::createTagSocket(aTableName, aValueName, aType);
-    mLogValueTagSocket->hookupTag(aTagSubSystem, aTagName);
-    connect(mLogValueTagSocket, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
+    logValueTagSocket_ = TagSocket::createTagSocket(tableName, valueName, type);
+    logValueTagSocket_->hookupTag(tagSubSystem, tagName);
+    connect(logValueTagSocket_, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
+}
+
+LogValue::LogValue(const QJsonObject &json, InfluxDB &infuxDb)
+    : influxdb_(infuxDb)
+{
+    tableName_ = json.value("tagsocket").toString();
+    valueName_ = json.value("name").toString();
+    auto tagSocketType = TagSocket::typeFromString(json.value("type").toString());
+    tagSubSystem_ = json.value("tagsubsystem").toString();
+    tagName_ = json.value("tagname").toString();
+
+    logValueTagSocket_ = TagSocket::createTagSocket(tableName_, valueName_, tagSocketType);
+    logValueTagSocket_->hookupTag(tagSubSystem_, tagName_);
+    connect(logValueTagSocket_, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
 }
 
 const QString &LogValue::getTableName() const
 {
-    return mTableName;
+    return tableName_;
 }
 
 const QString &LogValue::getValueNAme() const
 {
-    return mValueName;
+    return valueName_;
 }
 
 const QString &LogValue::getTagSubsystem() const
 {
-    return mTagSubSystem;
+    return tagSubSystem_;
 }
 
 const QString &LogValue::getTagName() const
 {
-    return mTagName;
+    return tagName_;
 }
 
 QString LogValue::getTagSocketTypeStr() const
 {
-    if(mLogValueTagSocket)
-        return mLogValueTagSocket->getTypeStr();
+    if(logValueTagSocket_)
+        return logValueTagSocket_->getTypeStr();
     return {};
+}
+
+QJsonObject LogValue::toJson() const
+{
+    QJsonObject object;
+    object.insert("tagsocket", tableName_);
+    object.insert("name", valueName_);
+    object.insert("type", getTagSocketTypeStr());
+    object.insert("tagsubsystem", tagSubSystem_);
+    object.insert("tagname", tagName_);
+
+    return object;
 }
 
 void LogValue::onTagSocketValueChanged(TagSocket *tagSocket)
