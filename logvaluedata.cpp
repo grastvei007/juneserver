@@ -71,11 +71,17 @@ void LogValueData::loadLogValueList()
     path.append(configFile_);
 
     QFile file(path);
-    if (!file.open(QIODevice::WriteOnly))
+
+    if (!file.exists())
     {
-        qDebug() << __FUNCTION__ << "Error opening file, " << path;
         // fall back to old style if file is not there.
         deprecatedLoadLogValueList();
+        return;
+    }
+
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        qDebug() << __FUNCTION__ << "Error opening file, " << path;
         return;
     }
 
