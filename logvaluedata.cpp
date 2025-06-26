@@ -90,6 +90,8 @@ void LogValueData::loadLogValueList()
         if(logValue.isObject())
             logValues_.push_back(std::make_unique<LogValue>(logValue.toObject(), influxDb_));
     }
+
+    qDebug() << __FUNCTION__ << "N LogValues: " << logValues_.size();
 }
 
 void LogValueData::deprecatedLoadLogValueList()
@@ -143,6 +145,10 @@ void LogValueData::deprecatedLoadLogValueList()
         emit logValueAdded();
     }
     qDebug() << __FUNCTION__ << "N LogValues: " << logValues_.size();
+    // if there has been a fallback to this, save the current loaded values
+    // in nex json format, then this function can be removed later.
+
+    saveLogValueList();
 }
 
 
