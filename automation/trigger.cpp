@@ -45,6 +45,11 @@ bool TriggerBase::hasWatchTag() const
     return watchTag_ != nullptr;
 }
 
+bool TriggerBase::shouldSave() const
+{
+    return true;
+}
+
 Tag *TriggerBase::watchTag() const
 {
     return watchTag_;
@@ -91,6 +96,11 @@ void TriggerBase::setDeactive()
     }
 }
 
+bool TriggerBase::validateWatchTacksoket(TagSocket::Type type) const
+{
+    return watchTagSocket_->getType() == type;
+}
+
 void TriggerBase::onTagSocketValueChanged(TagSocket *tagSocket)
 {
     tagSocketValueChanged(tagSocket);
@@ -105,6 +115,8 @@ QString TriggerBase::triggerTypeToString(TriggerType type) const
         return "trigggerBelow";
     case TriggerType::TriggerOnTime:
         return "triggerOnTime";
+    case TriggerType::ScheduleOnDuration:
+        return "scheduleOnDuration";
     default:
         break;
     }

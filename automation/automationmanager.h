@@ -31,6 +31,9 @@ public:
 signals:
     void triggerCreated(QString);
 
+private slots:
+    void onTriggerAboutToBeDestroyd(const QString &triggerName);
+
 private:
     QString appName_;
     TagList &tagList_;

@@ -9,6 +9,7 @@
 #include "trigger/triggereverytimeabove.h"
 #include "trigger/triggereverytimebelow.h"
 #include "trigger/triggerontime.h"
+#include "trigger/triggerschedule.h"
 
 #include "util/util.h"
 
@@ -20,6 +21,7 @@ AutomationManager::AutomationManager(const QString &appName, TagList &taglist, Q
     triggerFactory_.addFactory<TriggerEveryTimeAbove>("triggerAbove");
     triggerFactory_.addFactory<TriggerEveryTimeBelow>("trigggerBelow");
     triggerFactory_.addFactory<TriggerOnTime>("triggerOnTime");
+    triggerFactory_.addFactory<TriggerSchedule>("scheduleOnDuration");
 
     loadTriggers();
 }
@@ -36,8 +38,11 @@ bool AutomationManager::createTrigger(const QJsonObject &obj)
     {
         QString name = trigger->triggerName();
         triggers_.emplace_back(std::unique_ptr<TriggerBase>(trigger));
+        connect(triggers_.back().get(),
+                &TriggerBase::aboutToBeDestroyd,
+                this,
+                &AutomationManager::onTriggerAboutToBeDestroyd);
         emit triggerCreated(name);
-
         saveTriggers();
         return true;
     }
@@ -119,4 +124,9 @@ void AutomationManager::loadTriggers()
         qDebug() << "Triggers loaded: " << triggers.size();
     }
     file.close();
+}
+
+void AutomationManager::onTriggerAboutToBeDestroyd(const QString &triggerName)
+{
+    removeTrigger(triggerName);
 }
