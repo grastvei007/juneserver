@@ -60,10 +60,14 @@ void AutomationManager::updateTrigger(const QJsonObject &obj)
     }
 }
 
-QJsonArray AutomationManager::toJsonArray() const
+QJsonArray AutomationManager::toJsonArray(bool allTriggers) const
 {
     QJsonArray array;
-    for(auto &trigger : triggers_)
+    for (auto &trigger : triggers_ | std::views::filter([&allTriggers](auto &trigger) {
+         if (allTriggers)
+             return true;
+         return trigger->shouldSave();
+     }))
     {
         array.push_back(trigger->toJson());
     }
@@ -84,7 +88,7 @@ void AutomationManager::saveTriggers() const
     }
 
     QJsonObject obj;
-    obj.insert("triggers", toJsonArray());
+    obj.insert("triggers", toJsonArray(false));
     QJsonDocument document(obj);
 
     QTextStream stream(&file);

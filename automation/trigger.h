@@ -23,6 +23,7 @@ public:
 
     bool isActive() const;
     bool hasWatchTag() const;
+    virtual bool shouldSave() const; // default is true
 
     Tag* watchTag() const;
     const QString& subsystem() const;

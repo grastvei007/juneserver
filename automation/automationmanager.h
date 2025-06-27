@@ -23,7 +23,7 @@ public:
     void removeTrigger(const QString &triggerName);
     void updateTrigger(const QJsonObject &obj);
 
-    QJsonArray toJsonArray() const;
+    QJsonArray toJsonArray(bool allTriggers = true) const;
 
     void saveTriggers() const;
     void loadTriggers();
