@@ -9,6 +9,7 @@ public:
     TriggerSchedule(TagList &tagList, const QJsonObject &obj);
 
     bool shouldSave() const final;
+    QJsonObject toJson() const final;
 
     void update(const QJsonObject &obj) final;
     TriggerType type() const final;

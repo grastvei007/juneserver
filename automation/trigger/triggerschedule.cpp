@@ -1,5 +1,7 @@
 #include "triggerschedule.h"
 
+#include <QJsonObject>
+
 TriggerSchedule::TriggerSchedule(TagList &tagList, const QJsonObject &obj)
     : TriggerBase(tagList, obj)
 {
@@ -22,6 +24,14 @@ TriggerSchedule::TriggerSchedule(TagList &tagList, const QJsonObject &obj)
 bool TriggerSchedule::shouldSave() const
 {
     return false;
+}
+
+QJsonObject TriggerSchedule::toJson() const
+{
+    auto json = TriggerBase::toJson();
+    json.insert("duration", duration_);
+    json.insert("starttime", startTime_);
+    return json;
 }
 
 void TriggerSchedule::update(const QJsonObject &obj)
