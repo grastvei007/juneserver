@@ -17,6 +17,7 @@ private:
     QHttpServerResponse triggerList(const QHttpServerRequest &request);
     QHttpServerResponse updateTrigger(const QHttpServerRequest &request);
     QHttpServerResponse removeTrigger(const QHttpServerRequest &request);
+    QHttpServerResponse updloadTriggerFile(const QHttpServerRequest &request);
 
     QHttpServer &httpServer_;
     AutomationManager &automationManager_;

@@ -23,13 +23,16 @@ public:
     void removeTrigger(const QString &triggerName);
     void updateTrigger(const QJsonObject &obj);
 
-    QJsonArray toJsonArray() const;
+    QJsonArray toJsonArray(bool allTriggers = true) const;
 
     void saveTriggers() const;
     void loadTriggers();
 
 signals:
     void triggerCreated(QString);
+
+private slots:
+    void onTriggerAboutToBeDestroyd(const QString &triggerName);
 
 private:
     QString appName_;

@@ -30,6 +30,8 @@ TriggerBase::TriggerBase(TagList &tagList, const QJsonObject &obj, QObject *pare
         connect(watchTagSocket_, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &TriggerBase::onTagSocketValueChanged);
 
         triggerTag_ = tagList_.createTag("trigger", triggerName_, Tag::eBool, isActive_, "Target trigger");
+        if (triggerTag_->getBoolValue() != isActive_)
+            triggerTag_->setValue(isActive_);
     }
 }
 
@@ -41,6 +43,11 @@ bool TriggerBase::isActive() const
 bool TriggerBase::hasWatchTag() const
 {
     return watchTag_ != nullptr;
+}
+
+bool TriggerBase::shouldSave() const
+{
+    return true;
 }
 
 Tag *TriggerBase::watchTag() const
@@ -89,6 +96,11 @@ void TriggerBase::setDeactive()
     }
 }
 
+bool TriggerBase::validateWatchTacksoket(TagSocket::Type type) const
+{
+    return watchTagSocket_->getType() == type;
+}
+
 void TriggerBase::onTagSocketValueChanged(TagSocket *tagSocket)
 {
     tagSocketValueChanged(tagSocket);
@@ -103,6 +115,8 @@ QString TriggerBase::triggerTypeToString(TriggerType type) const
         return "trigggerBelow";
     case TriggerType::TriggerOnTime:
         return "triggerOnTime";
+    case TriggerType::ScheduleOnDuration:
+        return "scheduleOnDuration";
     default:
         break;
     }

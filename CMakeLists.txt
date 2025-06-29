@@ -73,7 +73,10 @@ qt_add_executable(juneserver
     automation/trigger/triggereverytimebelow.cpp
     automation/trigger/triggerontime.h
     automation/trigger/triggerontime.cpp
-    api/triggerapi.h api/triggerapi.cpp
+    automation/trigger/triggerschedule.h
+    automation/trigger/triggerschedule.cpp
+    api/triggerapi.h
+    api/triggerapi.cpp
 
     util/util.h
     util/util.cpp

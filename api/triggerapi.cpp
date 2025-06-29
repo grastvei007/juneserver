@@ -5,6 +5,7 @@
 #include <QHttpServer>
 #include <QHttpServerResponse>
 #include <QJsonObject>
+#include <QJsonArray>
 
 #include <tagsystem/util/json.h>
 
@@ -26,6 +27,12 @@ TriggerApi::TriggerApi(QHttpServer &httpServer, AutomationManager &automationMan
 
     httpServer_.route("/api/trigger/update", QHttpServerRequest::Method::Post,
             [this](const QHttpServerRequest &request){return updateTrigger(request);});
+
+    httpServer_.route("/api/trigger/upload",
+                      QHttpServerRequest::Method::Post,
+                      [this](const QHttpServerRequest &request) {
+                          return updloadTriggerFile(request);
+                      });
 }
 
 // comman values
@@ -99,4 +106,21 @@ QHttpServerResponse TriggerApi::removeTrigger(const QHttpServerRequest &request)
         return QHttpServerResponse(QHttpServerResponder::StatusCode::Accepted);
     }
     return QHttpServerResponse(QHttpServerResponder::StatusCode::BadRequest);
+}
+
+QHttpServerResponse TriggerApi::updloadTriggerFile(const QHttpServerRequest &request)
+{
+    const auto jsonArray = util::json::byteArrayToJsonArray(request.body());
+    if (!jsonArray.has_value())
+        return QHttpServerResponse(QHttpServerResponder::StatusCode::BadRequest);
+
+    const QJsonArray array = jsonArray.value();
+
+    for (const auto &trigger : array)
+    {
+        const QJsonObject &obj = trigger.toObject();
+        automationManager_.createTrigger(obj);
+    }
+
+    return QHttpServerResponse(automationManager_.toJsonArray());
 }

@@ -12,7 +12,9 @@ enum class TriggerType
 {
     TriggerEveryTimeAbove,
     TriggerEveryTimeBelow,
-    TriggerOnTime
+    TriggerOnTime,
+    // set a tag value for a duration.
+    ScheduleOnDuration
 };
 
 class TriggerBase : public QObject
@@ -23,6 +25,7 @@ public:
 
     bool isActive() const;
     bool hasWatchTag() const;
+    virtual bool shouldSave() const; // default is true
 
     Tag* watchTag() const;
     const QString& subsystem() const;
@@ -32,16 +35,22 @@ public:
     virtual void update(const QJsonObject &obj) = 0;
     virtual TriggerType type() const = 0;
 
+signals:
+    void aboutToBeDestroyd(QString);
+
 protected:
     virtual void tagSocketValueChanged(TagSocket *tagSocket) = 0;
     void setActive();
     void setDeactive();
 
+    bool validateWatchTacksoket(TagSocket::Type type) const;
+
 private slots:
     void onTagSocketValueChanged(TagSocket *tagSocket);
-    QString triggerTypeToString(TriggerType type) const;
 
 private:
+    QString triggerTypeToString(TriggerType type) const;
+
     bool isActive_ = false;
     Tag *watchTag_ = nullptr;
     Tag *triggerTag_ = nullptr;
