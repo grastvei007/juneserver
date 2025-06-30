@@ -22,6 +22,8 @@ private:
     double getValueAsDouble(TagSocket *tagSocket);
 
     double triggerValue_ = 0.;
+    qint64 triggerTime_ = 0;
+    qint64 duration_ = 0;
 };
 
 #endif // TRIGGEREVERYTIMEBELOW_H
