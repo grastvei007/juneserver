@@ -10,6 +10,7 @@ QJsonObject TriggerEveryTimeBelow::toJson() const
 {
     auto json = TriggerBase::toJson();
     json.insert("triggervalue", triggerValue_);
+    json.insert("duration", duration_);
     return json;
 }
 
@@ -18,6 +19,10 @@ void TriggerEveryTimeBelow::update(const QJsonObject &obj)
     if(obj.contains("triggervalue"))
     {
         triggerValue_ = obj.value("triggervalue").toDouble();
+    }
+    if (obj.contains("duration"))
+    {
+        duration_ = obj.value("duration").toInt();
     }
 }
 
@@ -35,15 +40,20 @@ void TriggerEveryTimeBelow::tagSocketValueChanged(TagSocket *tagSocket)
 
     // set tag value true/false based on rule for this trigger type
 
+    auto currentTime = QDateTime::currentSecsSinceEpoch();
+
+    if( isActive() && currentTime > (triggerTime_ + duration_))
+    {
+        setDeactive();
+    }
+
     if(tagSocketValue < triggerValue_)
     {
         if(!isActive())
+        {
+            triggerTime_ = currentTime;
             setActive();
-    }
-    else
-    {
-        if(isActive())
-            setDeactive();
+        }
     }
 }
 
