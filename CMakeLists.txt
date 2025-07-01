@@ -21,44 +21,30 @@ find_package(Qt6 COMPONENTS Network REQUIRED)
 
 qt_add_executable(juneserver
     main.cpp
-    addlogvaluedialog.cpp
     app.cpp
     logvaluedata.cpp
-    logvaluemodel.cpp
-    logvalueview.cpp
     pluginmanager.cpp
     websocketserver.cpp
-    mainwindow.cpp
-    gui/menubar.cpp
-    gui/clientlistwidget.cpp
     client.cpp
     clientinformation.cpp
     logger.cpp
-    gui/loggerwidget.cpp
-
-    addlogvaluedialog.h
     app.h
     logvaluedata.h
-    logvaluemodel.h
-    logvalueview.h
+
     pluginmanager.h
     websocketserver.h
-    mainwindow.h
-    gui/menubar.h
-    gui/clientlistwidget.h
+
     client.h
     clientinformation.h
     logger.h
-    gui/loggerwidget.h
-
-    addlogvaluedialog.ui
-    logvalueview.ui
-    mainwindow.ui
 
     api/pluginapi.h
     api/pluginapi.cpp
     api/tagapi.h
     api/tagapi.cpp
+    api/triggerapi.h
+    api/triggerapi.cpp
+
 
     automation/automationmanager.h
     automation/automationmanager.cpp
@@ -73,11 +59,6 @@ qt_add_executable(juneserver
     automation/trigger/triggerontime.cpp
     automation/trigger/triggerschedule.h
     automation/trigger/triggerschedule.cpp
-    api/triggerapi.h
-    api/triggerapi.cpp
-
-
-
 )
 
 qt_add_resources(juneserver resources

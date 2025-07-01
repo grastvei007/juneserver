@@ -3,14 +3,12 @@
 
 #include <QCoreApplication>
 #include <memory>
-#include <map>
 
 #include <tagsystem/taglist.h>
 #include <tagsystem/tag.h>
 #include <influxdb/influxdb.h>
 
 #include "websocketserver.h"
-#include "mainwindow.h"
 #include "automation/automationmanager.h"
 
 #include "pluginmanager.h"
