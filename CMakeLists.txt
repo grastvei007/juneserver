@@ -78,8 +78,8 @@ qt_add_executable(juneserver
     api/triggerapi.h
     api/triggerapi.cpp
 
-    util/util.h
-    util/util.cpp
+
+
 )
 
 qt_add_resources(juneserver resources

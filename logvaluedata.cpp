@@ -16,7 +16,7 @@
 
 #include <influxdb/influxdb.h>
 
-#include "util/util.h"
+#include <tagsystem/util/path.h>
 
 LogValueData::LogValueData(const QString &appName, InfluxDB &influxDb, QObject *parent) : QObject(parent),
     appName_(appName),
@@ -35,7 +35,7 @@ void LogValueData::addLogValue(const QString &tableName, const QString &valueNam
 
 void LogValueData::saveLogValueList()
 {
-    QString path = util::configDirPath(appName_);
+    QString path = util::path::configDir(appName_);
     path.append(QDir::separator());
     path.append(configFile_);
 
@@ -66,7 +66,7 @@ void LogValueData::saveLogValueList()
 
 void LogValueData::loadLogValueList()
 {
-    QString path = util::configDirPath(appName_);
+    QString path = util::path::configDir(appName_);
     path.append(QDir::separator());
     path.append(configFile_);
 
