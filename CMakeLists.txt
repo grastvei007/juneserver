@@ -8,8 +8,6 @@ set_target_properties(PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
 include_directories($ENV{JUNE_ROOT})
 link_directories(${CMAKE_BINARY_DIR}/$<CONFIG>/lib)
 
-add_definitions(-DNO_GUI)
-
 set(CMAKE_INCLUDE_CURRENT_DIR "YES")
 set(CMAKE_AUTOMOC "YES")
 set(CMAKE_AUTOUIC "YES")
@@ -23,44 +21,28 @@ find_package(Qt6 COMPONENTS Network REQUIRED)
 
 qt_add_executable(juneserver
     main.cpp
-    addlogvaluedialog.cpp
-    app.cpp
-    logvaluedata.cpp
-    logvaluemodel.cpp
-    logvalueview.cpp
-    pluginmanager.cpp
-    websocketserver.cpp
-    mainwindow.cpp
-    gui/menubar.cpp
-    gui/clientlistwidget.cpp
-    client.cpp
-    clientinformation.cpp
-    logger.cpp
-    gui/loggerwidget.cpp
 
-    addlogvaluedialog.h
     app.h
-    logvaluedata.h
-    logvaluemodel.h
-    logvalueview.h
-    pluginmanager.h
-    websocketserver.h
-    mainwindow.h
-    gui/menubar.h
-    gui/clientlistwidget.h
+    app.cpp
     client.h
+    client.cpp
     clientinformation.h
+    clientinformation.cpp
     logger.h
-    gui/loggerwidget.h
-
-    addlogvaluedialog.ui
-    logvalueview.ui
-    mainwindow.ui
+    logger.cpp
+    logvaluedata.h
+    logvaluedata.cpp
+    pluginmanager.h
+    pluginmanager.cpp
+    websocketserver.h
+    websocketserver.cpp
 
     api/pluginapi.h
     api/pluginapi.cpp
     api/tagapi.h
     api/tagapi.cpp
+    api/triggerapi.h
+    api/triggerapi.cpp
 
     automation/automationmanager.h
     automation/automationmanager.cpp
@@ -75,16 +57,6 @@ qt_add_executable(juneserver
     automation/trigger/triggerontime.cpp
     automation/trigger/triggerschedule.h
     automation/trigger/triggerschedule.cpp
-    api/triggerapi.h
-    api/triggerapi.cpp
-
-
-
-)
-
-qt_add_resources(juneserver resources
-    PREFIX "/resources"
-    FILES resources/icon.png
 )
 
 target_link_libraries(juneserver PRIVATE Qt6::WebSockets
