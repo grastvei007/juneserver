@@ -6,12 +6,13 @@
 
 #include <ranges>
 
+#include <tagsystem/util/path.h>
+
 #include "trigger/triggereverytimeabove.h"
 #include "trigger/triggereverytimebelow.h"
 #include "trigger/triggerontime.h"
 #include "trigger/triggerschedule.h"
 
-#include "util/util.h"
 
 AutomationManager::AutomationManager(const QString &appName, TagList &taglist, QObject *parent)
     : appName_(appName)
@@ -84,7 +85,7 @@ void AutomationManager::saveTriggers() const
     if(triggers_.empty())
         return;
 
-    QString configFile = util::configDirPath(appName_) + QDir::separator() + triggerFile_;
+    QString configFile = util::path::configDir(appName_) + QDir::separator() + triggerFile_;
     QFile file(configFile);
     if(!file.open(QIODevice::WriteOnly))
     {
@@ -103,7 +104,7 @@ void AutomationManager::saveTriggers() const
 
 void AutomationManager::loadTriggers()
 {
-    QString configFile = util::configDirPath(appName_) + QDir::separator() + triggerFile_;
+    QString configFile = util::path::configDir(appName_) + QDir::separator() + triggerFile_;
     QFile file(configFile);
 
     if(!file.exists())
