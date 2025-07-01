@@ -17,12 +17,8 @@
 #include "api/tagapi.h"
 #include "api/triggerapi.h"
 
-#ifdef NO_GUI
+
 App::App(int argc, char *argv[]) : QCoreApplication(argc, argv)
-#else
-App::App(int argc, char *argv[]) : QApplication(argc, argv),
-    mMainWindow(nullptr)
-#endif
 {   const QString appName("JuneServer");
     // Setup tagsocket list to load all tagsockets at startup.
     TagSocketList::sGetInstance().setApplicationName(appName);
@@ -36,8 +32,6 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
 
     QCommandLineParser parser;
     parser.addHelpOption();
-    QCommandLineOption noGui(QStringList() << "g" << "no-gui", "Gui" );
-    parser.addOption(noGui);
 
     QCommandLineOption influxDbToken("influx", "InfluxDB Token for api v2", "token");
     parser.addOption(influxDbToken);
@@ -66,21 +60,8 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
         influxdb_.useDb("june");
     }
 
-#ifndef NO_GUI
-    if(!parser.isSet(noGui))
-    {
-        mMainWindow = new MainWindow(logValueData_);
-        mMainWindow->setWindowTitle("June Server");
-        mMainWindow->setCentralWidget(new TagListView());
-        mMainWindow->show();
-
-        connect(mWebSocketServer, &WebSocketServer::newConnection, mMainWindow, &MainWindow::onNewConnection);
-    }
-    else
-        connect(&Logger::sGetInstance(), &Logger::logEntry, this, &App::onLogEntry);
-#else
     connect(&Logger::sGetInstance(), &Logger::logEntry, this, &App::onLogEntry);
-#endif
+
     mSystemTimeTag = TagList::sGetInstance().createTag("system", "time", Tag::eTime);
     mSystemTimeTimer = new QTimer(this);
     mSystemTimeTimer->setInterval(1000);
@@ -97,10 +78,7 @@ App::App(int argc, char *argv[]) : QApplication(argc, argv),
 
 App::~App()
 {
-#ifndef NO_GUI
-    if(mMainWindow)
-        mMainWindow->deleteLater();
-#endif
+
 }
 
 

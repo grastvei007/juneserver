@@ -2,7 +2,6 @@
 #define APP_H
 
 #include <QCoreApplication>
-#include <QApplication>
 #include <memory>
 #include <map>
 
@@ -26,11 +25,8 @@ class PluginApi;
 class TagApi;
 class TriggerApi;
 
-#ifdef NO_GUI
+
 class App : public QCoreApplication
-#else
-class App : public QApplication
-#endif
 {
 public:
     App(int argc, char *argv[]);
@@ -47,9 +43,7 @@ private:
     WebSocketServer *mWebSocketServer;
     QHttpServer httpServer_;
     std::unique_ptr<QTcpServer> tcpServer_;
-#ifndef NO_GUI
-    MainWindow *mMainWindow;
-#endif
+
     std::unique_ptr<PluginApi> pluginApi_;
     std::unique_ptr<TagApi> tagApi_;
     std::unique_ptr<TriggerApi> triggerApi_;

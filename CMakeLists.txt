@@ -8,8 +8,6 @@ set_target_properties(PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
 include_directories($ENV{JUNE_ROOT})
 link_directories(${CMAKE_BINARY_DIR}/$<CONFIG>/lib)
 
-add_definitions(-DNO_GUI)
-
 set(CMAKE_INCLUDE_CURRENT_DIR "YES")
 set(CMAKE_AUTOMOC "YES")
 set(CMAKE_AUTOUIC "YES")
