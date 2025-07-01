@@ -21,22 +21,21 @@ find_package(Qt6 COMPONENTS Network REQUIRED)
 
 qt_add_executable(juneserver
     main.cpp
-    app.cpp
-    logvaluedata.cpp
-    pluginmanager.cpp
-    websocketserver.cpp
-    client.cpp
-    clientinformation.cpp
-    logger.cpp
+
     app.h
-    logvaluedata.h
-
-    pluginmanager.h
-    websocketserver.h
-
+    app.cpp
     client.h
+    client.cpp
     clientinformation.h
+    clientinformation.cpp
     logger.h
+    logger.cpp
+    logvaluedata.h
+    logvaluedata.cpp
+    pluginmanager.h
+    pluginmanager.cpp
+    websocketserver.h
+    websocketserver.cpp
 
     api/pluginapi.h
     api/pluginapi.cpp
@@ -44,7 +43,6 @@ qt_add_executable(juneserver
     api/tagapi.cpp
     api/triggerapi.h
     api/triggerapi.cpp
-
 
     automation/automationmanager.h
     automation/automationmanager.cpp
