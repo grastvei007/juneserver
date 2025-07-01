@@ -61,11 +61,6 @@ qt_add_executable(juneserver
     automation/trigger/triggerschedule.cpp
 )
 
-qt_add_resources(juneserver resources
-    PREFIX "/resources"
-    FILES resources/icon.png
-)
-
 target_link_libraries(juneserver PRIVATE Qt6::WebSockets
     Qt6::Widgets
     Qt6::Gui
