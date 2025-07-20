@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 20)
 
 set_target_properties(PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
 
-include_directories($ENV{JUNE_ROOT})
 link_directories(${CMAKE_BINARY_DIR}/$<CONFIG>/lib)
 
 set(CMAKE_INCLUDE_CURRENT_DIR "YES")
