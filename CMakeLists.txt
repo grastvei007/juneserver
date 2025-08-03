@@ -40,6 +40,8 @@ qt_add_executable(juneserver
     api/pluginapi.cpp
     api/tagapi.h
     api/tagapi.cpp
+    api/tagsocketbindingapi.h
+    api/tagsocketbindingapi.cpp
     api/triggerapi.h
     api/triggerapi.cpp
 
