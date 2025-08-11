@@ -33,7 +33,7 @@ signals:
 private:
     void deprecatedLoadLogValueList();
     InfluxDB &influxDb_;
-    const QString &appName_;
+    QString appName_;
     const QString configFile_{"juneserverlogtags.json"};
 
     std::vector<std::unique_ptr<LogValue>> logValues_;
