@@ -47,6 +47,7 @@ public:
     LogValue(InfluxDB &infuxDb, const QString &tableName, const QString &valueName, const QString &tagSubSystem, const QString &tagName);
     LogValue(InfluxDB &infuxDb, const QString &tableName, const QString &valueName, TagSocket::Type type, const QString &tagSubSystem, const QString &tagName);
     LogValue(const QJsonObject &json, InfluxDB &infuxDb);
+    ~LogValue();
 
     const QString& getTableName() const;
     const QString& getValueName() const;

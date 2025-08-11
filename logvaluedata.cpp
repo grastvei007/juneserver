@@ -17,6 +17,7 @@
 #include <influxdb/influxdb.h>
 
 #include <tagsystem/util/path.h>
+#include <tagsystem/tagsocketlist.h>
 
 LogValueData::LogValueData(const QString &appName, InfluxDB &influxDb, QObject *parent) : QObject(parent),
     appName_(appName),
@@ -216,6 +217,12 @@ LogValue::LogValue(const QJsonObject &json, InfluxDB &infuxDb)
     logValueTagSocket_ = TagSocket::createTagSocket(tableName_, valueName_, tagSocketType);
     logValueTagSocket_->hookupTag(tagSubSystem_, tagName_);
     connect(logValueTagSocket_, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &LogValue::onTagSocketValueChanged);
+}
+
+LogValue::~LogValue()
+{
+    if(logValueTagSocket_)
+        TagSocketList::sGetInstance().removeTagSocket(logValueTagSocket_);
 }
 
 const QString &LogValue::getTableName() const
