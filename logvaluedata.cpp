@@ -47,12 +47,7 @@ void LogValueData::saveLogValueList()
         return;
     }
 
-    QJsonArray array;
-
-    for(const auto& logValue : logValues_)
-    {
-        array.push_back(logValue->toJson());
-    }
+    QJsonArray array = toJsonArray();
 
     QJsonObject obj;
     obj.insert("logvalues", array);
@@ -174,7 +169,29 @@ const LogValue *LogValueData::getLogValueByIndex(unsigned int aIndex) const
     return logValues_.at(aIndex).get();
 }
 
+void LogValueData::removeLogValueByTagSocketName(const QString &tagsocketName)
+{
+    auto result = std::remove_if(logValues_.begin(), logValues_.end(), [&tagsocketName](auto &item)
+    {
+        QString socket = QString("%1.%2").arg(item->getTableName(), item->getValueName());
+        return socket == tagsocketName;
+    });
+    logValues_.erase(result);
+    // update file, to make sure the removed value is not loaded again
+    saveLogValueList();
+    emit logValueRemoved();
+}
 
+QJsonArray LogValueData::toJsonArray() const
+{
+    QJsonArray array;
+
+    for(const auto& logValue : logValues_)
+    {
+        array.push_back(logValue->toJson());
+    }
+    return array;
+}
 
 LogValue::LogValue(InfluxDB &influxDb, const QString &tableName, const QString &valueName, const QString &tagSubSystem, const QString &tagName) :
     influxdb_(influxDb),

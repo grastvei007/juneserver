@@ -24,6 +24,9 @@ public:
 
     int numberOfLogVAlues() const;
     const LogValue* getLogValueByIndex(unsigned int index) const;
+    void removeLogValueByTagSocketName(const QString& tagsocketName);
+
+    QJsonArray toJsonArray() const;
 signals:
     void logValueAdded();
     void logValueRemoved();
