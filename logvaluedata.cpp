@@ -223,7 +223,7 @@ const QString &LogValue::getTableName() const
     return tableName_;
 }
 
-const QString &LogValue::getValueNAme() const
+const QString &LogValue::getValueName() const
 {
     return valueName_;
 }

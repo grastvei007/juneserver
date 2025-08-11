@@ -49,7 +49,7 @@ public:
     LogValue(const QJsonObject &json, InfluxDB &infuxDb);
 
     const QString& getTableName() const;
-    const QString& getValueNAme() const;
+    const QString& getValueName() const;
     const QString& getTagSubsystem() const;
     const QString& getTagName() const;
     QString getTagSocketTypeStr() const;
