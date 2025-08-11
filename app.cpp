@@ -17,6 +17,7 @@
 #include "api/tagapi.h"
 #include "api/triggerapi.h"
 #include "api/tagsocketbindingapi.h"
+#include "api/logvalueapi.h"
 
 
 App::App(int argc, char *argv[]) : QCoreApplication(argc, argv)
@@ -121,6 +122,7 @@ void App::setupHttpServer(quint16 port)
     tagApi_ = std::make_unique<TagApi>(httpServer_, TagList::sGetInstance());
     triggerApi_ = std::make_unique<TriggerApi>(httpServer_, *automationManager_.get());
     tagSocketBindingApi_ = std::make_unique<TagSocketBindingApi>(httpServer_, TagSocketList::sGetInstance());
+    logValueApi_ = std::make_unique<LogValueApi>(httpServer_, *logValueData_);
 
     tcpServer_ = std::make_unique<QTcpServer>();
     if(!tcpServer_->listen(QHostAddress::Any, port))

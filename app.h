@@ -23,6 +23,7 @@ class PluginApi;
 class TagApi;
 class TriggerApi;
 class TagSocketBindingApi;
+class LogValueApi;
 
 
 class App : public QCoreApplication
@@ -47,6 +48,7 @@ private:
     std::unique_ptr<TagApi> tagApi_;
     std::unique_ptr<TriggerApi> triggerApi_;
     std::unique_ptr<TagSocketBindingApi> tagSocketBindingApi_;
+    std::unique_ptr<LogValueApi> logValueApi_;
 
     LogValueData *logValueData_;
     Tag *mSystemTimeTag = nullptr;
