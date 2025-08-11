@@ -24,6 +24,9 @@ public:
 
     int numberOfLogVAlues() const;
     const LogValue* getLogValueByIndex(unsigned int index) const;
+    void removeLogValueByTagSocketName(const QString& tagsocketName);
+
+    QJsonArray toJsonArray() const;
 signals:
     void logValueAdded();
     void logValueRemoved();
@@ -33,7 +36,7 @@ signals:
 private:
     void deprecatedLoadLogValueList();
     InfluxDB &influxDb_;
-    const QString &appName_;
+    QString appName_;
     const QString configFile_{"juneserverlogtags.json"};
 
     std::vector<std::unique_ptr<LogValue>> logValues_;
@@ -47,9 +50,10 @@ public:
     LogValue(InfluxDB &infuxDb, const QString &tableName, const QString &valueName, const QString &tagSubSystem, const QString &tagName);
     LogValue(InfluxDB &infuxDb, const QString &tableName, const QString &valueName, TagSocket::Type type, const QString &tagSubSystem, const QString &tagName);
     LogValue(const QJsonObject &json, InfluxDB &infuxDb);
+    ~LogValue();
 
     const QString& getTableName() const;
-    const QString& getValueNAme() const;
+    const QString& getValueName() const;
     const QString& getTagSubsystem() const;
     const QString& getTagName() const;
     QString getTagSocketTypeStr() const;
