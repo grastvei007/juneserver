@@ -75,6 +75,7 @@ QHttpServerResponse TriggerApi::triggerList(const QHttpServerRequest &request)
 // values to update
 // triggervalue:
 // duration:
+// enable:
 QHttpServerResponse TriggerApi::updateTrigger(const QHttpServerRequest &request)
 {
     const auto json = util::json::byteArrayToJsonObject(request.body());

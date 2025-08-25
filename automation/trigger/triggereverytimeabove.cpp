@@ -18,6 +18,7 @@ QJsonObject TriggerEveryTimeAbove::toJson() const
 
 void TriggerEveryTimeAbove::update(const QJsonObject &obj)
 {
+    TriggerBase::update(obj);
     if(obj.contains("triggervalue"))
     {
         triggerValue_ = obj.value("triggervalue").toDouble();

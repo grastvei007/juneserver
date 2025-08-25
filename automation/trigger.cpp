@@ -45,6 +45,11 @@ bool TriggerBase::hasWatchTag() const
     return watchTag_ != nullptr;
 }
 
+bool TriggerBase::isEnabled() const
+{
+    return isEnabled_;
+}
+
 bool TriggerBase::shouldSave() const
 {
     return true;
@@ -73,8 +78,18 @@ QJsonObject TriggerBase::toJson() const
     json.insert("name", name_);
     json.insert("triggername", triggerName_);
     json.insert("type", triggerTypeToString(type()));
+    json.insert("enable", isEnabled_);
 
     return json;
+}
+
+void TriggerBase::update(const QJsonObject &obj)
+{
+    if (obj.contains("enable"))
+    {
+        isEnabled_ = obj.value("enable").toBool();
+    }
+
 }
 
 void TriggerBase::setActive()
@@ -103,7 +118,10 @@ bool TriggerBase::validateWatchTacksoket(TagSocket::Type type) const
 
 void TriggerBase::onTagSocketValueChanged(TagSocket *tagSocket)
 {
-    tagSocketValueChanged(tagSocket);
+    if(isEnabled())
+    {
+        tagSocketValueChanged(tagSocket);
+    }
 }
 
 QString TriggerBase::triggerTypeToString(TriggerType type) const

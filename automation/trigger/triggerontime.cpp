@@ -17,6 +17,7 @@ QJsonObject TriggerOnTime::toJson() const
 
 void TriggerOnTime::update(const QJsonObject &obj)
 {
+    TriggerBase::update(obj);
     if(obj.contains("triggervalue"))
     {
         triggerTimeOfDay_ = obj.value("triggervalue").toInt();
