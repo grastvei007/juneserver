@@ -36,6 +36,7 @@ QJsonObject TriggerSchedule::toJson() const
 
 void TriggerSchedule::update(const QJsonObject &obj)
 {
+    TriggerBase::update(obj);
     if (obj.contains("duration"))
     {
         duration_ = obj.value("duration").toInt();

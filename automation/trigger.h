@@ -25,6 +25,7 @@ public:
 
     bool isActive() const;
     bool hasWatchTag() const;
+    bool isEnabled() const;
     virtual bool shouldSave() const; // default is true
 
     Tag* watchTag() const;
@@ -32,7 +33,7 @@ public:
     const QString& triggerName() const;
 
     virtual QJsonObject toJson() const;
-    virtual void update(const QJsonObject &obj) = 0;
+    virtual void update(const QJsonObject &obj);
     virtual TriggerType type() const = 0;
 
 signals:
@@ -52,6 +53,7 @@ private:
     QString triggerTypeToString(TriggerType type) const;
 
     bool isActive_ = false;
+    bool isEnabled_ = true;
     Tag *watchTag_ = nullptr;
     Tag *triggerTag_ = nullptr;
     TagList &tagList_;
