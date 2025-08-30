@@ -51,6 +51,17 @@ bool AutomationManager::createTrigger(const QJsonObject &obj)
     return false;
 }
 
+TriggerBase *AutomationManager::findTriggerByName(const QString &triggerName)
+{
+    for (auto &trigger : triggers_)
+    {
+        if (trigger->triggerName() == triggerName)
+            return trigger.get();
+    }
+
+    return nullptr;
+}
+
 void AutomationManager::removeTrigger(const QString &triggerName)
 {
     std::erase_if(triggers_, [&triggerName](auto &trigger)

@@ -15,6 +15,7 @@ public:
 private:
     QHttpServerResponse createTrigger(const QHttpServerRequest &request);
     QHttpServerResponse triggerList(const QHttpServerRequest &request);
+    QHttpServerResponse getSelectedTriggers(const QHttpServerRequest &request);
     QHttpServerResponse updateTrigger(const QHttpServerRequest &request);
     QHttpServerResponse removeTrigger(const QHttpServerRequest &request);
     QHttpServerResponse updloadTriggerFile(const QHttpServerRequest &request);
