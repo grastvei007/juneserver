@@ -19,6 +19,7 @@ public:
     explicit AutomationManager(const QString& appName, TagList &taglist, QObject *parent = nullptr);
 
     bool createTrigger(const QJsonObject &obj);
+    TriggerBase *findTriggerByName(const QString &triggerName);
 
     void removeTrigger(const QString &triggerName);
     void updateTrigger(const QJsonObject &obj);

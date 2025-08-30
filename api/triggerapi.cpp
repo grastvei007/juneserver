@@ -19,6 +19,12 @@ TriggerApi::TriggerApi(QHttpServer &httpServer, AutomationManager &automationMan
     httpServer_.route("/api/trigger/get", QHttpServerRequest::Method::Get,
             [this](const QHttpServerRequest &request){return triggerList(request);});
 
+    httpServer_.route("/api/trigger/get",
+                      QHttpServerRequest::Method::Post,
+                      [this](const QHttpServerRequest &request) {
+                          return getSelectedTriggers(request);
+                      });
+
     httpServer_.route("/api/trigger/create", QHttpServerRequest::Method::Post,
             [this](const QHttpServerRequest &request){return createTrigger(request); });
 
@@ -69,6 +75,29 @@ QHttpServerResponse TriggerApi::triggerList(const QHttpServerRequest &request)
 {
     Q_UNUSED(request);
     return QHttpServerResponse(automationManager_.toJsonArray());
+}
+
+// request is an jsonarray with jsonObject that contains a single triggerName each
+QHttpServerResponse TriggerApi::getSelectedTriggers(const QHttpServerRequest &request)
+{
+    const auto json = util::json::byteArrayToJsonArray(request.body());
+    if (!json.has_value())
+        return QHttpServerResponse(QHttpServerResponder::StatusCode::BadRequest);
+
+    const QJsonArray array = json.value();
+    QJsonArray result;
+
+    for (const auto &ref : array)
+    {
+        const QJsonObject &selectedTrigger = ref.toObject();
+        const QString triggerName = selectedTrigger.value("triggername").toString();
+        if (auto *trigger = automationManager_.findTriggerByName(triggerName); trigger != nullptr)
+        {
+            result.push_back(trigger->toJson());
+        }
+    }
+
+    return QHttpServerResponse(result);
 }
 
 // triggername:
