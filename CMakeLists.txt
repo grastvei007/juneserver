@@ -36,6 +36,8 @@ qt_add_executable(juneserver
     websocketserver.h
     websocketserver.cpp
 
+    api/logvalueapi.h
+    api/logvalueapi.cpp
     api/pluginapi.h
     api/pluginapi.cpp
     api/tagapi.h
@@ -58,7 +60,9 @@ qt_add_executable(juneserver
     automation/trigger/triggerontime.cpp
     automation/trigger/triggerschedule.h
     automation/trigger/triggerschedule.cpp
-    api/logvalueapi.h api/logvalueapi.cpp
+    automation/trigger/triggertwovalues.h
+    automation/trigger/triggertwovalues.cpp
+
 )
 
 target_link_libraries(juneserver PRIVATE Qt6::WebSockets

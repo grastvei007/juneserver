@@ -14,7 +14,8 @@ enum class TriggerType
     TriggerEveryTimeBelow,
     TriggerOnTime,
     // set a tag value for a duration.
-    ScheduleOnDuration
+    ScheduleOnDuration,
+    TriggerTwoValues
 };
 
 class TriggerBase : public QObject

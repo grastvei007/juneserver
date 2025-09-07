@@ -12,6 +12,7 @@
 #include "trigger/triggereverytimebelow.h"
 #include "trigger/triggerontime.h"
 #include "trigger/triggerschedule.h"
+#include "trigger/triggertwovalues.h"
 
 
 AutomationManager::AutomationManager(const QString &appName, TagList &taglist, QObject *parent)
@@ -23,6 +24,7 @@ AutomationManager::AutomationManager(const QString &appName, TagList &taglist, Q
     triggerFactory_.addFactory<TriggerEveryTimeBelow>("trigggerBelow");
     triggerFactory_.addFactory<TriggerOnTime>("triggerOnTime");
     triggerFactory_.addFactory<TriggerSchedule>("scheduleOnDuration");
+    triggerFactory_.addFactory<TriggerTwoValues>("triggertwovalues");
 
     loadTriggers();
 }
