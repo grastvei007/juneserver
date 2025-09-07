@@ -107,18 +107,20 @@ QHttpServerResponse TriggerApi::getSelectedTriggers(const QHttpServerRequest &re
 // enable:
 QHttpServerResponse TriggerApi::updateTrigger(const QHttpServerRequest &request)
 {
-    const auto json = util::json::byteArrayToJsonObject(request.body());
+    const auto json = util::json::byteArrayToJsonArray(request.body());
     if(!json.has_value())
         return QHttpServerResponse(QHttpServerResponder::StatusCode::BadRequest);
 
-    const QJsonObject obj = json.value();
-    if(obj.contains("triggername"))
+    const QJsonArray array = json.value();
+    for (const auto &ref : array)
     {
-        automationManager_.updateTrigger(obj);
-        return QHttpServerResponse(QHttpServerResponder::StatusCode::Accepted);
+        const QJsonObject &obj = ref.toObject();
+        if(obj.contains("triggername"))
+        {
+            automationManager_.updateTrigger(obj);
+        }
     }
-
-    return QHttpServerResponse(QHttpServerResponder::StatusCode::BadRequest);
+    return QHttpServerResponse(QHttpServerResponder::StatusCode::Accepted);
 }
 
 // triggername:
