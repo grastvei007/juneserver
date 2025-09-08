@@ -39,6 +39,7 @@ private slots:
 private:
     void loadPlugins();
     void setupHttpServer(quint16 port);
+    void loadTagFile(const QString &filename);
     QNetworkAccessManager networkAcessManager_;
     WebSocketServer *mWebSocketServer;
     QHttpServer httpServer_;
