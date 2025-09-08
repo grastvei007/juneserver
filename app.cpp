@@ -9,6 +9,7 @@
 
 #include <tagsystem/taglistview.h>
 #include <tagsystem/tagsocketlist.h>
+#include <tagsystem/util/json.h>
 
 #include "logvaluedata.h"
 #include "logger.h"
@@ -41,7 +42,18 @@ App::App(int argc, char *argv[]) : QCoreApplication(argc, argv)
     QCommandLineOption influxDbEndPoint("endpoint", "InfluxDb endpoint", "ip");
     parser.addOption(influxDbEndPoint);
 
+    QCommandLineOption tagFile("tagfile",
+                               "Load a file with tags on startup, make the server ready for testing with user spessified tags.",
+                               "file");
+    parser.addOption(tagFile);
+
     parser.process(*this);
+
+    if (parser.isSet(tagFile))
+    {
+        auto filename = parser.value(tagFile);
+        loadTagFile(filename);
+    }
 
     if(parser.isSet(influxDbEndPoint))
     {
@@ -131,4 +143,33 @@ void App::setupHttpServer(quint16 port)
         return;
     }
     httpServer_.bind(tcpServer_.get());
+}
+
+void App::loadTagFile(const QString &filename)
+{
+    QFile file(filename);
+    if (!file.exists())
+    {
+        qDebug() << "Try to load a tag file, that does not exists, " << filename;
+        return;
+    }
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        qDebug() << "Error opening tag file, " << filename;
+    }
+
+    auto json = util::json::byteArrayToJsonArray(file.readAll());
+    if (!json.has_value())
+    {
+        qDebug() << "Invalid json format in file, " << filename;
+        return;
+    }
+
+    const QJsonArray array = json.value();
+    for (const auto &ref : array)
+    {
+        const QJsonObject &obj = ref.toObject();
+        TagList::sGetInstance().UpdateOrCreateTag(obj);
+    }
+    qDebug() << "Preload with " << array.size() << " tags.";
 }
