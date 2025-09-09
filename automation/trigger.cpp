@@ -135,6 +135,8 @@ QString TriggerBase::triggerTypeToString(TriggerType type) const
         return "triggerOnTime";
     case TriggerType::ScheduleOnDuration:
         return "scheduleOnDuration";
+    case TriggerType::TriggerTwoValues:
+        return "triggertwovalues";
     default:
         break;
     }
