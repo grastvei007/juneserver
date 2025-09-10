@@ -58,15 +58,30 @@ TriggerApi::TriggerApi(QHttpServer &httpServer, AutomationManager &automationMan
 // duration:
 QHttpServerResponse TriggerApi::createTrigger(const QHttpServerRequest &request)
 {
-    const auto json = util::json::byteArrayToJsonObject(request.body());
-    if(!json.has_value())
-        return QHttpServerResponse(QHttpServerResponder::StatusCode::BadRequest);
+    const auto byteArray = request.body();
 
-    const QJsonObject obj = json.value();
-    if(automationManager_.createTrigger(obj))
+
+    if (const auto json = util::json::byteArrayToJsonObject(byteArray); json.has_value())
     {
+        const QJsonObject obj = json.value();
+        if (automationManager_.createTrigger(obj))
+        {
+            return QHttpServerResponse(QHttpServerResponder::StatusCode::Accepted);
+        }
+    } else if (const auto json = util::json::byteArrayToJsonArray(byteArray); json.has_value())
+    {
+        const QJsonArray array = json.value();
+        for (const auto &ref : array)
+        {
+            const QJsonObject &obj = ref.toObject();
+            if (!automationManager_.createTrigger(obj))
+            {
+                return QHttpServerResponse(QHttpServerResponder::StatusCode::BadRequest);
+            }
+        }
         return QHttpServerResponse(QHttpServerResponder::StatusCode::Accepted);
     }
+
 
     return QHttpServerResponse(QHttpServerResponder::StatusCode::BadRequest);
 }
