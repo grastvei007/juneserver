@@ -42,7 +42,7 @@ void TriggerOnTime::tagSocketValueChanged(TagSocket *tagSocket)
     if(!tagSocket->readValue(value))
         return;
 
-    int tagSocketTimeOfDayValue = value.time().msecsSinceStartOfDay() * 1000;
+    int tagSocketTimeOfDayValue = value.time().msecsSinceStartOfDay();
 
     if(tagSocketTimeOfDayValue > triggerTimeOfDay_)
     {
