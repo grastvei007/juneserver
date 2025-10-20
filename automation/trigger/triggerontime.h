@@ -18,10 +18,14 @@ protected:
     void tagSocketValueChanged(TagSocket *tagSocket) override;
 
 private:
+    void resetState();
+
     // seconds since midnight
     int triggerTimeOfDay_ = 0;
     // The time duration in minutes the trigger is active
     int duration_ = 0;
+    bool hasTriggeredOn_ = false;
+    bool hasTriggeredOff_ = false;
 };
 
 #endif // TRIGGERONTIME_H
