@@ -26,6 +26,8 @@ void TriggerOnTime::update(const QJsonObject &obj)
     {
         duration_ = obj.value("duration").toInt();
     }
+
+    resetState();
 }
 
 TriggerType TriggerOnTime::type() const
@@ -44,14 +46,40 @@ void TriggerOnTime::tagSocketValueChanged(TagSocket *tagSocket)
 
     int tagSocketTimeOfDayValue = value.time().msecsSinceStartOfDay();
 
-    if(tagSocketTimeOfDayValue > triggerTimeOfDay_)
+    // reset at start of day, first 2 sec after midnight
+    if(tagSocketTimeOfDayValue < 2000)
     {
-        if(!isActive())
-            setActive();
+        resetState();
     }
 
-    if(isActive() && duration_ > 0 && tagSocketTimeOfDayValue > (triggerTimeOfDay_ + duration_))
+    if(!hasTriggeredOn_
+        && tagSocketTimeOfDayValue > triggerTimeOfDay_
+        && tagSocketTimeOfDayValue < (triggerTimeOfDay_ + duration_))
     {
-        setDeactive();
+        if(!isActive())
+        {
+            setActive();
+            hasTriggeredOn_ = true;
+        }
     }
+
+    if(!hasTriggeredOff_
+        && isActive()
+        && duration_ > 0
+        && tagSocketTimeOfDayValue > (triggerTimeOfDay_ + duration_))
+    {
+        if(isActive())
+        {
+            setDeactive();
+            hasTriggeredOff_ = true;
+        }
+    }
+}
+
+void TriggerOnTime::resetState()
+{
+    hasTriggeredOn_ = false;
+    hasTriggeredOff_ = false;
+    if(isActive())
+        setDeactive();
 }
