@@ -42,10 +42,12 @@ void TriggerEveryTimeBelow::tagSocketValueChanged(TagSocket *tagSocket)
     // set tag value true/false based on rule for this trigger type
 
     auto currentTime = QDateTime::currentSecsSinceEpoch();
+    auto durationS = duration_ / 1000;
 
-    if( isActive() && currentTime > (triggerTime_ + duration_))
+    if( isActive() && currentTime > (triggerTime_ + durationS))
     {
-        setDeactive();
+        if(isActive())
+            setDeactive();
     }
 
     if(tagSocketValue < triggerValue_)

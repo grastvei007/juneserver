@@ -63,16 +63,19 @@ void TriggerSchedule::tagSocketValueChanged(TagSocket *tagSocket)
         return;
 
     auto currentTime = QDateTime::currentSecsSinceEpoch();
+    auto durationS = duration_ / 1000;
+
     if (!isActive())
     {
         if (currentTime > startTime_)
         {
-            setActive();
+            if(!isActive())
+                setActive();
         }
         return;
     }
 
-    if (currentTime > (startTime_ + duration_))
+    if (isActive() && currentTime > (startTime_ + durationS))
     {
         setDeactive();
         isDone_ = true;
