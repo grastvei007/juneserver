@@ -79,7 +79,7 @@ void TriggerOnTime::tagSocketValueChanged(TagSocket *tagSocket)
 void TriggerOnTime::resetState()
 {
     hasTriggeredOn_ = false;
-    hasTriggeredOff_ = false;
+    hasTriggeredOff_ = true;
     if(isActive())
         setDeactive();
 }
