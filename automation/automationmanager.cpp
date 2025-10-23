@@ -66,8 +66,11 @@ TriggerBase *AutomationManager::findTriggerByName(const QString &triggerName)
 
 void AutomationManager::removeTrigger(const QString &triggerName)
 {
-    std::erase_if(triggers_, [&triggerName](auto &trigger)
-                  {return trigger->triggerName() == triggerName;});
+    if(std::erase_if(triggers_, [&triggerName](auto &trigger)
+                      {return trigger->triggerName() == triggerName;}))
+    {
+        saveTriggers();
+    }
 }
 
 void AutomationManager::updateTrigger(const QJsonObject &obj)
@@ -76,6 +79,7 @@ void AutomationManager::updateTrigger(const QJsonObject &obj)
         (auto &element){return obj.value("triggername").toString() == element->triggerName();}))
     {
         trigger->update(obj);
+        saveTriggers();
     }
 }
 
