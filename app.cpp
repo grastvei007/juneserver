@@ -98,7 +98,7 @@ App::~App()
 
 void App::onSystemTimeTimer()
 {
-    mSystemTimeTag->setValue(QDateTime::currentDateTime());
+    mSystemTimeTag->setValue(QDateTime::currentDateTime().toMSecsSinceEpoch());
 }
 
 void App::onLogEntry(QString message)
