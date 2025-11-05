@@ -29,7 +29,7 @@ TriggerBase::TriggerBase(TagList &tagList, const QJsonObject &obj, QObject *pare
 
         connect(watchTagSocket_, qOverload<TagSocket*>(&TagSocket::valueChanged), this, &TriggerBase::onTagSocketValueChanged);
 
-        triggerTag_ = tagList_.createTag("trigger", triggerName_, Tag::eBool, isActive_, "Target trigger");
+        triggerTag_ = tagList_.createTag("trigger", triggerName_, TagType::eBool, isActive_, "Target trigger");
         if (triggerTag_->getBoolValue() != isActive_)
             triggerTag_->setValue(isActive_);
     }

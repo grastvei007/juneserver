@@ -76,7 +76,7 @@ App::App(int argc, char *argv[]) : QCoreApplication(argc, argv)
 
     connect(&Logger::sGetInstance(), &Logger::logEntry, this, &App::onLogEntry);
 
-    mSystemTimeTag = TagList::sGetInstance().createTag("system", "time", Tag::eTime);
+    mSystemTimeTag = TagList::sGetInstance().createTag("system", "time", TagType::eTime);
     mSystemTimeTimer = new QTimer(this);
     mSystemTimeTimer->setInterval(1000);
     connect(mSystemTimeTimer, &QTimer::timeout, this, &App::onSystemTimeTimer);

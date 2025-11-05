@@ -42,37 +42,37 @@ QHttpServerResponse TagApi::createTag(const QHttpServerRequest &request)
     {
         const QString name = obj.value("name").toString();
         const QString subsystem = obj.value("subsystem").toString();
-        const Tag::Type type = Tag::typeFromString(obj.value("type").toString());
+        const TagType type = Tag::typeFromString(obj.value("type").toString());
         const QString description = obj.value("description").toString("No description");
 
-        if(name.isEmpty() || subsystem.isEmpty() || type == Tag::Type::eUnknown)
+        if(name.isEmpty() || subsystem.isEmpty() || type == TagType::eUnknown)
         {
             return QHttpServerResponse(QHttpServerResponder::StatusCode::BadRequest);
         }
 
         switch (type) {
-        case Tag::eBool:
+        case TagType::eBool:
         {
             auto value = obj.contains("value") ? obj.value("value").toBool() : false;
-            tagList_.createTag(subsystem, name, Tag::eBool, value, description);
+            tagList_.createTag(subsystem, name, TagType::eBool, value, description);
             break;
         }
-        case Tag::eDouble:
+        case TagType::eDouble:
         {
             auto value = obj.contains("value") ? obj.value("value").toDouble(0.0) : 0.0;
-            tagList_.createTag(subsystem, name, Tag::eDouble, value, description);
+            tagList_.createTag(subsystem, name, TagType::eDouble, value, description);
             break;
         }
-        case Tag::eInt:
+        case TagType::eInt:
         {
             auto value = obj.contains("value") ? obj.value("value").toInt() : 0;
-            tagList_.createTag(subsystem, name, Tag::eInt, value, description);
+            tagList_.createTag(subsystem, name, TagType::eInt, value, description);
             break;
         }
-        case Tag::eString:
+        case TagType::eString:
         {
             auto value = obj.contains("value") ? obj.value("value").toString("") : QString("");
-            tagList_.createTag(subsystem, name, Tag::eString, value, description);
+            tagList_.createTag(subsystem, name, TagType::eString, value, description);
             break;
         }
             break;
@@ -109,22 +109,22 @@ QHttpServerResponse TagApi::update(const QHttpServerRequest &request)
         QJsonValue value = obj.value("value");
 
         switch (tag->getType()) {
-        case Tag::eBool:
+        case TagType::eBool:
         {
             tag->setValue(value.toBool(), timestamp);
             break;
         }
-        case Tag::eDouble:
+        case TagType::eDouble:
         {
             tag->setValue(value.toInt(), timestamp);
             break;
         }
-        case Tag::eInt:
+        case TagType::eInt:
         {
             tag->setValue(value.toDouble(), timestamp);
             break;
         }
-        case Tag::eString:
+        case TagType::eString:
         {
             tag->setValue(value.toString(), timestamp);
             break;
