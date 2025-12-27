@@ -54,6 +54,8 @@ qt_add_library(juneserverlib
     automation/trigger/triggereverytimeabove.cpp
     automation/trigger/triggereverytimebelow.h
     automation/trigger/triggereverytimebelow.cpp
+    automation/trigger/triggermultivalue.h
+    automation/trigger/triggermultivalue.cpp
     automation/trigger/triggerontime.h
     automation/trigger/triggerontime.cpp
     automation/trigger/triggerschedule.h
