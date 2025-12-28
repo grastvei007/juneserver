@@ -56,6 +56,7 @@ set_target_properties(juneserver
 )
 
 add_subdirectory(lib)
+add_subdirectory(tests)
 
 add_dependencies(juneserverlib tagsystem influxdb pluginLoad core)
 
