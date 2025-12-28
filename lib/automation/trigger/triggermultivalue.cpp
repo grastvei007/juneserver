@@ -16,7 +16,7 @@ TriggerMultiValue::TriggerMultiValue(TagList &tagList, const QJsonObject &obj)
  * {
  *  name<string>
  *  tagName<string>
- *  targetValuefortag<value>
+ *  targetValue<value>
  *  operator<> less/above/equal/not_equal
  * }
  */

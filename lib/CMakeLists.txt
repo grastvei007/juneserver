@@ -62,6 +62,8 @@ qt_add_library(juneserverlib
     automation/trigger/triggerschedule.cpp
     automation/trigger/triggertwovalues.h
     automation/trigger/triggertwovalues.cpp
+    automation/trigger/valueitem.h
+    automation/trigger/valueitem.cpp
 )
 
 target_link_libraries(juneserverlib PRIVATE Qt6::WebSockets
