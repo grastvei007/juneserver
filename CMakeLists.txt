@@ -20,49 +20,6 @@ find_package(Qt6 COMPONENTS Network REQUIRED)
 
 qt_add_executable(juneserver
     main.cpp
-
-    app.h
-    app.cpp
-    client.h
-    client.cpp
-    clientinformation.h
-    clientinformation.cpp
-    logger.h
-    logger.cpp
-    logvaluedata.h
-    logvaluedata.cpp
-    pluginmanager.h
-    pluginmanager.cpp
-    websocketserver.h
-    websocketserver.cpp
-
-    api/logvalueapi.h
-    api/logvalueapi.cpp
-    api/pluginapi.h
-    api/pluginapi.cpp
-    api/tagapi.h
-    api/tagapi.cpp
-    api/tagsocketbindingapi.h
-    api/tagsocketbindingapi.cpp
-    api/triggerapi.h
-    api/triggerapi.cpp
-
-    automation/automationmanager.h
-    automation/automationmanager.cpp
-    automation/trigger.h
-    automation/trigger.cpp
-    automation/triggerfactory.h
-    automation/trigger/triggereverytimeabove.h
-    automation/trigger/triggereverytimeabove.cpp
-    automation/trigger/triggereverytimebelow.h
-    automation/trigger/triggereverytimebelow.cpp
-    automation/trigger/triggerontime.h
-    automation/trigger/triggerontime.cpp
-    automation/trigger/triggerschedule.h
-    automation/trigger/triggerschedule.cpp
-    automation/trigger/triggertwovalues.h
-    automation/trigger/triggertwovalues.cpp
-
 )
 
 target_link_libraries(juneserver PRIVATE Qt6::WebSockets
@@ -78,15 +35,18 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_link_libraries(juneserver PRIVATE influxdbd)
     target_link_libraries(juneserver PRIVATE pluginLoadd)
     target_link_libraries(juneserver PRIVATE cored)
+    target_link_libraries(juneserver PRIVATE juneserverlibd)
 else()
     message("Release mode")
     target_link_libraries(juneserver PRIVATE tagsystem)
     target_link_libraries(juneserver PRIVATE influxdb)
     target_link_libraries(juneserver PRIVATE pluginLoad)
     target_link_libraries(juneserver PRIVATE core)
+    target_link_libraries(juneserver PRIVATE juneserverlib)
 endif()
 
 target_include_directories(juneserver INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(juneserver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
 
 set_target_properties(juneserver
@@ -95,4 +55,7 @@ set_target_properties(juneserver
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/bin
 )
 
+add_subdirectory(lib)
+
+add_dependencies(juneserverlib tagsystem influxdb pluginLoad core)
 
