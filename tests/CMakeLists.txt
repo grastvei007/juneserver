@@ -18,12 +18,14 @@ include_directories(${gtest_INCLUDE_DIRS})
 
 add_executable(test_server
     main.cpp
+    test_valueitem.cpp
 )
 
 
 target_link_libraries(test_server ${gtest_LIBRARIES} tagsystem)
+target_link_libraries(test_server juneserverlib)
 
-target_include_directories(test_server INTERFACE ../)
+target_include_directories(test_server PUBLIC ../lib)
 target_include_directories(test_server INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
 

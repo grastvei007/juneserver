@@ -74,9 +74,9 @@ bool ValueItem::evaluateBool()
     bool value = currentValue_.toBool();
 
     if (operator_ == Operator::eLess) {
-        return target < value;
-    } else if (operator_ == Operator::eAbove) {
         return target > value;
+    } else if (operator_ == Operator::eAbove) {
+        return target < value;
     } else if (operator_ == Operator::eEqual) {
         return target == value;
     } else if (operator_ == Operator::eNotEqual)
@@ -91,9 +91,9 @@ bool ValueItem::evaluateInt()
     int value = currentValue_.toInt();
 
     if (operator_ == Operator::eLess) {
-        return target < value;
-    } else if (operator_ == Operator::eAbove) {
         return target > value;
+    } else if (operator_ == Operator::eAbove) {
+        return target < value;
     } else if (operator_ == Operator::eEqual) {
         return target == value;
     } else if (operator_ == Operator::eNotEqual)
@@ -108,9 +108,9 @@ bool ValueItem::evaluateDouble()
     double value = currentValue_.toDouble();
 
     if (operator_ == Operator::eLess) {
-        return target < value;
-    } else if (operator_ == Operator::eAbove) {
         return target > value;
+    } else if (operator_ == Operator::eAbove) {
+        return target < value;
     } else if (operator_ == Operator::eEqual) {
         return target == value;
     } else if (operator_ == Operator::eNotEqual)
