@@ -8,14 +8,14 @@
 #include <tagsystem/taglist.h>
 #include <tagsystem/tagsocket.h>
 
-enum class TriggerType
-{
+enum class TriggerType {
     TriggerEveryTimeAbove,
     TriggerEveryTimeBelow,
     TriggerOnTime,
     // set a tag value for a duration.
     ScheduleOnDuration,
-    TriggerTwoValues
+    TriggerTwoValues,
+    TriggerMultiValue
 };
 
 class TriggerBase : public QObject
@@ -46,6 +46,7 @@ protected:
     void setDeactive();
 
     bool validateWatchTacksoket(TagSocket::Type type) const;
+    TagList &tagList() { return tagList_; }
 
 private slots:
     void onTagSocketValueChanged(TagSocket *tagSocket);
