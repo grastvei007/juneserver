@@ -1,5 +1,4 @@
 #include "base/testtriggerbase.h"
-//#include <gtest/gtest.h>
 
 #include <QJsonObject>
 
@@ -12,12 +11,6 @@
 class TestValueItem : public TestTriggerBase
 {
 protected:
-    Tag *createTag(const QString &tagName, TagType type)
-    {
-        auto [subsystem, name] = util::tag::splitFullName(tagName);
-        return TagList::sGetInstance().createTag(subsystem, name, type);
-    }
-
     ValueItem creteValueItem(const QJsonObject &obj)
     {
         return ValueItem(TagList::sGetInstance(), "testName", obj);

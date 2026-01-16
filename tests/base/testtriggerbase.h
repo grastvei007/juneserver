@@ -1,10 +1,11 @@
 #ifndef TESTTRIGGERBASE_H
 #define TESTTRIGGERBASE_H
 
-#include <gtest/gtest.h>
+#include <QString>
+#include "testbase.h"
 #include <tagsystem/taglist.h>
 
-class TestTriggerBase : public ::testing::Test
+class TestTriggerBase : public TestBase
 {
   public:
 	TestTriggerBase();
@@ -16,9 +17,6 @@ class TestTriggerBase : public ::testing::Test
 							   TagType type);
 
   protected:
-	void SetUp() override {}
-
-	void TearDown() override { TagList::sGetInstance().clear(); }
 };
 
 #endif // TESTTRIGGERBASE_H
