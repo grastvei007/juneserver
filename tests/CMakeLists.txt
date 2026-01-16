@@ -19,6 +19,8 @@ include_directories(${gtest_INCLUDE_DIRS})
 add_executable(test_server
     main.cpp
     test_valueitem.cpp
+    base/testtriggerbase.h
+    base/testtriggerbase.cpp
 )
 
 

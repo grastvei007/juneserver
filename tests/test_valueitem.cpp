@@ -1,4 +1,5 @@
-#include <gtest/gtest.h>
+#include "base/testtriggerbase.h"
+//#include <gtest/gtest.h>
 
 #include <QJsonObject>
 
@@ -8,33 +9,9 @@
 
 #include <automation/trigger/valueitem.h>
 
-class TestValueItem : public ::testing::Test
+class TestValueItem : public TestTriggerBase
 {
 protected:
-    void SetUp() override {}
-
-    void TearDown() override { TagList::sGetInstance().clear(); }
-
-    QJsonObject createItemJson(const QString &name,
-                               const QString &tagName,
-                               QVariant value,
-                               const QString &op,
-                               TagType type)
-    {
-        QJsonObject obj;
-        obj.insert("name", name);
-        obj.insert("tagname", tagName);
-        obj.insert("operator", op);
-        if (type == TagType::eBool)
-            obj.insert("targetvalue", value.toBool());
-        else if (type == TagType::eInt)
-            obj.insert("targetvalue", value.toInt());
-        else if (type == TagType::eDouble)
-            obj.insert("targetvalue", value.toDouble());
-
-        return obj;
-    }
-
     Tag *createTag(const QString &tagName, TagType type)
     {
         auto [subsystem, name] = util::tag::splitFullName(tagName);
