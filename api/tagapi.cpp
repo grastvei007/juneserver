@@ -116,13 +116,13 @@ QHttpServerResponse TagApi::update(const QHttpServerRequest &request)
         }
         case TagType::eDouble:
         {
-            tag->setValue(value.toInt(), timestamp);
-            break;
+			tag->setValue(value.toDouble(), timestamp);
+			break;
         }
         case TagType::eInt:
         {
-            tag->setValue(value.toDouble(), timestamp);
-            break;
+			tag->setValue(value.toInt(), timestamp);
+			break;
         }
         case TagType::eString:
         {
