@@ -18,6 +18,8 @@ enum class TriggerType {
     TriggerMultiValue
 };
 
+QString triggerTypeToString(TriggerType type);
+
 class TriggerBase : public QObject
 {
     Q_OBJECT
@@ -52,8 +54,6 @@ private slots:
     void onTagSocketValueChanged(TagSocket *tagSocket);
 
 private:
-    QString triggerTypeToString(TriggerType type) const;
-
     bool isActive_ = false;
     bool isEnabled_ = true;
     Tag *watchTag_ = nullptr;

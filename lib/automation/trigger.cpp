@@ -124,21 +124,23 @@ void TriggerBase::onTagSocketValueChanged(TagSocket *tagSocket)
     }
 }
 
-QString TriggerBase::triggerTypeToString(TriggerType type) const
+QString triggerTypeToString(
+	TriggerType type)
 {
-    switch (type) {
-    case TriggerType::TriggerEveryTimeAbove:
-        return "triggerAbove";
-    case TriggerType::TriggerEveryTimeBelow:
-        return "trigggerBelow";
-    case TriggerType::TriggerOnTime:
-        return "triggerOnTime";
-    case TriggerType::ScheduleOnDuration:
-        return "scheduleOnDuration";
-    case TriggerType::TriggerTwoValues:
-        return "triggertwovalues";
-    default:
-        break;
-    }
-    return {};
+	switch (type)
+	{
+		case TriggerType::TriggerEveryTimeAbove:
+			return "triggerAbove";
+		case TriggerType::TriggerEveryTimeBelow:
+			return "trigggerBelow";
+		case TriggerType::TriggerOnTime:
+			return "triggerOnTime";
+		case TriggerType::ScheduleOnDuration:
+			return "scheduleOnDuration";
+		case TriggerType::TriggerTwoValues:
+			return "triggertwovalues";
+		default:
+			break;
+	}
+	return {};
 }
