@@ -10,17 +10,6 @@ TriggerBase::TriggerBase(TagList &tagList, const QJsonObject &obj, QObject *pare
     name_ = obj.value("name").toString();
     triggerName_ = obj.value("triggername").toString();
 
-	if (obj.contains("days"))
-	{
-		const QJsonArray days = obj.value("days").toArray();
-		parseArrayWithDays(days);
-	}
-	if (obj.contains("months"))
-	{
-		const QJsonArray months = obj.value("months").toArray();
-		parseArrayWithMonths(months);
-	}
-
 	watchTag_ = tagList_.findByTagName(subsystem_, name_);
 
 	// if the tag does not exist, will most likely happen when server is started, and it is a tag
