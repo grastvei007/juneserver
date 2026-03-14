@@ -48,6 +48,7 @@ TriggerApi::TriggerApi(QHttpServer &httpServer, AutomationManager &automationMan
 // name:
 // triggername:
 // days: <optional> Array of jsonValue integers [1-7]
+// months: <optional> Array of jsonValues integers [1-12]
 //---------------
 // trigger above and below
 // ---------------
@@ -122,6 +123,7 @@ QHttpServerResponse TriggerApi::getSelectedTriggers(const QHttpServerRequest &re
 // duration:
 // enable:
 // days: <optional> Array of jsonValue integers [1-7]
+// months: <optional> Array of jsonValues integers [1-12]
 QHttpServerResponse TriggerApi::updateTrigger(const QHttpServerRequest &request)
 {
     const auto json = util::json::byteArrayToJsonArray(request.body());

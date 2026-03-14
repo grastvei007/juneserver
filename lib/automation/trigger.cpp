@@ -15,6 +15,11 @@ TriggerBase::TriggerBase(TagList &tagList, const QJsonObject &obj, QObject *pare
 		const QJsonArray days = obj.value("days").toArray();
 		parseArrayWithDays(days);
 	}
+	if (obj.contains("months"))
+	{
+		const QJsonArray months = obj.value("months").toArray();
+		parseArrayWithMonths(months);
+	}
 
 	watchTag_ = tagList_.findByTagName(subsystem_, name_);
 
@@ -104,6 +109,16 @@ QJsonObject TriggerBase::toJson() const
 		json.insert("days", array);
 	}
 
+	if (!triggerInTheseMonths_.empty())
+	{
+		QJsonArray array;
+		for (auto month : triggerInTheseMonths_)
+		{
+			array.push_back(QJsonValue(static_cast<int>(month)));
+		}
+		json.insert("months", array);
+	}
+
 	return json;
 }
 
@@ -121,6 +136,15 @@ void TriggerBase::update(const QJsonObject &obj)
 	else
 	{
 		triggerOnTheseDays_.clear();
+	}
+
+	if (obj.contains("months"))
+	{
+		parseArrayWithMonths(obj.value("months").toArray());
+	}
+	else
+	{
+		triggerInTheseMonths_.clear();
 	}
 }
 
@@ -150,16 +174,33 @@ bool TriggerBase::validateWatchTacksoket(TagSocket::Type type) const
 
 bool TriggerBase::shouldTriggerToday() const
 {
-	if (triggerOnTheseDays_.empty())
-		return true;
-
-	const auto today = util::date::currentDay();
-	for (auto day : triggerOnTheseDays_)
-	{
-		if (today == day)
+	auto triggerToday = [this]() {
+		if (triggerOnTheseDays_.empty())
 			return true;
-	}
-	return false;
+
+		const auto today = util::date::currentDay();
+		for (auto day : triggerOnTheseDays_)
+		{
+			if (today == day)
+				return true;
+		}
+		return false;
+	};
+
+	auto triggerThisMonth = [this]() {
+		if (triggerInTheseMonths_.empty())
+			return true;
+
+		const auto currentMonth = util::date::currentMonth();
+		for (auto month : triggerInTheseMonths_)
+		{
+			if (month == currentMonth)
+				return true;
+		}
+		return false;
+	};
+
+	return triggerThisMonth() && triggerToday();
 }
 
 void TriggerBase::parseArrayWithDays(const QJsonArray &days)
@@ -172,6 +213,19 @@ void TriggerBase::parseArrayWithDays(const QJsonArray &days)
 		if (int day = dayref.toInt(); day >= 1 && day <= 7)
 		{
 			triggerOnTheseDays_.push_back(util::date::DayOfWeek(day));
+		}
+	}
+}
+
+void TriggerBase::parseArrayWithMonths(const QJsonArray &months)
+{
+	triggerInTheseMonths_.clear();
+
+	for (const auto &monthRef : months)
+	{
+		if (int month = monthRef.toInt(); month >= 1 && month <= 12)
+		{
+			triggerInTheseMonths_.push_back(util::date::Month(month));
 		}
 	}
 }
