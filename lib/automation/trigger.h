@@ -1,12 +1,16 @@
 #ifndef TRIGGER_H
 #define TRIGGER_H
 
-#include <QObject>
+#include <vector>
+
+#include <QJsonArray>
 #include <QJsonObject>
+#include <QObject>
 
 #include <tagsystem/tag.h>
 #include <tagsystem/taglist.h>
 #include <tagsystem/tagsocket.h>
+#include <tagsystem/util/date.h>
 
 enum class TriggerType
 {
@@ -46,14 +50,18 @@ protected:
     void setDeactive();
 
     bool validateWatchTacksoket(TagSocket::Type type) const;
+	bool shouldTriggerToday() const;
+	TagList &tagList() { return tagList_; }
 
-private slots:
-    void onTagSocketValueChanged(TagSocket *tagSocket);
+  private:
+	void parseArrayWithDays(const QJsonArray &days);
+  private slots:
+	void onTagSocketValueChanged(TagSocket *tagSocket);
 
 private:
     QString triggerTypeToString(TriggerType type) const;
 
-    bool isActive_ = false;
+	bool isActive_ = false;
     bool isEnabled_ = true;
     Tag *watchTag_ = nullptr;
     Tag *triggerTag_ = nullptr;
@@ -64,6 +72,8 @@ private:
     QString triggerName_;
 
     TagSocket *watchTagSocket_ = nullptr;
+
+	std::vector<util::date::DayOfWeek> triggerOnTheseDays_; //< If empty trigger on all days
 };
 
 #endif // TRIGGER_H
