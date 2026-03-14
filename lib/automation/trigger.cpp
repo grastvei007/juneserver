@@ -223,6 +223,7 @@ void TriggerBase::onTagSocketValueChanged(TagSocket *tagSocket)
 {
 	if (!shouldTriggerToday())
 	{
+		setDeactive();
 		return;
 	}
 
