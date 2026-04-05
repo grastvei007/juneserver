@@ -58,9 +58,9 @@ QHttpServerResponse PluginApi::unloadPluginRequest(const QHttpServerRequest &req
 
 QHttpServerResponse PluginApi::getRunningPlugins(const QHttpServerRequest &request)
 {
-    auto plugins = pluginManager_.runningPlugins();
+	const auto plugins = pluginManager_.runningPlugins();
 
-    auto jsonArray = QJsonArray();
+	auto jsonArray = QJsonArray();
     for(const auto& plugin : plugins)
     {
         auto jsonObject = QJsonValue{{"name", plugin}};
