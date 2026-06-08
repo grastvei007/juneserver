@@ -47,7 +47,14 @@ App::App(int argc, char *argv[]) : QCoreApplication(argc, argv)
                                "file");
     parser.addOption(tagFile);
 
+    parser.addOption({{"d", "debug"}, "Debug mode. Print info when a tag value is updated."});
+
     parser.process(*this);
+
+    if (parser.isSet("debug"))
+    {
+        mWebSocketServer->setDebugTagValues();
+    }
 
     if (parser.isSet(tagFile))
     {
