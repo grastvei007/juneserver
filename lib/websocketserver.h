@@ -27,6 +27,7 @@ class WebSocketServer : public QObject
 public:
     WebSocketServer(qint16 port, QString aServerName, QObject *parent=nullptr);
 
+    void setDebugTagValues() {isTagValueDebug_ = true;}
 signals:
     void newConnection(Client*);
 
@@ -43,6 +44,7 @@ private slots:
     void onClientDisconnect(Client *aClient);
 private:
     std::unique_ptr<QWebSocketServer> mWebSocketServer;
+    bool isTagValueDebug_ = false;
 
     QVector<Client*> mClients;
 };

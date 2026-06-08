@@ -79,6 +79,12 @@ void WebSocketServer::socketDisconnected()
 
 void WebSocketServer::onTagValueChanged(Tag *aTag)
 {
+    if (isTagValueDebug_)
+    {
+
+        qDebug() << aTag->getFullName() << " " << aTag->getTypeStr() << " value: " << aTag->getValueAsString();
+    }
+
     QJsonArray array;
     array.push_back(aTag->toJson());
     QJsonDocument document(array);
