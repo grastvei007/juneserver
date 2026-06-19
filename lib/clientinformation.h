@@ -8,10 +8,12 @@ class ClientInformation : public QObject
 {
     Q_OBJECT
 public:
-    ClientInformation(QString aInfo, QObject *parent = 0);
+	ClientInformation(QString info, QObject *parent = 0);
 
     QString getName() const;
     QString getIp() const;
+	QStringList getTagSet() const;
+	bool hasTagSet() const;
 
     bool hasError() const;
     QString errorStr() const;
@@ -20,11 +22,12 @@ signals:
 public slots:
 
 private:
-    QString mName;
-    QString mIp;
+	QString name_;
+	QString ip_;
+	QStringList tagSet_;
 
-    bool mHasError;
-    QString mErrorString;
+	bool hasError_ = false;
+	QString errorString_;
 };
 
 #endif // CLIENTINFORMATION_H

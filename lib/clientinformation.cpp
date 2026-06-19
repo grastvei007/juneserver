@@ -1,76 +1,75 @@
 #include "clientinformation.h"
 
 #include <QDebug>
-#include <QXmlStreamReader>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
-
-ClientInformation::ClientInformation(QString aInfo, QObject *parent) : QObject(parent),
-    mHasError(false)
+ClientInformation::ClientInformation(QString info, QObject *parent) : QObject(parent)
 {
-    QXmlStreamReader stream(aInfo);
-    while(!stream.atEnd() && !stream.hasError())
-    {
-       QXmlStreamReader::TokenType token = stream.readNext();
-       if(token == QXmlStreamReader::StartDocument)
-           continue;
-       if(token == QXmlStreamReader::StartElement)
-       {
-           if(stream.name() == QString("client"))
-               continue;
+	auto jsonObject = QJsonDocument::fromJson(info.toLatin1()).object();
 
-           if(stream.name() == QString("name"))
-           {
-               mName = stream.readElementText();
-               qDebug() << mName;
-           }
-           if(stream.name() == QString("ip"))
-           {
-               mIp = stream.readElementText();
-               qDebug() << mIp;
-           }
-       }
+	if(jsonObject.contains("name"))
+	{
+		name_ = jsonObject.value("name").toString();
+	}
+	if(jsonObject.contains("ip"))
+	{
+		ip_ = jsonObject.value("ip").toString();
+	}
+	if(jsonObject.contains("tag_set"))
+	{
+		const auto &array = jsonObject.value("tag_set").toArray();
+		for(const auto &tag : array)
+		{
+			tagSet_.push_back(tag.toString());
+		}
+	}
 
-    }
-   /* if(stream.hasError())
-    {
-        mErrorString = stream.errorString();
-        mHasError = true;
-    }
-    else
-    {*/
-        if(mName.isEmpty())
-        {
-            mErrorString.append("ClientInformation, Name not set.\n");
-            mHasError = true;
-        }
-        else if(mIp.isEmpty())
-        {
-            mErrorString.append("ClientInformation, Ip not set.\n");
-            mHasError = true;
-        }
-   // }
+
+
+	if(name_.isEmpty())
+	{
+		errorString_.append("ClientInformation, Name not set.\n");
+		hasError_ = true;
+	}
+	else if(ip_.isEmpty())
+	{
+		errorString_.append("ClientInformation, Ip not set.\n");
+		hasError_ = true;
+	}
 }
 
 
 QString ClientInformation::getName() const
 {
-    return mName;
+	return name_;
 }
 
 
 QString ClientInformation::getIp() const
 {
-    return mIp;
+	return ip_;
+}
+
+QStringList ClientInformation::getTagSet() const
+{
+	return tagSet_;
+}
+
+bool ClientInformation::hasTagSet() const
+{
+	return !tagSet_.empty();
 }
 
 
 bool ClientInformation::hasError() const
 {
-    return mHasError;
+	return hasError_;
 }
 
 
 QString ClientInformation::errorStr() const
 {
-    return mErrorString;
+	return errorString_;
 }
