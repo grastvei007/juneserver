@@ -12,6 +12,8 @@ public:
 
     QString getName() const;
     QString getIp() const;
+	QStringList getTagSet() const;
+	bool hasTagSet() const;
 
     bool hasError() const;
     QString errorStr() const;
@@ -22,6 +24,7 @@ public slots:
 private:
     QString mName;
     QString mIp;
+	QStringList tagSet_;
 
     bool mHasError;
     QString mErrorString;
