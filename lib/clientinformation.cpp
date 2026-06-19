@@ -5,18 +5,17 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-ClientInformation::ClientInformation(QString aInfo, QObject *parent) : QObject(parent),
-    mHasError(false)
+ClientInformation::ClientInformation(QString info, QObject *parent) : QObject(parent)
 {
-	auto jsonObject = QJsonDocument::fromJson(aInfo.toLatin1()).object();
+	auto jsonObject = QJsonDocument::fromJson(info.toLatin1()).object();
 
 	if(jsonObject.contains("name"))
 	{
-		mName = jsonObject.value("name").toString();
+		name_ = jsonObject.value("name").toString();
 	}
 	if(jsonObject.contains("ip"))
 	{
-		mIp = jsonObject.value("ip").toString();
+		ip_ = jsonObject.value("ip").toString();
 	}
 	if(jsonObject.contains("tag_set"))
 	{
@@ -29,28 +28,28 @@ ClientInformation::ClientInformation(QString aInfo, QObject *parent) : QObject(p
 
 
 
-	if(mName.isEmpty())
+	if(name_.isEmpty())
 	{
-		mErrorString.append("ClientInformation, Name not set.\n");
-		mHasError = true;
+		errorString_.append("ClientInformation, Name not set.\n");
+		hasError_ = true;
 	}
-	else if(mIp.isEmpty())
+	else if(ip_.isEmpty())
 	{
-		mErrorString.append("ClientInformation, Ip not set.\n");
-		mHasError = true;
+		errorString_.append("ClientInformation, Ip not set.\n");
+		hasError_ = true;
 	}
 }
 
 
 QString ClientInformation::getName() const
 {
-    return mName;
+	return name_;
 }
 
 
 QString ClientInformation::getIp() const
 {
-    return mIp;
+	return ip_;
 }
 
 QStringList ClientInformation::getTagSet() const
@@ -66,11 +65,11 @@ bool ClientInformation::hasTagSet() const
 
 bool ClientInformation::hasError() const
 {
-    return mHasError;
+	return hasError_;
 }
 
 
 QString ClientInformation::errorStr() const
 {
-    return mErrorString;
+	return errorString_;
 }
