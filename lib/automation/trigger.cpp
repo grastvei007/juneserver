@@ -18,7 +18,7 @@ TriggerBase::TriggerBase(TagList &tagList, const QJsonObject &obj, QObject *pare
 	watchTagSocket_ = TagSocketList::sGetInstance().findTagSocketByName("trigger", triggerName_);
 	if (!watchTag_ && watchTagSocket_)
 	{
-		watchTag_ = tagList.createTag(subsystem_, name_, Tag::typeMatchTagSocket(watchTagSocket_));
+		watchTag_ = tagList.createTag(subsystem_, name_, Tag::typeMatchTagSocket(watchTagSocket_), false);
 	}
 
 	if (watchTag())

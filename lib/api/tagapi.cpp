@@ -54,25 +54,25 @@ QHttpServerResponse TagApi::createTag(const QHttpServerRequest &request)
         case TagType::eBool:
         {
             auto value = obj.contains("value") ? obj.value("value").toBool() : false;
-            tagList_.createTag(subsystem, name, TagType::eBool, value, description);
+			tagList_.createTag(subsystem, name, TagType::eBool, value, description, false);
             break;
         }
         case TagType::eDouble:
         {
             auto value = obj.contains("value") ? obj.value("value").toDouble(0.0) : 0.0;
-            tagList_.createTag(subsystem, name, TagType::eDouble, value, description);
+			tagList_.createTag(subsystem, name, TagType::eDouble, value, description, false);
             break;
         }
         case TagType::eInt:
         {
             auto value = obj.contains("value") ? obj.value("value").toInt() : 0;
-            tagList_.createTag(subsystem, name, TagType::eInt, value, description);
+			tagList_.createTag(subsystem, name, TagType::eInt, value, description, false);
             break;
         }
         case TagType::eString:
         {
             auto value = obj.contains("value") ? obj.value("value").toString("") : QString("");
-            tagList_.createTag(subsystem, name, TagType::eString, value, description);
+			tagList_.createTag(subsystem, name, TagType::eString, value, description, false);
             break;
         }
             break;
