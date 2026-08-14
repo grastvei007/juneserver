@@ -50,5 +50,6 @@ QHttpServerResponse TagSocketBindingApi::hookup(const QHttpServerRequest &reques
         return QHttpServerResponse(QHttpServerResponder::StatusCode::BadRequest);
 
     tagsocket->hookupTag(tagSubsystem, tagName);
+	tagSocketList_.saveBindingList();
     return QHttpServerResponse(tagsocket->toJson());
 }
